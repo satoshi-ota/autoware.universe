@@ -11,7 +11,7 @@
         <link rel="canonical" href="https://autowarefoundation.github.io/autoware.universe/main/planning/obstacle_stop_planner/">
       
       <link rel="icon" href="../../docs/assets/images/autoware-foundation.png">
-      <meta name="generator" content="mkdocs-1.3.0, mkdocs-material-8.2.14">
+      <meta name="generator" content="mkdocs-1.3.0, mkdocs-material-8.2.15">
     
     
       
@@ -19,7 +19,7 @@
       
     
     
-      <link rel="stylesheet" href="../../assets/stylesheets/main.3de6f41f.min.css">
+      <link rel="stylesheet" href="../../assets/stylesheets/main.c382b1dc.min.css">
       
         
         <link rel="stylesheet" href="../../assets/stylesheets/palette.cc9b2e1e.min.css">
@@ -8723,10 +8723,18 @@
 </ul>
 </li>
 </ul>
-<p>When the stop point that has 0 velocity is inserted, the point is inserted in front of the target point cloud by the distance of <code>baselink to front</code> + <code>stop margin</code>. The <code>baselink to front</code> means the distance between <code>base_link</code>(center of rear-wheel axis) and front of the car. <code>stop margin</code> is determined by the parameters described below.</p>
-<p><img alt="insert_stop_velocity" src="docs/insert_velocity.drawio.svg" /></p>
+<p>In order to stop with a <code>stop margin</code> from the obstacle exists, the stop point (<code>v=0</code>) is inserted at a distance of <code>baselink to front</code> + <code>stop margin</code> from the obstacle. The <code>baselink to front</code> means the distance between <code>base_link</code>(center of rear-wheel axis) and front of the car.</p>
+<p>If a stop point has already been inserted by other nodes between the obstacle and a position which is <code>stop margin</code> meters away from the obstacle, the stop point is inserted at a distance of <code>baselink to front</code> + <code>min behavior stop margin</code> from the obstacle.</p>
+<div align="center">
+  <img src="./docs/insert_velocity1.drawio.svg" width=45%>
+  <img src="./docs/insert_velocity2.drawio.svg" width=45%>
+</div>
+
 <p>When the deceleration section is inserted, the start point of the section is inserted in front of the target point cloud by the distance of <code>baselink to front</code> + <code>slow down forward margin</code>. the end point of the section is inserted behind the target point cloud by the distance of <code>slow down backward margin</code> + <code>baselink to rear</code>. The <code>baselink to rear</code> means the distance between <code>base_link</code> and rear of the car. The velocities of points in the deceleration section are modified to the deceleration velocity. <code>slow down backward margin</code> and <code>slow down forward margin</code> are determined by the parameters described below.</p>
-<p><img alt="insert_stop_velocity" src="docs/insert_decel_velocity.drawio.svg" /></p>
+<div align="center">
+  <img src="./docs/insert_decel_velocity.drawio.svg" width=45%>
+</div>
+
 <h2 id="input-topics">Input topics<a class="headerlink" href="#input-topics" title="Permanent link">#</a></h2>
 <table>
 <thead>
@@ -9185,7 +9193,7 @@ to the obstacle pointcloud is longer than standard distance, The target velocity
     <script id="__config" type="application/json">{"base": "../..", "features": ["navigation.expand", "navigation.indexes", "navigation.instant", "navigation.sections", "navigation.tabs", "navigation.tabs.sticky", "navigation.top"], "search": "../../assets/javascripts/workers/search.2a1c317c.min.js", "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.config.lang": "en", "search.config.pipeline": "trimmer, stopWordFilter", "search.config.separator": "[\\s\\-]+", "search.placeholder": "Search", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version.title": "Select version"}, "version": {"provider": "mike"}}</script>
     
     
-      <script src="../../assets/javascripts/bundle.c2e1ee47.min.js"></script>
+      <script src="../../assets/javascripts/bundle.a6c66575.min.js"></script>
       
         <script src="https://cdn.jsdelivr.net/npm/mathjax@2/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
       
