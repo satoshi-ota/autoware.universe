@@ -8677,7 +8677,7 @@
 <div class="highlight"><pre><span></span><code>ros2 launch accel_brake_map_calibrator accel_brake_map_calibrator.launch.xml rviz:<span class="o">=</span><span class="nb">true</span>
 </code></pre></div>
 <p>Or if you want to use rosbag files, run the following commands.</p>
-<div class="highlight"><pre><span></span><code>ros2 param <span class="nb">set</span> /use_sim_time <span class="nb">true</span>
+<div class="highlight"><pre><span></span><code>ros2 launch accel_brake_map_calibrator accel_brake_map_calibrator.launch.xml rviz:<span class="o">=</span><span class="nb">true</span> use_sim_time:<span class="o">=</span><span class="nb">true</span>
 ros2 bag play &lt;rosbag_file&gt; --clock
 </code></pre></div>
 <p>During the calibration with setting the parameter <code>progress_file_output</code> to true, the log file is output in [directory of <em>accel_brake_map_calibrator</em>]/config/ . You can also see accel and brake maps in [directory of <em>accel_brake_map_calibrator</em>]/config/accel_map.csv and [directory of <em>accel_brake_map_calibrator</em>]/config/brake_map.csv after calibration.</p>
@@ -8761,7 +8761,7 @@ Diagnostic type <code>WARN</code> indicates that the current accel/brake map is 
 <p><img alt="sample pic2" src="media/statistics_sample.png" /></p>
 <h3 id="how-to-save-the-calibrated-accel-brake-map-anytime-you-want">How to save the calibrated accel / brake map anytime you want<a class="headerlink" href="#how-to-save-the-calibrated-accel-brake-map-anytime-you-want" title="Permanent link">#</a></h3>
 <p>You can save accel and brake map anytime with the following command.</p>
-<div class="highlight"><pre><span></span><code>ros2 service call /accel_brake_map_calibrator/update_map_dir <span class="s2">&quot;path: &#39;&lt;accel/brake map directory&gt;&#39;&quot;</span>
+<div class="highlight"><pre><span></span><code>ros2 service call /accel_brake_map_calibrator/update_map_dir tier4_vehicle_msgs/srv/UpdateAccelBrakeMap <span class="s2">&quot;path: &#39;&lt;accel/brake map directory&gt;&#39;&quot;</span>
 </code></pre></div>
 <p>You can also save accel and brake map in the default directory where Autoware reads accel_map.csv/brake_map.csv using the RViz plugin (AccelBrakeMapCalibratorButtonPanel) as following.</p>
 <ol>
