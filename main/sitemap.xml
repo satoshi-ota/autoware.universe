@@ -161,6 +161,11 @@
          <changefreq>daily</changefreq>
     </url>
     <url>
+         <loc>https://autowarefoundation.github.io/autoware.universe/main/common/tier4_screen_capture_rviz_plugin/</loc>
+         <lastmod>2022-07-06</lastmod>
+         <changefreq>daily</changefreq>
+    </url>
+    <url>
          <loc>https://autowarefoundation.github.io/autoware.universe/main/common/tier4_simulated_clock_rviz_plugin/</loc>
          <lastmod>2022-07-06</lastmod>
          <changefreq>daily</changefreq>
@@ -247,6 +252,11 @@
     </url>
     <url>
          <loc>https://autowarefoundation.github.io/autoware.universe/main/control/trajectory_follower_nodes/design/longitudinal_controller-design/</loc>
+         <lastmod>2022-07-06</lastmod>
+         <changefreq>daily</changefreq>
+    </url>
+    <url>
+         <loc>https://autowarefoundation.github.io/autoware.universe/main/control/trajectory_follower_nodes/design/simple_trajectory_follower-design/</loc>
          <lastmod>2022-07-06</lastmod>
          <changefreq>daily</changefreq>
     </url>
@@ -421,6 +431,16 @@
          <changefreq>daily</changefreq>
     </url>
     <url>
+         <loc>https://autowarefoundation.github.io/autoware.universe/main/perception/detected_object_validation/object-lanelet-filter/</loc>
+         <lastmod>2022-07-06</lastmod>
+         <changefreq>daily</changefreq>
+    </url>
+    <url>
+         <loc>https://autowarefoundation.github.io/autoware.universe/main/perception/detected_object_validation/object-position-filter/</loc>
+         <lastmod>2022-07-06</lastmod>
+         <changefreq>daily</changefreq>
+    </url>
+    <url>
          <loc>https://autowarefoundation.github.io/autoware.universe/main/perception/detected_object_validation/obstacle-pointcloud-based-validator/</loc>
          <lastmod>2022-07-06</lastmod>
          <changefreq>daily</changefreq>
@@ -472,6 +492,11 @@
     </url>
     <url>
          <loc>https://autowarefoundation.github.io/autoware.universe/main/perception/image_projection_based_fusion/</loc>
+         <lastmod>2022-07-06</lastmod>
+         <changefreq>daily</changefreq>
+    </url>
+    <url>
+         <loc>https://autowarefoundation.github.io/autoware.universe/main/perception/image_projection_based_fusion/docs/pointpainting-fusion/</loc>
          <lastmod>2022-07-06</lastmod>
          <changefreq>daily</changefreq>
     </url>
