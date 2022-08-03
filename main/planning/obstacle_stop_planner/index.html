@@ -9951,6 +9951,13 @@
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
+  <a href="#common-parameter" class="md-nav__link">
+    Common Parameter
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
   <a href="#obstacle-stop-planner_1" class="md-nav__link">
     Obstacle Stop Planner
   </a>
@@ -10155,6 +10162,43 @@
 </tbody>
 </table>
 <h2 id="modules">Modules<a class="headerlink" href="#modules" title="Permanent link">#</a></h2>
+<h3 id="common-parameter">Common Parameter<a class="headerlink" href="#common-parameter" title="Permanent link">#</a></h3>
+<table>
+<thead>
+<tr>
+<th>Parameter</th>
+<th>Type</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>enable_slow_down</code></td>
+<td>bool</td>
+<td>enable slow down planner [-]</td>
+</tr>
+<tr>
+<td><code>max_velocity</code></td>
+<td>double</td>
+<td>max velocity [m/s]</td>
+</tr>
+<tr>
+<td><code>hunting_threshold</code></td>
+<td>double</td>
+<td># even if the obstacle disappears, the stop judgment continues for hunting_threshold [s]</td>
+</tr>
+<tr>
+<td><code>lowpass_gain</code></td>
+<td>double</td>
+<td>low pass gain for calculating acceleration [-]</td>
+</tr>
+<tr>
+<td><code>max_yaw_deviation_deg</code></td>
+<td>double</td>
+<td># maximum ego yaw deviation from trajectory [deg] (measures against overlapping lanes)</td>
+</tr>
+</tbody>
+</table>
 <h3 id="obstacle-stop-planner_1">Obstacle Stop Planner<a class="headerlink" href="#obstacle-stop-planner_1" title="Permanent link">#</a></h3>
 <h4 id="role">Role<a class="headerlink" href="#role" title="Permanent link">#</a></h4>
 <p><code>Obstacle Stop Planner</code> module inserts a stop point in trajectory when there is a static point cloud on the trajectory. This module does not work when <code>Adaptive Cruise Controller</code> works.</p>
