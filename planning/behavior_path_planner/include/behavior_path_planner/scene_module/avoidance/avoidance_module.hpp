@@ -182,13 +182,15 @@ private:
   // -- for pre-processing --
   void initVariables();
   AvoidancePlanningData calcAvoidancePlanningData(DebugData & debug) const;
-  ObjectDataArray calcAvoidanceTargetObjects(
-    const lanelet::ConstLanelets & lanelets, const PathWithLaneId & reference_path,
-    DebugData & debug) const;
+  void fillAvoidanceTargetObjects(AvoidancePlanningData & avoidance_data, DebugData & debug) const;
+  void fillObjectEnvelopePolygon(const Pose & closest_pose, ObjectData & object_data) const;
 
+  mutable ObjectDataArray stopped_objects_;
   ObjectDataArray registered_objects_;
   void updateRegisteredObject(const ObjectDataArray & objects);
-  void CompensateDetectionLost(ObjectDataArray & objects) const;
+  void CompensateDetectionLost(
+    ObjectDataArray & target_objects, ObjectDataArray & ignore_objects) const;
+  void fillObjectMovingTime(ObjectData & object_data) const;
 
   // -- for shift point generation --
   AvoidPointArray calcShiftPoints(
@@ -261,7 +263,9 @@ private:
 
   // debug
   mutable DebugData debug_data_;
-  void setDebugData(const PathShifter & shifter, const DebugData & debug);
+  void setDebugData(
+    const AvoidancePlanningData & avoidance_data, const PathShifter & shifter,
+    const DebugData & debug) const;
   void updateAvoidanceDebugData(std::vector<AvoidanceDebugMsg> & avoidance_debug_msg_array) const;
   mutable std::vector<AvoidanceDebugMsg> debug_avoidance_initializer_for_shift_point_;
   mutable rclcpp::Time debug_avoidance_initializer_for_shift_point_time_;

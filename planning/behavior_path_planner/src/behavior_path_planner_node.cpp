@@ -255,8 +255,12 @@ AvoidanceParameters BehaviorPathPlannerNode::getAvoidanceParam()
 
   p.threshold_distance_object_is_on_center = dp("threshold_distance_object_is_on_center", 1.0);
   p.threshold_speed_object_is_stopped = dp("threshold_speed_object_is_stopped", 1.0);
+  p.threshold_time_object_is_moving = dp("threshold_time_object_is_moving", 1.0);
   p.object_check_forward_distance = dp("object_check_forward_distance", 150.0);
   p.object_check_backward_distance = dp("object_check_backward_distance", 2.0);
+  p.object_check_overhang = dp("object_check_overhang", 1.0);
+  p.object_check_yaw = dp("object_check_yaw", 0.52);
+  p.object_check_road_shoulder_ratio = dp("object_check_road_shoulder_ratio", 0.3);
   p.lateral_collision_margin = dp("lateral_collision_margin", 2.0);
   p.lateral_collision_safety_buffer = dp("lateral_collision_safety_buffer", 0.5);
 
@@ -281,8 +285,12 @@ AvoidanceParameters BehaviorPathPlannerNode::getAvoidanceParam()
 
   p.object_last_seen_threshold = dp("object_last_seen_threshold", 2.0);
 
+  p.object_envelope_buffer = dp("object_envelope_buffer", 0.1);
+
   p.min_avoidance_speed_for_acc_prevention = dp("min_avoidance_speed_for_acc_prevention", 3.0);
   p.max_avoidance_acceleration = dp("max_avoidance_acceleration", 0.5);
+
+  p.minimum_road_shoulder_width = dp("minimum_road_shoulder_width", 0.5);
 
   p.publish_debug_marker = dp("publish_debug_marker", false);
   p.print_debug_info = dp("print_debug_info", false);

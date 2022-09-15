@@ -648,8 +648,9 @@ std::vector<size_t> filterObjectsByLanelets(
 }
 
 // works with random lanelets
-std::vector<size_t> filterObjectsByLanelets(
-  const PredictedObjects & objects, const lanelet::ConstLanelets & target_lanelets)
+std::vector<size_t> filterObjectIndicesByLanelets(
+  const PredictedObjects & objects, const lanelet::ConstLanelets & target_lanelets,
+  std::vector<size_t> & ignore_object_indices)
 {
   std::vector<size_t> indices;
   if (target_lanelets.empty()) {
@@ -668,6 +669,8 @@ std::vector<size_t> filterObjectsByLanelets(
       continue;
     }
 
+    bool is_filtered_object = false;
+
     for (const auto & llt : target_lanelets) {
       // create lanelet polygon
       const auto polygon2d = llt.polygon2d().basicPolygon();
@@ -685,11 +688,49 @@ std::vector<size_t> filterObjectsByLanelets(
       // check the object does not intersect the lanelet
       if (!boost::geometry::disjoint(lanelet_polygon, obj_polygon)) {
         indices.push_back(i);
+        is_filtered_object = true;
         break;
       }
     }
+
+    if (!is_filtered_object) {
+      ignore_object_indices.push_back(i);
+    }
   }
   return indices;
+}
+
+std::vector<size_t> filterObjectIndicesByLanelets(
+  const PredictedObjects & objects, const lanelet::ConstLanelets & target_lanelets)
+{
+  std::vector<size_t> ignore_object_indices;
+  return filterObjectIndicesByLanelets(objects, target_lanelets, ignore_object_indices);
+}
+
+PredictedObjects filterObjectsByLanelets(
+  const PredictedObjects & objects, const lanelet::ConstLanelets & target_lanelets,
+  PredictedObjects & ignore_objects)
+{
+  PredictedObjects filtered_objects;
+  std::vector<size_t> ignore_object_indices;
+  const auto indices =
+    filterObjectIndicesByLanelets(objects, target_lanelets, ignore_object_indices);
+  for (const size_t i : indices) {
+    filtered_objects.objects.push_back(objects.objects.at(i));
+  }
+
+  for (const size_t i : ignore_object_indices) {
+    ignore_objects.objects.push_back(objects.objects.at(i));
+  }
+
+  return filtered_objects;
+}
+
+PredictedObjects filterObjectsByLanelets(
+  const PredictedObjects & objects, const lanelet::ConstLanelets & target_lanelets)
+{
+  PredictedObjects ignore_objects;
+  return filterObjectsByLanelets(objects, target_lanelets, ignore_objects);
 }
 
 bool calcObjectPolygon(const PredictedObject & object, Polygon2d * object_polygon)

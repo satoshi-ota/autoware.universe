@@ -19,6 +19,7 @@
 #include "behavior_path_planner/scene_module/avoidance/avoidance_module_data.hpp"
 #include "behavior_path_planner/scene_module/utils/path_shifter.hpp"
 
+#include <tier4_autoware_utils/math/unit_conversion.hpp>
 #include <tier4_autoware_utils/ros/marker_helper.hpp>
 
 #include <autoware_auto_perception_msgs/msg/predicted_objects.hpp>
@@ -47,10 +48,13 @@ MarkerArray createAvoidPointMarkerArray(
   const AvoidPointArray & shift_points, std::string && ns, const float & r, const float & g,
   const float & b, const double & w);
 
-MarkerArray createAvoidanceObjectsMarkerArray(
+MarkerArray createTargetObjectsMarkerArray(
   const behavior_path_planner::ObjectDataArray & objects, std::string && ns);
 
-MarkerArray makeOverhangToRoadShoulderMarkerArray(
+MarkerArray createIgnoreObjectsMarkerArray(
+  const behavior_path_planner::ObjectDataArray & objects, std::string && ns);
+
+MarkerArray makeOffsetMarkerArray(
   const behavior_path_planner::ObjectDataArray & objects, std::string && ns);
 
 MarkerArray createOverhangFurthestLineStringMarkerArray(

@@ -427,7 +427,7 @@ bool isPullOutPathSafe(
 
   // find obstacle in shoulder lanes
   const auto shoulder_lane_object_indices =
-    util::filterObjectsByLanelets(*dynamic_objects, shoulder_lanes);
+    util::filterObjectIndicesByLanelets(*dynamic_objects, shoulder_lanes);
 
   // Collision check for objects in shoulder lane
   if (use_dynamic_object) {

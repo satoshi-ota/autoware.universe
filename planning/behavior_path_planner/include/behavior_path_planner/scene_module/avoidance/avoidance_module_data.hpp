@@ -18,6 +18,7 @@
 #include "behavior_path_planner/scene_module/utils/path_shifter.hpp"
 
 #include <rclcpp/rclcpp.hpp>
+#include <tier4_autoware_utils/tier4_autoware_utils.hpp>
 
 #include <autoware_auto_perception_msgs/msg/predicted_objects.hpp>
 #include <autoware_auto_planning_msgs/msg/path.hpp>
@@ -37,6 +38,7 @@ using autoware_auto_perception_msgs::msg::PredictedObject;
 using autoware_auto_perception_msgs::msg::PredictedObjects;
 using autoware_auto_planning_msgs::msg::PathWithLaneId;
 
+using tier4_autoware_utils::Polygon2d;
 using tier4_planning_msgs::msg::AvoidanceDebugFactor;
 using tier4_planning_msgs::msg::AvoidanceDebugMsg;
 using tier4_planning_msgs::msg::AvoidanceDebugMsgArray;
@@ -44,6 +46,7 @@ using tier4_planning_msgs::msg::AvoidanceDebugMsgArray;
 using geometry_msgs::msg::Point;
 using geometry_msgs::msg::Pose;
 using geometry_msgs::msg::PoseStamped;
+using geometry_msgs::msg::TransformStamped;
 
 struct AvoidanceParameters
 {
@@ -74,11 +77,23 @@ struct AvoidanceParameters
   // vehicles with speed greater than this will not be avoided
   double threshold_speed_object_is_stopped;
 
+  // vehicles which is moving more than this parameter will not be avoided
+  double threshold_time_object_is_moving;
+
   // distance to avoid object detection
   double object_check_forward_distance;
 
   // continue to detect backward vehicles as avoidance targets until they are this distance away
   double object_check_backward_distance;
+
+  // overhang threshold to judge whether object merges ego lane
+  double object_check_overhang;
+
+  // yaw threshold to detect merging vehicles
+  double object_check_yaw;
+
+  // ratio between object width and distance to shoulder
+  double object_check_road_shoulder_ratio;
 
   // we want to keep this lateral margin when avoiding
   double lateral_collision_margin;
@@ -136,6 +151,9 @@ struct AvoidanceParameters
   // lost_count and the registered object will be removed when the count exceeds this max count.
   double object_last_seen_threshold;
 
+  // For object's enveloped polygon
+  double object_envelope_buffer;
+
   // For velocity planning to avoid acceleration during avoidance.
   // Speeds smaller than this are not inserted.
   double min_avoidance_speed_for_acc_prevention;
@@ -149,6 +167,9 @@ struct AvoidanceParameters
   // In multiple targets case: if there are multiple vehicles in a row to be avoided, no new
   // avoidance path will be generated unless their lateral margin difference exceeds this value.
   double avoidance_execution_lateral_threshold;
+
+  // minimum road shoulder width. maybe 0.5 [m]
+  double minimum_road_shoulder_width;
 
   // true by default
   bool avoid_car{true};      // avoidance is performed for type object car
@@ -183,24 +204,43 @@ struct ObjectData  // avoidance target
   // longitudinal position of the CoM, in Frenet coordinate from ego-pose
   double longitudinal;
 
+  // object yaw relative to path pose [rad]
+  double relative_yaw;
+
   // longitudinal length of vehicle, in Frenet coordinate
   double length;
 
   // lateral distance to the closest footprint, in Frenet coordinate
   double overhang_dist;
 
+  // lateral offset ratio
+  double offset_ratio{0.0};
+
   // count up when object disappeared. Removed when it exceeds threshold.
   rclcpp::Time last_seen;
   double lost_time{0.0};
 
+  // count up when object moved. Removed when it exceeds threshold.
+  rclcpp::Time last_stop;
+  double move_time{0.0};
+
   // store the information of the lanelet which the object's overhang is currently occupying
   lanelet::ConstLanelet overhang_lanelet;
+
+  // envelope polygon
+  Polygon2d envelope_poly{};
 
   // the position of the overhang
   Pose overhang_pose;
 
   // lateral distance from overhang to the road shoulder
   double to_road_shoulder_distance{0.0};
+
+  // lateral distance from object to the left road boundary
+  double to_road_left_boundary_distance{0.0};
+
+  // ignore reason for debug
+  std::string reason{""};
 };
 using ObjectDataArray = std::vector<ObjectData>;
 
@@ -257,7 +297,10 @@ struct AvoidancePlanningData
   lanelet::ConstLanelets current_lanelets;
 
   // avoidance target objects
-  ObjectDataArray objects;
+  ObjectDataArray target_objects;
+
+  // avoidance ignore objects
+  ObjectDataArray ignore_objects;
 };
 
 /*

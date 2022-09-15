@@ -171,8 +171,19 @@ std::vector<size_t> filterObjectsByLanelets(
  * @brief Get index of the obstacles inside the lanelets
  * @return Indices corresponding to the obstacle inside the lanelets
  */
-std::vector<size_t> filterObjectsByLanelets(
+std::vector<size_t> filterObjectIndicesByLanelets(
   const PredictedObjects & objects, const lanelet::ConstLanelets & target_lanelets);
+
+std::vector<size_t> filterObjectIndicesByLanelets(
+  const PredictedObjects & objects, const lanelet::ConstLanelets & target_lanelets,
+  std::vector<size_t> & ignore_object_indices);
+
+PredictedObjects filterObjectsByLanelets(
+  const PredictedObjects & objects, const lanelet::ConstLanelets & target_lanelets);
+
+PredictedObjects filterObjectsByLanelets(
+  const PredictedObjects & objects, const lanelet::ConstLanelets & target_lanelets,
+  PredictedObjects & ignore_objects);
 
 std::vector<size_t> filterObjectsByPath(
   const PredictedObjects & objects, const std::vector<size_t> & object_indices,
