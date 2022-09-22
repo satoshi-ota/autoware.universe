@@ -82,6 +82,9 @@ BehaviorPathPlannerNode::BehaviorPathPlannerNode(const rclcpp::NodeOptions & nod
   velocity_subscriber_ = create_subscription<Odometry>(
     "~/input/odometry", 1, std::bind(&BehaviorPathPlannerNode::onVelocity, this, _1),
     createSubscriptionOptions(this));
+  acceleration_subscriber_ = create_subscription<AccelWithCovarianceStamped>(
+    "~/input/accel", 1, std::bind(&BehaviorPathPlannerNode::onAcceleration, this, _1),
+    createSubscriptionOptions(this));
   perception_subscriber_ = create_subscription<PredictedObjects>(
     "~/input/perception", 1, std::bind(&BehaviorPathPlannerNode::onPerception, this, _1),
     createSubscriptionOptions(this));
@@ -530,7 +533,9 @@ void BehaviorPathPlannerNode::waitForData()
   }
 
   while (rclcpp::ok()) {
-    if (planner_data_->dynamic_object && planner_data_->self_odometry) {
+    if (
+      planner_data_->dynamic_object && planner_data_->self_odometry &&
+      planner_data_->self_acceleration) {
       break;
     }
 
@@ -672,6 +677,11 @@ void BehaviorPathPlannerNode::onVelocity(const Odometry::ConstSharedPtr msg)
 {
   std::lock_guard<std::mutex> lock(mutex_pd_);
   planner_data_->self_odometry = msg;
+}
+void BehaviorPathPlannerNode::onAcceleration(const AccelWithCovarianceStamped::ConstSharedPtr msg)
+{
+  std::lock_guard<std::mutex> lock(mutex_pd_);
+  planner_data_->self_acceleration = msg;
 }
 void BehaviorPathPlannerNode::onPerception(const PredictedObjects::ConstSharedPtr msg)
 {
