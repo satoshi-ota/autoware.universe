@@ -261,6 +261,8 @@ private:
 
   bool isTargetObjectType(const PredictedObject & object) const;
 
+  void applySmoother(const ShiftedPath & path);
+
   // debug
   mutable DebugData debug_data_;
   void setDebugData(

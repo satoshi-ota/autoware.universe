@@ -2073,6 +2073,77 @@ boost::optional<AvoidPoint> AvoidanceModule::calcIntersectionShiftPoint(
   return intersection_shift_point;
 }
 
+void AvoidanceModule::applySmoother(const ShiftedPath & shifted_path)
+{
+  PathWithLaneId smoothed_path;
+
+  util::applyVelocitySmoothing(planner_data_, shifted_path.path, smoothed_path);
+
+  const auto self_pose = getEgoPose().pose;
+
+  const auto trimPathFromSelfPose = [&self_pose](const PathWithLaneId & input) {
+    const size_t nearest_idx = motion_utils::findNearestIndex(input.points, self_pose.position);
+    const double trim_distance = 100.0;
+
+    PathWithLaneId output{};
+    output.header = input.header;
+    // output.drivable_area = input.drivable_area;
+    double dist_sum = 0;
+    for (size_t i = nearest_idx; i < input.points.size(); ++i) {
+      output.points.push_back(input.points.at(i));
+
+      if (i != nearest_idx) {
+        dist_sum +=
+          tier4_autoware_utils::calcDistance2d(input.points.at(i - 1), input.points.at(i));
+      }
+
+      if (dist_sum > trim_distance) {
+        break;
+      }
+    }
+
+    return output;
+  };
+
+  const auto clipped_smoothed_path = trimPathFromSelfPose(smoothed_path);
+
+  float travel_time = 0.0;
+  float travel_distance = 0.0;
+  float save_time = 1.0;
+
+  debug_data_.future_poses.clear();
+
+  {
+    FuturePose p;
+    p.future_pose = tier4_autoware_utils::getPose(clipped_smoothed_path.points.front());
+    p.travel_time = travel_time;
+    p.travel_distance = travel_distance;
+    debug_data_.future_poses.push_back(p);
+  }
+
+  for (size_t i = 1; i < clipped_smoothed_path.points.size(); ++i) {
+    const auto & p1 = clipped_smoothed_path.points.at(i - 1).point;
+    const auto & p2 = clipped_smoothed_path.points.at(i).point;
+
+    const auto v = std::max(p1.longitudinal_velocity_mps, float{1.0});
+
+    const auto ds = tier4_autoware_utils::calcDistance2d(p1, p2);
+
+    travel_time += ds / v;
+    travel_distance += ds;
+
+    if (travel_time > save_time) {
+      save_time += 1.0;
+
+      FuturePose p;
+      p.future_pose = tier4_autoware_utils::getPose(p1);
+      p.travel_time = travel_time;
+      p.travel_distance = travel_distance;
+      debug_data_.future_poses.push_back(p);
+    }
+  }
+}
+
 BehaviorModuleOutput AvoidanceModule::plan()
 {
   DEBUG_PRINT("AVOIDANCE plan");
@@ -2124,6 +2195,8 @@ BehaviorModuleOutput AvoidanceModule::plan()
 
   // modify max speed to prevent acceleration in avoidance maneuver.
   modifyPathVelocityToPreventAccelerationOnAvoidance(avoidance_path);
+
+  applySmoother(avoidance_path);
 
   // post processing
   {
@@ -2758,6 +2831,7 @@ void AvoidanceModule::setDebugData(
   using marker_utils::avoidance_marker::createIgnoreObjectsMarkerArray;
   using marker_utils::avoidance_marker::createOverhangFurthestLineStringMarkerArray;
   using marker_utils::avoidance_marker::createTargetObjectsMarkerArray;
+  using marker_utils::avoidance_marker::makeFuturePoseMarkerArray;
   using marker_utils::avoidance_marker::makeOffsetMarkerArray;
 
   debug_marker_.markers.clear();
@@ -2786,6 +2860,7 @@ void AvoidanceModule::setDebugData(
   add(createLaneletsAreaMarkerArray(*debug.expanded_lanelets, "expanded_lanelet", 0.8, 0.8, 0.0));
   add(createTargetObjectsMarkerArray(avoidance_data.target_objects, "target_object"));
   add(createIgnoreObjectsMarkerArray(avoidance_data.ignore_objects, "ignore_objects"));
+  add(makeFuturePoseMarkerArray(debug.future_poses, "future_poses"));
   add(makeOffsetMarkerArray(avoidance_data.target_objects, "target_object_parameters"));
   add(makeOffsetMarkerArray(avoidance_data.ignore_objects, "ignore_object_parameters"));
   add(createOverhangFurthestLineStringMarkerArray(

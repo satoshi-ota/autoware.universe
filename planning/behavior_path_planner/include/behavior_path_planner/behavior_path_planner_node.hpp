@@ -76,6 +76,7 @@ using tier4_planning_msgs::msg::AvoidanceDebugMsgArray;
 using tier4_planning_msgs::msg::PathChangeModule;
 using tier4_planning_msgs::msg::PathChangeModuleArray;
 using tier4_planning_msgs::msg::Scenario;
+using tier4_planning_msgs::msg::VelocityLimit;
 using visualization_msgs::msg::MarkerArray;
 
 class BehaviorPathPlannerNode : public rclcpp::Node
@@ -93,6 +94,7 @@ private:
   rclcpp::Subscription<OccupancyGrid>::SharedPtr occupancy_grid_subscriber_;
   rclcpp::Subscription<ApprovalMsg>::SharedPtr external_approval_subscriber_;
   rclcpp::Subscription<PathChangeModule>::SharedPtr force_approval_subscriber_;
+  rclcpp::Subscription<VelocityLimit>::SharedPtr velocity_limit_subscriber_;
   rclcpp::Publisher<PathWithLaneId>::SharedPtr path_publisher_;
   rclcpp::Publisher<Path>::SharedPtr path_candidate_publisher_;
   rclcpp::Publisher<PathChangeModuleArray>::SharedPtr force_available_publisher_;
@@ -131,6 +133,7 @@ private:
 
   // callback
   void onVelocity(const Odometry::ConstSharedPtr msg);
+  void onVelocityLimit(const VelocityLimit::ConstSharedPtr msg);
   void onAcceleration(const AccelWithCovarianceStamped::ConstSharedPtr msg);
   void onPerception(const PredictedObjects::ConstSharedPtr msg);
   void onOccupancyGrid(const OccupancyGrid::ConstSharedPtr msg);

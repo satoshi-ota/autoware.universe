@@ -23,6 +23,7 @@
 #include "behavior_path_planner/scene_module/side_shift/side_shift_module.hpp"
 #include "behavior_path_planner/utilities.hpp"
 
+#include <motion_velocity_smoother/smoother/analytical_jerk_constrained_smoother/analytical_jerk_constrained_smoother.hpp>
 #include <tier4_autoware_utils/tier4_autoware_utils.hpp>
 #include <vehicle_info_util/vehicle_info_util.hpp>
 
@@ -55,11 +56,13 @@ BehaviorPathPlannerNode::BehaviorPathPlannerNode(const rclcpp::NodeOptions & nod
 {
   using std::placeholders::_1;
   using std::chrono_literals::operator""ms;
+  using motion_velocity_smoother::AnalyticalJerkConstrainedSmoother;
 
   // data_manager
   {
     planner_data_ = std::make_shared<PlannerData>();
     planner_data_->parameters = getCommonParam();
+    planner_data_->smoother = std::make_shared<AnalyticalJerkConstrainedSmoother>(*this);
   }
 
   // publisher
@@ -106,6 +109,9 @@ BehaviorPathPlannerNode::BehaviorPathPlannerNode(const rclcpp::NodeOptions & nod
   force_approval_subscriber_ = create_subscription<PathChangeModule>(
     "~/input/force_approval", 1, std::bind(&BehaviorPathPlannerNode::onForceApproval, this, _1),
     createSubscriptionOptions(this));
+  velocity_limit_subscriber_ = this->create_subscription<VelocityLimit>(
+    "~/input/external_velocity_limit_mps", rclcpp::QoS{1}.transient_local(),
+    std::bind(&BehaviorPathPlannerNode::onVelocityLimit, this, _1));
 
   // route_handler
   auto qos_transient_local = rclcpp::QoS{1}.transient_local();
@@ -677,6 +683,10 @@ void BehaviorPathPlannerNode::onVelocity(const Odometry::ConstSharedPtr msg)
 {
   std::lock_guard<std::mutex> lock(mutex_pd_);
   planner_data_->self_odometry = msg;
+}
+void BehaviorPathPlannerNode::onVelocityLimit(const VelocityLimit::ConstSharedPtr msg)
+{
+  planner_data_->velocity_limit = *msg;
 }
 void BehaviorPathPlannerNode::onAcceleration(const AccelWithCovarianceStamped::ConstSharedPtr msg)
 {

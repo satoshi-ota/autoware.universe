@@ -246,6 +246,44 @@ MarkerArray makeOffsetMarkerArray(
   return msg;
 }
 
+MarkerArray makeFuturePoseMarkerArray(
+  const behavior_path_planner::FuturePoseArray & future_poses, std::string && ns)
+{
+  const auto current_time = rclcpp::Clock{RCL_ROS_TIME}.now();
+  MarkerArray msg;
+
+  {
+    Marker marker = createDefaultMarker(
+      "map", current_time, ns, 0.0, Marker::POINTS, createMarkerScale(0.4, 0.4, 0.0),
+      createMarkerColor(1.0, 0.0, 0.0, 0.999));
+
+    for (const auto & p : future_poses) {
+      marker.points.push_back(p.future_pose.position);
+    }
+
+    msg.markers.push_back(marker);
+  }
+
+  {
+    Marker marker = createDefaultMarker(
+      "map", current_time, ns + "_text", 0L, Marker::TEXT_VIEW_FACING,
+      createMarkerScale(0.5, 0.5, 0.5), createMarkerColor(1.0, 1.0, 0.0, 1.0));
+
+    int32_t i{0};
+    for (const auto & p : future_poses) {
+      marker.id = ++i;
+      marker.pose = p.future_pose;
+      std::ostringstream string_stream;
+      string_stream << "t[s]: " << p.travel_time << "\n"
+                    << "d[m]: " << p.travel_distance;
+      marker.text = string_stream.str();
+      msg.markers.push_back(marker);
+    }
+  }
+
+  return msg;
+}
+
 MarkerArray createOverhangFurthestLineStringMarkerArray(
   const lanelet::ConstLineStrings3d & linestrings, std::string && ns, const float & r,
   const float & g, const float & b)

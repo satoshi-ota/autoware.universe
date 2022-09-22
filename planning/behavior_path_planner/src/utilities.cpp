@@ -2012,5 +2012,77 @@ lanelet::ConstLanelets getExtendedCurrentLanes(
   return current_lanes;
 }
 
+bool applyVelocitySmoothing(
+  const std::shared_ptr<const PlannerData> & planner_data, const PathWithLaneId & input,
+  PathWithLaneId & output)
+{
+  using motion_utils::findNearestIndex;
+  using motion_velocity_smoother::trajectory_utils::applyMaximumVelocityLimit;
+
+  const auto & v_limit = planner_data->velocity_limit;
+  const auto & smoother = planner_data->smoother;
+  const auto & p0 = planner_data->self_pose->pose;
+  const auto & v0 = planner_data->self_odometry->twist.twist.linear.x;
+  const auto & a0 = planner_data->self_acceleration->accel.accel.linear.x;
+
+  const auto toTrajectoryPoints = [](const PathWithLaneId & path) {
+    TrajectoryPoints ret;
+    for (const auto & p : path.points) {
+      TrajectoryPoint p_conv;
+      p_conv.pose = p.point.pose;
+      p_conv.longitudinal_velocity_mps = p.point.longitudinal_velocity_mps;
+      // since path point doesn't have acc for now
+      p_conv.acceleration_mps2 = 0;
+      ret.emplace_back(p_conv);
+    }
+    return ret;
+  };
+
+  const auto toPathWithLaneId = [](const TrajectoryPoints & trajectory) {
+    PathWithLaneId ret;
+    for (const auto & p : trajectory) {
+      PathPointWithLaneId p_conv;
+      p_conv.point.pose = p.pose;
+      p_conv.point.longitudinal_velocity_mps = p.longitudinal_velocity_mps;
+      ret.points.emplace_back(p_conv);
+    }
+    return ret;
+  };
+
+  auto trajectory = toTrajectoryPoints(input);
+
+  if (v_limit) {
+    applyMaximumVelocityLimit(0, trajectory.size(), v_limit->max_velocity, trajectory);
+  }
+
+  const auto traj_1 = smoother->applyLateralAccelerationFilter(trajectory);
+  if (!traj_1) {
+    return false;
+  }
+
+  const auto nearest_idx_traj_1 = findNearestIndex(traj_1.get(), p0.position);
+  const auto traj_2 = smoother->resampleTrajectory(traj_1.get(), v0, nearest_idx_traj_1);
+  if (!traj_2) {
+    return false;
+  }
+
+  const auto nearest_idx_traj_2 = findNearestIndex(traj_2.get(), p0.position);
+
+  // Clip trajectory from closest point
+  TrajectoryPoints traj_3;
+  traj_3.insert(traj_3.end(), traj_2->begin() + nearest_idx_traj_2, traj_2->end());
+
+  TrajectoryPoints traj_4;
+  std::vector<TrajectoryPoints> debug_trajectories;
+  if (!smoother->apply(v0, a0, traj_3, traj_4, debug_trajectories)) {
+    return false;
+  }
+
+  traj_4.insert(traj_4.begin(), traj_2->begin(), traj_2->begin() + nearest_idx_traj_2);
+
+  output = toPathWithLaneId(traj_4);
+  return true;
+}
+
 }  // namespace util
 }  // namespace behavior_path_planner

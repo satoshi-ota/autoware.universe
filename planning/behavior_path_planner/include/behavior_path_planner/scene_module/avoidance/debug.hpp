@@ -57,6 +57,9 @@ MarkerArray createIgnoreObjectsMarkerArray(
 MarkerArray makeOffsetMarkerArray(
   const behavior_path_planner::ObjectDataArray & objects, std::string && ns);
 
+MarkerArray makeFuturePoseMarkerArray(
+  const behavior_path_planner::FuturePoseArray & future_poses, std::string && ns);
+
 MarkerArray createOverhangFurthestLineStringMarkerArray(
   const lanelet::ConstLineStrings3d & linestrings, std::string && ns, const float & r,
   const float & g, const float & b);

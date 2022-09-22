@@ -17,6 +17,7 @@
 
 #include "behavior_path_planner/parameters.hpp"
 
+#include <motion_velocity_smoother/smoother/smoother_base.hpp>
 #include <rclcpp/rclcpp.hpp>
 #include <route_handler/route_handler.hpp>
 
@@ -26,6 +27,7 @@
 #include <geometry_msgs/msg/pose_stamped.hpp>
 #include <geometry_msgs/msg/twist_stamped.hpp>
 #include <nav_msgs/msg/odometry.hpp>
+#include <tier4_planning_msgs/msg/velocity_limit.hpp>
 
 #include <lanelet2_core/LaneletMap.h>
 #include <lanelet2_routing/RoutingGraph.h>
@@ -41,9 +43,11 @@ using autoware_auto_planning_msgs::msg::PathWithLaneId;
 using geometry_msgs::msg::AccelWithCovarianceStamped;
 using geometry_msgs::msg::PoseStamped;
 using geometry_msgs::msg::TwistStamped;
+using motion_velocity_smoother::SmootherBase;
 using nav_msgs::msg::OccupancyGrid;
 using nav_msgs::msg::Odometry;
 using route_handler::RouteHandler;
+using tier4_planning_msgs::msg::VelocityLimit;
 struct BoolStamped
 {
   explicit BoolStamped(bool in_data) : data(in_data) {}
@@ -75,6 +79,8 @@ struct PlannerData
   BehaviorPathPlannerParameters parameters{};
   lanelet::ConstLanelets current_lanes{};
   std::shared_ptr<RouteHandler> route_handler{std::make_shared<RouteHandler>()};
+  std::shared_ptr<SmootherBase> smoother{};
+  boost::optional<VelocityLimit> velocity_limit;
   Approval approval{};
 };
 

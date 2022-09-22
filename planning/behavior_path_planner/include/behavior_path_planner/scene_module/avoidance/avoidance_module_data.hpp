@@ -331,6 +331,16 @@ struct ShiftLineData
   std::vector<std::vector<double>> shift_line_history;
 };
 
+struct FuturePose
+{
+  Pose future_pose;
+
+  double travel_time;
+
+  double travel_distance;
+};
+using FuturePoseArray = std::vector<FuturePose>;
+
 /*
  * Debug information for marker array
  */
@@ -358,6 +368,9 @@ struct DebugData
   std::vector<double> neg_shift;
   std::vector<double> total_shift;
   std::vector<double> output_shift;
+
+  // future pose
+  FuturePoseArray future_poses;
 
   // tmp for plot
   PathWithLaneId center_line;
