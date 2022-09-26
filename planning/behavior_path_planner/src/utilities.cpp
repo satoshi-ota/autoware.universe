@@ -647,6 +647,43 @@ std::vector<size_t> filterObjectsByLanelets(
   return indices;
 }
 
+bool isObjectWithinLanelets(
+  const PredictedObject & object, const lanelet::ConstLanelets & target_lanelets)
+{
+  if (target_lanelets.empty()) {
+    return false;
+  }
+
+  Polygon2d obj_polygon;
+  if (!calcObjectPolygon(object, &obj_polygon)) {
+    RCLCPP_ERROR_STREAM(
+      rclcpp::get_logger("behavior_path_planner").get_child("utilities"),
+      "Failed to calcObjectPolygon...!!!");
+    return false;
+  }
+
+  for (const auto & llt : target_lanelets) {
+    const auto polygon2d = llt.polygon2d().basicPolygon();
+    if (polygon2d.empty()) {
+      continue;
+    }
+
+    Polygon2d lanelet_polygon;
+    for (const auto & lanelet_point : polygon2d) {
+      lanelet_polygon.outer().emplace_back(lanelet_point.x(), lanelet_point.y());
+    }
+
+    lanelet_polygon.outer().push_back(lanelet_polygon.outer().front());
+
+    // check the object does not intersect the lanelet
+    if (!boost::geometry::disjoint(lanelet_polygon, obj_polygon)) {
+      return true;
+    }
+  }
+
+  return false;
+}
+
 // works with random lanelets
 std::vector<size_t> filterObjectIndicesByLanelets(
   const PredictedObjects & objects, const lanelet::ConstLanelets & target_lanelets,
@@ -2014,10 +2051,11 @@ lanelet::ConstLanelets getExtendedCurrentLanes(
 
 bool applyVelocitySmoothing(
   const std::shared_ptr<const PlannerData> & planner_data, const PathWithLaneId & input,
-  PathWithLaneId & output)
+  const double forward_path_length, PathWithLaneId & output)
 {
   using motion_utils::findNearestIndex;
   using motion_velocity_smoother::trajectory_utils::applyMaximumVelocityLimit;
+  using tier4_autoware_utils::calcDistance2d;
 
   const auto & v_limit = planner_data->velocity_limit;
   const auto & smoother = planner_data->smoother;
@@ -2025,15 +2063,31 @@ bool applyVelocitySmoothing(
   const auto & v0 = planner_data->self_odometry->twist.twist.linear.x;
   const auto & a0 = planner_data->self_acceleration->accel.accel.linear.x;
 
-  const auto toTrajectoryPoints = [](const PathWithLaneId & path) {
+  const auto toTrajectoryPoints = [&forward_path_length, &p0](const PathWithLaneId & path) {
+    const auto nearest_idx = findNearestIndex(path.points, p0.position);
+
     TrajectoryPoints ret;
-    for (const auto & p : path.points) {
+    double dist_sum = 0.0;
+
+    for (size_t i = 1; i < path.points.size(); ++i) {
+      const auto & p1 = path.points.at(i - 1);
+      const auto & p2 = path.points.at(i);
+
       TrajectoryPoint p_conv;
-      p_conv.pose = p.point.pose;
-      p_conv.longitudinal_velocity_mps = p.point.longitudinal_velocity_mps;
-      // since path point doesn't have acc for now
+      p_conv.pose = p1.point.pose;
+      p_conv.longitudinal_velocity_mps = p1.point.longitudinal_velocity_mps;
       p_conv.acceleration_mps2 = 0;
       ret.emplace_back(p_conv);
+
+      if (i < nearest_idx + 1) {
+        continue;
+      }
+
+      dist_sum += calcDistance2d(p1, p2);
+
+      if (dist_sum > forward_path_length) {
+        break;
+      }
     }
     return ret;
   };
@@ -2080,7 +2134,29 @@ bool applyVelocitySmoothing(
 
   traj_4.insert(traj_4.begin(), traj_2->begin(), traj_2->begin() + nearest_idx_traj_2);
 
-  output = toPathWithLaneId(traj_4);
+  const auto trimPathFromSelfPose = [&](const PathWithLaneId & input) {
+    const size_t nearest_idx = findNearestIndex(input.points, p0.position);
+
+    PathWithLaneId output{};
+    output.header = input.header;
+    double dist_sum = 0;
+    for (size_t i = nearest_idx; i < input.points.size(); ++i) {
+      output.points.push_back(input.points.at(i));
+
+      if (i != nearest_idx) {
+        dist_sum += calcDistance2d(input.points.at(i - 1), input.points.at(i));
+      }
+
+      if (dist_sum > forward_path_length) {
+        break;
+      }
+    }
+
+    return output;
+  };
+
+  output = trimPathFromSelfPose(toPathWithLaneId(traj_4));
+
   return true;
 }
 

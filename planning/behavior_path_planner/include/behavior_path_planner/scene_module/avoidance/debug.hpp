@@ -37,7 +37,11 @@ namespace marker_utils::avoidance_marker
 {
 using autoware_auto_perception_msgs::msg::PredictedObjects;
 using autoware_auto_planning_msgs::msg::PathWithLaneId;
+using behavior_path_planner::AvoidancePlanningData;
+using behavior_path_planner::AvoidanceState;
 using behavior_path_planner::AvoidPointArray;
+using behavior_path_planner::MarginDataArray;
+using behavior_path_planner::ObjectDataArray;
 using behavior_path_planner::ShiftPointArray;
 using geometry_msgs::msg::Point;
 using geometry_msgs::msg::Polygon;
@@ -48,22 +52,27 @@ MarkerArray createAvoidPointMarkerArray(
   const AvoidPointArray & shift_points, std::string && ns, const float & r, const float & g,
   const float & b, const double & w);
 
-MarkerArray createTargetObjectsMarkerArray(
-  const behavior_path_planner::ObjectDataArray & objects, std::string && ns);
+MarkerArray createTargetObjectsMarkerArray(const ObjectDataArray & objects, std::string && ns);
 
-MarkerArray createIgnoreObjectsMarkerArray(
-  const behavior_path_planner::ObjectDataArray & objects, std::string && ns);
+MarkerArray createUnsafeObjectsMarkerArray(const ObjectDataArray & objects, std::string && ns);
 
-MarkerArray makeOffsetMarkerArray(
-  const behavior_path_planner::ObjectDataArray & objects, std::string && ns);
+MarkerArray createUnavoidableObjectsMarkerArray(const ObjectDataArray & objects, std::string && ns);
 
-MarkerArray makeFuturePoseMarkerArray(
-  const behavior_path_planner::FuturePoseArray & future_poses, std::string && ns);
+MarkerArray createOtherObjectsMarkerArray(
+  const ObjectDataArray & objects, const std::string & reason);
+
+MarkerArray createPredictedVehiclePositions(const PathWithLaneId & path, std::string && ns);
 
 MarkerArray createOverhangFurthestLineStringMarkerArray(
   const lanelet::ConstLineStrings3d & linestrings, std::string && ns, const float & r,
   const float & g, const float & b);
 
+MarkerArray createYieldAlertMarkerArray(
+  const AvoidanceState & state, const Pose & pose, const MarginDataArray & margin_data_array,
+  const bool exist_adjacent_objects);
+
+MarkerArray createEgoStatusMarkerArray(
+  const AvoidancePlanningData & data, const Pose & p_ego, std::string && ns);
 }  // namespace marker_utils::avoidance_marker
 
 std::string toStrInfo(const behavior_path_planner::ShiftPointArray & sp_arr);

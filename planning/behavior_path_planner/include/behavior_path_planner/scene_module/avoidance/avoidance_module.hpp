@@ -28,6 +28,8 @@
 #include <tier4_planning_msgs/msg/avoidance_debug_factor.hpp>
 #include <tier4_planning_msgs/msg/avoidance_debug_msg.hpp>
 #include <tier4_planning_msgs/msg/avoidance_debug_msg_array.hpp>
+#include <tier4_planning_msgs/msg/velocity_limit.hpp>
+#include <tier4_planning_msgs/msg/velocity_limit_clear_command.hpp>
 
 #include <memory>
 #include <string>
@@ -37,6 +39,10 @@
 
 namespace behavior_path_planner
 {
+
+using tier4_planning_msgs::msg::VelocityLimit;
+using tier4_planning_msgs::msg::VelocityLimitClearCommand;
+
 class AvoidanceModule : public SceneModuleInterface
 {
   using RegisteredShiftPointArray = std::vector<std::pair<UUID, Pose>>;
@@ -85,6 +91,9 @@ public:
   }
 
 private:
+  rclcpp::Publisher<VelocityLimitClearCommand>::SharedPtr pub_clear_velocity_limit_;
+  rclcpp::Publisher<VelocityLimit>::SharedPtr pub_velocity_limit_;
+
   AvoidanceParameters parameters_;
 
   AvoidancePlanningData avoidance_data_;
@@ -193,13 +202,15 @@ private:
   void fillObjectMovingTime(ObjectData & object_data) const;
 
   // -- for shift point generation --
-  AvoidPointArray calcShiftPoints(
+  AvoidPointArray applyPreProcessToRawShiftPoints(
     AvoidPointArray & current_raw_shift_points, DebugData & debug) const;
 
   // shift point generation: generator
   double getShiftLength(
     const ObjectData & object, const bool & is_object_on_right, const double & avoid_margin) const;
-  AvoidPointArray calcRawShiftPointsFromObjects(const ObjectDataArray & objects) const;
+  double getShiftLength(const ObjectData & object, const double avoidance_velocity) const;
+  AvoidPointArray calcRawShiftPointsFromObjects(
+    const double avoidance_velocity, const AvoidancePlanningData & data, DebugData & debug) const;
   double getRightShiftBound() const;
   double getLeftShiftBound() const;
 
@@ -238,12 +249,14 @@ private:
   void fillAdditionalInfoFromLongitudinal(AvoidPointArray & shift_points) const;
 
   // -- for new shift point approval --
-  boost::optional<AvoidPointArray> findNewShiftPoint(
+  AvoidPointArray findNewShiftPoint(
     const AvoidPointArray & shift_points, const PathShifter & shifter) const;
-  void addShiftPointIfApproved(const AvoidPointArray & point);
+  void addShiftPointIfApproved(
+    const AvoidPointArray & unapproved_new_sp, const AvoidPointArray & unapproved_raw_sp);
   void addNewShiftPoints(PathShifter & path_shifter, const AvoidPointArray & shift_points) const;
 
   // -- path generation --
+  void fillAvoidancePath(AvoidancePlanningData & data, DebugData & debug) const;
   ShiftedPath generateAvoidancePath(PathShifter & shifter) const;
   void generateExtendedDrivableArea(ShiftedPath * shifted_path) const;
 
@@ -253,6 +266,8 @@ private:
   // clean up shifter
   void postProcess(PathShifter & shifter) const;
 
+  AvoidanceState updateEgoState(const AvoidancePlanningData & data) const;
+
   // turn signal
   TurnSignalInfo calcTurnSignalInfo(const ShiftedPath & path) const;
 
@@ -261,7 +276,26 @@ private:
 
   bool isTargetObjectType(const PredictedObject & object) const;
 
-  void applySmoother(const ShiftedPath & path);
+  // =====================================
+  // ========= for safety check ==========
+  // =====================================
+  lanelet::ConstLanelets getAdjacentLane(
+    const PathShifter & path_shifter, const double forward_distance,
+    const double backward_distance) const;
+  bool isSafePath(
+    const PathShifter & path_shifter, ShiftedPath & shifted_path, DebugData & debug) const;
+  bool isSafePath(
+    const PathWithLaneId & path, const lanelet::ConstLanelets & check_lanes,
+    DebugData & debug) const;
+  bool isEnoughMargin(
+    const PathPointWithLaneId & p_ego, const double t, const ObjectData & object,
+    const bool is_stop_object, MarginData & margin_data) const;
+  void insertWaitPoint(const bool hard_constraints, ShiftedPath & shifted_path) const;
+  void insertAvoidanceVelocity(
+    const double avoidance_velocity, const bool show_wall, ShiftedPath & shifted_path) const;
+  void insertPrepairVelocity(const bool avoidable, ShiftedPath & shifted_path) const;
+  void insertYieldVelocity(ShiftedPath & shifted_path) const;
+  bool yield_now_{false};
 
   // debug
   mutable DebugData debug_data_;
@@ -280,17 +314,36 @@ private:
 
   void clipPathLength(PathWithLaneId & path) const;
 
+  void removeAllRegisteredShiftPoints(PathShifter & path_shifter);
+
   // TODO(Horibe): think later.
   // for unique ID
   mutable uint64_t original_unique_id = 0;  // TODO(Horibe) remove mutable
   uint64_t getOriginalShiftPointUniqueId() const { return original_unique_id++; }
 
+  ObjectDataArray getTargetObjects() const;
+  ObjectDataArray getAdjacentLaneObjects(const lanelet::ConstLanelets & adjacent_lanes) const;
+
+  double getMinimumAvoidanceDistance(const double shift_length) const;
   double getNominalAvoidanceDistance(const double shift_length) const;
+  double getNominalAvoidanceDistance(const double shift_length, const double v) const;
   double getNominalPrepareDistance() const;
   double getNominalAvoidanceEgoSpeed() const;
+  double getNominalAvoidanceEgoSpeed(const double v) const;
+  float getMinimumAvoidanceEgoSpeed() const;
+  float getMaximumAvoidanceEgoSpeed() const;
 
   double getSharpAvoidanceDistance(const double shift_length) const;
   double getSharpAvoidanceEgoSpeed() const;
+
+  double getMinimumLateralMargin() const;
+  double getMaximumLateralMargin() const;
+  double getLateralMarginFromVelocity(const double velocity) const;
+  double getLongitudinalMarginFromVelocity(
+    const double v_ego, const double v_obj, const bool is_stop_object,
+    const bool is_front_object) const;
+  boost::optional<double> getFeasibleDecelDistance(const double target_velocity) const;
+  boost::optional<double> getMildDecelDistance(const double target_velocity) const;
 
   double getEgoSpeed() const;
   Point getEgoPosition() const;
@@ -299,6 +352,12 @@ private:
   double getCurrentBaseShift() const { return path_shifter_.getBaseOffset(); }
   double getCurrentShift() const;
   double getCurrentLinearShift() const;
+
+  static AvoidPoint getNotStraightShiftPoint(const AvoidPointArray & shift_points);
+  static double getLongitudinalVelocity(const Pose & p_ref, const Pose & p_target, const double v);
+
+  // Stop watch
+  mutable StopWatch<std::chrono::milliseconds> stop_watch_;
 };
 
 }  // namespace behavior_path_planner

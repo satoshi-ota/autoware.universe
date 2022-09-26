@@ -126,6 +126,17 @@ MarkerArray createShiftPointMarkerArray(
       marker_l.points.push_back(marker_s.pose.position);
       marker_l.points.push_back(marker_e.pose.position);
       msg.markers.push_back(marker_l);
+
+      auto marker_t = basic_marker;
+      marker_t.id = ++id;
+      marker_t.type = Marker::TEXT_VIEW_FACING;
+      marker_t.scale = tier4_autoware_utils::createMarkerScale(1.0, 1.0, 1.0);
+      marker_t.color = createMarkerColor(1.0, 1.0, 1.0, 0.999);
+      marker_t.pose = sp.end;
+      std::ostringstream string_stream;
+      string_stream << "length:" << sp.length << "[m]";
+      marker_t.text = string_stream.str();
+      msg.markers.push_back(marker_t);
     }
     current_shift = sp.length;
   }

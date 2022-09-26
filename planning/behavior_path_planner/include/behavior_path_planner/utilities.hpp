@@ -163,6 +163,9 @@ double getDistanceBetweenPredictedPathAndObjectPolygon(
   const tier4_autoware_utils::LinearRing2d & vehicle_footprint, double distance_resolution,
   const lanelet::ConstLanelets & road_lanes);
 
+bool isObjectWithinLanelets(
+  const PredictedObject & object, const lanelet::ConstLanelets & target_lanelets);
+
 /**
  * @brief Get index of the obstacles inside the lanelets with start and end length
  * @return Indices corresponding to the obstacle inside the lanelets
@@ -312,7 +315,7 @@ lanelet::ConstLanelets getExtendedCurrentLanes(
 
 bool applyVelocitySmoothing(
   const std::shared_ptr<const PlannerData> & planner_data, const PathWithLaneId & input,
-  PathWithLaneId & output);
+  const double forward_path_length, PathWithLaneId & output);
 
 }  // namespace util
 }  // namespace behavior_path_planner

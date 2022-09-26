@@ -28,6 +28,7 @@
 #include <tier4_planning_msgs/msg/avoidance_debug_msg.hpp>
 #include <tier4_planning_msgs/msg/avoidance_debug_msg_array.hpp>
 
+#include <limits>
 #include <memory>
 #include <string>
 #include <vector>
@@ -36,10 +37,12 @@ namespace behavior_path_planner
 {
 using autoware_auto_perception_msgs::msg::PredictedObject;
 using autoware_auto_perception_msgs::msg::PredictedObjects;
+using autoware_auto_perception_msgs::msg::PredictedPath;
 using autoware_auto_planning_msgs::msg::PathWithLaneId;
 
 using tier4_autoware_utils::Point2d;
 using tier4_autoware_utils::Polygon2d;
+using tier4_autoware_utils::StopWatch;
 using tier4_planning_msgs::msg::AvoidanceDebugFactor;
 using tier4_planning_msgs::msg::AvoidanceDebugMsg;
 using tier4_planning_msgs::msg::AvoidanceDebugMsgArray;
@@ -48,6 +51,8 @@ using geometry_msgs::msg::Point;
 using geometry_msgs::msg::Pose;
 using geometry_msgs::msg::PoseStamped;
 using geometry_msgs::msg::TransformStamped;
+
+using unique_identifier_msgs::msg::UUID;
 
 struct AvoidanceParameters
 {
@@ -71,6 +76,33 @@ struct AvoidanceParameters
   // to use this, enable_avoidance_over_same_direction need to be set to true.
   bool enable_avoidance_over_opposite_direction{true};
 
+  // enable avoidance for all parking vehicle
+  bool enable_avoidance_all_parking_vehicle{false};
+
+  // enable abort maneuver
+  bool enable_avoidance_yield{false};
+
+  // enable slow down
+  bool enable_slow_down{false};
+
+  // constrains
+  bool hard_constraints{false};
+
+  // yield velocity
+  double yield_velocity;
+
+  // yield max deceleration
+  double max_deceleration;
+
+  // yield max jerk
+  double max_jerk;
+
+  // max deceleration
+  double nominal_deceleration;
+
+  // max jerk
+  double nominal_jerk;
+
   // Vehicles whose distance to the center of the path is
   // less than this will not be considered for avoidance.
   double threshold_distance_object_is_on_center;
@@ -81,11 +113,20 @@ struct AvoidanceParameters
   // vehicles which is moving more than this parameter will not be avoided
   double threshold_time_object_is_moving;
 
+  // force avoidance
+  double threshold_time_force_avoidance;
+
+  // force avoidance
+  double threshold_intersection_force_avoidance;
+
   // distance to avoid object detection
   double object_check_forward_distance;
 
   // continue to detect backward vehicles as avoidance targets until they are this distance away
   double object_check_backward_distance;
+
+  // find adjacent lane vehicles
+  double adjacent_lane_check_backward_distance;
 
   // overhang threshold to judge whether object merges ego lane
   double object_check_overhang;
@@ -97,10 +138,20 @@ struct AvoidanceParameters
   double object_check_road_shoulder_ratio;
 
   // we want to keep this lateral margin when avoiding
-  double lateral_collision_margin;
+  // double lateral_collision_margin;
+
+  // we must keep this lateral margin when avoiding
+  // double minimum_collision_margin;
+
   // a buffer in case lateral_collision_margin is set to 0. Will throw error
   // don't ever set this value to 0
   double lateral_collision_safety_buffer{0.5};
+
+  // margin between object back and end point of avoid shift point
+  double longitudinal_collision_safety_buffer_front;
+
+  // margin between object front and start point of return shift point
+  double longitudinal_collision_safety_buffer_back;
 
   // when complete avoidance motion, there is a distance margin with the object
   // for longitudinal direction
@@ -119,12 +170,24 @@ struct AvoidanceParameters
   // minimum distance while avoiding TODO(Horibe): will be changed to jerk constraint later
   double min_avoidance_distance;
 
+  // minimum stop distance
+  double stop_min_distance;
+
+  // maximum stop distance
+  double stop_max_distance;
+
+  // minimum longitudinal margin for vehicles in adjacent lane
+  double min_longitudinal_margin_for_moving_object;
+
   // minimum speed for jerk calculation in a nominal situation, i.e. there is an enough
   // distance for avoidance, and the object is very far from ego. In that case, the
   // vehicle speed is unknown passing along the object. Then use this speed as a minimum.
   // Note: This parameter is needed because we have to plan an avoidance path in advance
   //       without knowing the speed of the distant path.
   double min_nominal_avoidance_speed;
+
+  // avoidance speed step for safety velocity profile searchin g
+  float avoidance_speed_step;
 
   // minimum speed for jerk calculation in a tight situation, i.e. there is NOT an enough
   // distance for avoidance. Need a sharp avoidance path to avoid the object.
@@ -172,6 +235,12 @@ struct AvoidanceParameters
   // minimum road shoulder width. maybe 0.5 [m]
   double minimum_road_shoulder_width;
 
+  // target velocity matrix
+  std::vector<double> target_velocity_matrix;
+
+  // matrix col size
+  size_t col_size;
+
   // true by default
   bool avoid_car{true};      // avoidance is performed for type object car
   bool avoid_truck{true};    // avoidance is performed for type object truck
@@ -187,6 +256,7 @@ struct AvoidanceParameters
   // debug
   bool publish_debug_marker = false;
   bool print_debug_info = false;
+  bool print_processing_time = false;
 };
 
 struct ObjectData  // avoidance target
@@ -225,6 +295,10 @@ struct ObjectData  // avoidance target
   rclcpp::Time last_stop;
   double move_time{0.0};
 
+  // count up when object stopped.
+  rclcpp::Time last_move;
+  double stop_time{0.0};
+
   // store the information of the lanelet which the object's overhang is currently occupying
   lanelet::ConstLanelet overhang_lanelet;
 
@@ -242,6 +316,12 @@ struct ObjectData  // avoidance target
 
   // lateral distance from object to the left road boundary
   double to_road_left_boundary_distance{0.0};
+
+  // to intersection
+  double to_intersection_distance{std::numeric_limits<double>::max()};
+
+  // whether the lateral distance is lower than margin
+  bool avoid_required{false};
 
   // ignore reason for debug
   std::string reason{""};
@@ -262,6 +342,9 @@ struct AvoidPoint : public ShiftPoint
   // Distance from ego to end point in Frenet
   double end_longitudinal = 0.0;
 
+  // lateral margin that can be taken in aboidance maneuver
+  double lateral_margin = 0.0;
+
   // for unique_id
   uint64_t id = 0;
 
@@ -279,11 +362,22 @@ struct AvoidPoint : public ShiftPoint
 };
 using AvoidPointArray = std::vector<AvoidPoint>;
 
+enum class AvoidanceState {
+  NOT_AVOID = 0,
+  AVOID_EXECUTE,
+  YIELD,
+  AVOID_PATH_READY,
+  AVOID_PATH_NOT_READY,
+};
+
 /*
  * Common data for avoidance planning
  */
 struct AvoidancePlanningData
 {
+  // ego final state
+  AvoidanceState state{AvoidanceState::NOT_AVOID};
+
   // un-shifted pose (for current lane detection)
   Pose reference_pose;
 
@@ -305,6 +399,42 @@ struct AvoidancePlanningData
 
   // avoidance ignore objects
   ObjectDataArray ignore_objects;
+
+  // output path
+  ShiftedPath safe_path;
+
+  // raw shift point
+  AvoidPointArray unapproved_raw_sp{};
+
+  // new shift point
+  AvoidPointArray unapproved_new_sp{};
+
+  // safe shift point
+  AvoidPointArray safe_new_sp{};
+
+  bool safe{false};
+
+  bool avoid_required{false};
+
+  bool yield_required{false};
+
+  bool avoiding_now{false};
+
+  bool found_avoidance_path{false};
+
+  double safe_velocity{0.0};
+
+  double avoid_variable_distance{0.0};
+
+  double avoid_constant_distance{0.0};
+
+  double front_object_longitudinal{0.0};
+
+  double required_jerk{0.0};
+
+  double shift_length{0.0};
+
+  double lateral_margin_variable{0.0};
 };
 
 /*
@@ -341,6 +471,24 @@ struct FuturePose
 };
 using FuturePoseArray = std::vector<FuturePose>;
 
+struct MarginData
+{
+  Pose pose{};
+
+  bool enough_lateral_margin{true};
+
+  double longitudinal_distance{std::numeric_limits<double>::max()};
+
+  double longitudinal_margin{std::numeric_limits<double>::lowest()};
+
+  double vehicle_width;
+
+  double base_link2front;
+
+  double base_link2rear;
+};
+using MarginDataArray = std::vector<MarginData>;
+
 /*
  * Debug information for marker array
  */
@@ -364,17 +512,33 @@ struct DebugData
   AvoidPointArray trim_similar_grad_shift_second;
   AvoidPointArray trim_momentary_return;
   AvoidPointArray trim_too_sharp_shift;
+  AvoidPointArray unfeasible_shift;
   std::vector<double> pos_shift;
   std::vector<double> neg_shift;
   std::vector<double> total_shift;
   std::vector<double> output_shift;
 
+  boost::optional<Pose> stop_pose{boost::none};
+  boost::optional<Pose> slow_pose{boost::none};
+  boost::optional<Pose> feasible_bound{boost::none};
+
+  bool exist_adjacent_objects{false};
+
   // future pose
-  FuturePoseArray future_poses;
+  PathWithLaneId velocity_smoothed_path;
+
+  // margin
+  MarginDataArray margin_data_array;
 
   // tmp for plot
   PathWithLaneId center_line;
   AvoidanceDebugMsgArray avoidance_debug_msg_array;
+
+  // avoidance require objects
+  ObjectDataArray unavoidable_objects;
+
+  // avoidance unsafe objects
+  ObjectDataArray unsafe_objects;
 };
 
 }  // namespace behavior_path_planner
