@@ -10506,6 +10506,13 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#tips" class="md-nav__link">
+    Tips
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#assumptions-known-limits" class="md-nav__link">
     Assumptions / Known limits
   </a>
@@ -10645,8 +10652,36 @@
 <td>double</td>
 <td>association frame</td>
 </tr>
+<tr>
+<td><code>distance_threshold_list</code></td>
+<td><code>std::vector&lt;double&gt;</code></td>
+<td>Distance threshold for each class used in judging overlap. The class order depends on <a href="https://github.com/tier4/autoware_auto_msgs/blob/tier4/main/autoware_auto_perception_msgs/msg/ObjectClassification.idl">ObjectClassification</a>.</td>
+</tr>
+<tr>
+<td><code>generalized_iou_threshold</code></td>
+<td>double</td>
+<td>Generalized IoU threshold</td>
+</tr>
 </tbody>
 </table>
+<h2 id="tips">Tips<a class="headerlink" href="#tips" title="Permanent link">#</a></h2>
+<ul>
+<li>False Positive Unknown object detected by clustering method sometimes raises the risk of sudden stop and interferes with Planning module. If ML based detector rarely misses objects, you can tune the parameter of object_merger and make Perception module ignore unknown objects.<ul>
+<li>If you want to remove unknown object close to large vehicle,<ul>
+<li>use HIGH <code>distance_threshold_list</code><ul>
+<li>However, this causes high computational load</li>
+</ul>
+</li>
+<li>use LOW <code>precision_threshold_to_judge_overlapped</code></li>
+<li>use LOW <code>generalized_iou_threshold</code><ul>
+<li>However, these 2 params raise the risk of overlooking object close to known object.</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
 <h2 id="assumptions-known-limits">Assumptions / Known limits<a class="headerlink" href="#assumptions-known-limits" title="Permanent link">#</a></h2>
 <!-- Write assumptions and limitations of your implementation.
 
