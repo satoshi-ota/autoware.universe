@@ -38,6 +38,7 @@ using autoware_auto_perception_msgs::msg::PredictedObject;
 using autoware_auto_perception_msgs::msg::PredictedObjects;
 using autoware_auto_planning_msgs::msg::PathWithLaneId;
 
+using tier4_autoware_utils::Point2d;
 using tier4_autoware_utils::Polygon2d;
 using tier4_planning_msgs::msg::AvoidanceDebugFactor;
 using tier4_planning_msgs::msg::AvoidanceDebugMsg;
@@ -229,6 +230,9 @@ struct ObjectData  // avoidance target
 
   // envelope polygon
   Polygon2d envelope_poly{};
+
+  // envelope polygon centroid
+  Point2d centroid{};
 
   // the position of the overhang
   Pose overhang_pose;

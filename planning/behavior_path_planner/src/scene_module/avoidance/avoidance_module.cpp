@@ -172,6 +172,7 @@ AvoidancePlanningData AvoidanceModule::calcAvoidancePlanningData(DebugData & deb
 void AvoidanceModule::fillAvoidanceTargetObjects(
   AvoidancePlanningData & avoidance_data, DebugData & debug) const
 {
+  using boost::geometry::return_centroid;
   using boost::geometry::within;
   using lanelet::geometry::distance2d;
   using lanelet::geometry::toArcCoordinates;
@@ -243,6 +244,10 @@ void AvoidanceModule::fillAvoidanceTargetObjects(
     // Create envelope polygon.
     fillObjectEnvelopePolygon(object_closest_pose, object_data);
 
+    // calc object centroid.
+    object_data.centroid = return_centroid<Point2d>(object_data.envelope_poly);
+
+    // calc object moving time.
     fillObjectMovingTime(object_data);
 
     if (object_data.move_time > parameters_.threshold_time_object_is_moving) {
@@ -342,8 +347,7 @@ void AvoidanceModule::fillAvoidanceTargetObjects(
       continue;
     }
 
-    lanelet::BasicPoint3d object_basic_pose(
-      object_pose.position.x, object_pose.position.y, object_pose.position.z);
+    lanelet::BasicPoint2d object_centroid(object_data.centroid.x(), object_data.centroid.y());
 
     /**
      * Is not object in adjacent lane?
@@ -353,7 +357,7 @@ void AvoidanceModule::fillAvoidanceTargetObjects(
      *   - No -> the object is avoidance target no matter whether it is parking object or not.
      */
     const auto is_in_ego_lane =
-      within(to2D(object_basic_pose), overhang_lanelet.polygon2d().basicPolygon());
+      within(object_centroid, overhang_lanelet.polygon2d().basicPolygon());
     if (is_in_ego_lane) {
       /**
        * TODO(Satoshi Ota) use intersection area
@@ -394,7 +398,7 @@ void AvoidanceModule::fillAvoidanceTargetObjects(
       }
 
       const auto arc_coordinates = toArcCoordinates(
-        to2D(object_closest_lanelet.centerline().basicLineString()), to2D(object_basic_pose));
+        to2D(object_closest_lanelet.centerline().basicLineString()), object_centroid);
       object_data.offset_ratio = arc_coordinates.distance / object_shiftable_distance;
 
       const auto is_parking_object =

@@ -31,6 +31,7 @@ using tier4_autoware_utils::createMarkerColor;
 using tier4_autoware_utils::createMarkerScale;
 using tier4_autoware_utils::createPoint;
 using tier4_autoware_utils::rad2deg;
+using tier4_autoware_utils::toMsg;
 using visualization_msgs::msg::Marker;
 
 MarkerArray createAvoidPointMarkerArray(
@@ -119,17 +120,29 @@ MarkerArray createTargetObjectsMarkerArray(
     for (const auto & object : objects) {
       const auto pos = object.object.kinematics.initial_pose_with_covariance.pose.position;
 
-      Marker marker = createDefaultMarker(
-        "map", rclcpp::Clock{RCL_ROS_TIME}.now(), ns + "_envelope_polygon", 0L, Marker::LINE_STRIP,
-        createMarkerScale(0.1, 0.0, 0.0), createMarkerColor(1.0, 1.0, 1.0, 0.999));
+      {
+        Marker marker = createDefaultMarker(
+          "map", rclcpp::Clock{RCL_ROS_TIME}.now(), ns + "_envelope_polygon", 0L,
+          Marker::LINE_STRIP, createMarkerScale(0.1, 0.0, 0.0),
+          createMarkerColor(1.0, 1.0, 1.0, 0.999));
 
-      for (const auto & p : object.envelope_poly.outer()) {
-        marker.points.push_back(createPoint(p.x(), p.y(), pos.z));
+        for (const auto & p : object.envelope_poly.outer()) {
+          marker.points.push_back(createPoint(p.x(), p.y(), pos.z));
+        }
+
+        marker.points.push_back(marker.points.front());
+        marker.id = uuid_to_id(object.object.object_id);
+        msg.markers.push_back(marker);
       }
 
-      marker.points.push_back(marker.points.front());
-      marker.id = uuid_to_id(object.object.object_id);
-      msg.markers.push_back(marker);
+      {
+        Marker marker = createDefaultMarker(
+          "map", rclcpp::Clock{RCL_ROS_TIME}.now(), ns + "_centroid", 0, Marker::POINTS,
+          createMarkerScale(0.6, 0.6, 0.0), createMarkerColor(1.0, 1.0, 0.0, 0.999));
+
+        marker.points.push_back(toMsg(object.centroid.to_3d(pos.z)));
+        msg.markers.push_back(marker);
+      }
     }
   }
 
