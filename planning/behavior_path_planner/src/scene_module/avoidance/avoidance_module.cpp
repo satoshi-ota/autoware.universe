@@ -2476,11 +2476,6 @@ void AvoidanceModule::onExit()
   removeRTCStatus();
 }
 
-void AvoidanceModule::setParameters(const AvoidanceParameters & parameters)
-{
-  parameters_ = parameters;
-}
-
 void AvoidanceModule::initVariables()
 {
   prev_output_ = ShiftedPath();

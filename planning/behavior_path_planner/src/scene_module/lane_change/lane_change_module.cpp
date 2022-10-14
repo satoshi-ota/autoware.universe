@@ -211,11 +211,6 @@ BehaviorModuleOutput LaneChangeModule::planWaitingApproval()
   return out;
 }
 
-void LaneChangeModule::setParameters(const LaneChangeParameters & parameters)
-{
-  parameters_ = parameters;
-}
-
 void LaneChangeModule::updateLaneChangeStatus()
 {
   const auto current_lanes = getCurrentLanes();

@@ -72,7 +72,17 @@ public:
     return false;
   }
 
-  void setParameters(const AvoidanceParameters & parameters);
+  void lockRTCCommand() override
+  {
+    rtc_interface_left_.lockCommandUpdate();
+    rtc_interface_right_.lockCommandUpdate();
+  }
+
+  void unlockRTCCommand() override
+  {
+    rtc_interface_left_.unlockCommandUpdate();
+    rtc_interface_right_.unlockCommandUpdate();
+  }
 
 private:
   AvoidanceParameters parameters_;
