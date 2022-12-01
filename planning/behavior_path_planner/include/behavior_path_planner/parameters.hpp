@@ -19,6 +19,12 @@
 
 struct BehaviorPathPlannerParameters
 {
+  bool launch_avoidance{false};
+  bool launch_lane_change{false};
+  bool launch_pull_out{false};
+  bool launch_pull_over{false};
+  bool launch_side_shift{false};
+
   double backward_path_length;
   double forward_path_length;
   double backward_length_buffer_for_end_of_lane;

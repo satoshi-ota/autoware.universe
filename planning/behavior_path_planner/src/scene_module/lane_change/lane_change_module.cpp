@@ -50,11 +50,13 @@ namespace behavior_path_planner
 using autoware_auto_perception_msgs::msg::ObjectClassification;
 
 LaneChangeModule::LaneChangeModule(
-  const std::string & name, rclcpp::Node & node, std::shared_ptr<LaneChangeParameters> parameters)
+  const std::string & name, rclcpp::Node & node, std::shared_ptr<LaneChangeParameters> parameters,
+  std::shared_ptr<RTCInterface> & rtc_interface_left,
+  std::shared_ptr<RTCInterface> & rtc_interface_right)
 : SceneModuleInterface{name, node},
   parameters_{std::move(parameters)},
-  rtc_interface_left_(&node, "lane_change_left"),
-  rtc_interface_right_(&node, "lane_change_right"),
+  rtc_interface_left_{rtc_interface_left},
+  rtc_interface_right_{rtc_interface_right},
   uuid_left_{generateUUID()},
   uuid_right_{generateUUID()}
 {
@@ -72,17 +74,20 @@ void LaneChangeModule::onEntry()
 void LaneChangeModule::onExit()
 {
   resetParameters();
-  current_state_ = BT::NodeStatus::SUCCESS;
+  current_state_ = ModuleStatus::SUCCESS;
+  *path_data_.path = PathWithLaneId();
+  publishReferencePath();
   RCLCPP_DEBUG(getLogger(), "LANE_CHANGE onExit");
 }
 
 bool LaneChangeModule::isExecutionRequested() const
 {
-  if (current_state_ == BT::NodeStatus::RUNNING) {
+  if (current_state_ == ModuleStatus::RUNNING) {
     return true;
   }
 
-  const auto current_lanes = util::getCurrentLanes(planner_data_);
+  // const auto current_lanes = util::getCurrentLanes(planner_data_);
+  const auto current_lanes = getCurrentLanes(*path_data_.path);
   const auto lane_change_lanes = getLaneChangeLanes(current_lanes, lane_change_lane_length_);
 
   LaneChangePath selected_path;
@@ -94,11 +99,12 @@ bool LaneChangeModule::isExecutionRequested() const
 
 bool LaneChangeModule::isExecutionReady() const
 {
-  if (current_state_ == BT::NodeStatus::RUNNING) {
+  if (current_state_ == ModuleStatus::RUNNING) {
     return true;
   }
 
-  const auto current_lanes = util::getCurrentLanes(planner_data_);
+  // const auto current_lanes = util::getCurrentLanes(planner_data_);
+  const auto current_lanes = getCurrentLanes(*path_data_.path);
   const auto lane_change_lanes = getLaneChangeLanes(current_lanes, lane_change_lane_length_);
 
   LaneChangePath selected_path;
@@ -108,7 +114,7 @@ bool LaneChangeModule::isExecutionReady() const
   return found_safe_path;
 }
 
-BT::NodeStatus LaneChangeModule::updateState()
+ModuleStatus LaneChangeModule::updateState()
 {
   RCLCPP_DEBUG(getLogger(), "LANE_CHANGE updateState");
   if (!isValidPath()) {
@@ -134,10 +140,10 @@ BT::NodeStatus LaneChangeModule::updateState()
   }
 
   if (hasFinishedLaneChange()) {
-    current_state_ = BT::NodeStatus::SUCCESS;
+    current_state_ = ModuleStatus::SUCCESS;
     return current_state_;
   }
-  current_state_ = BT::NodeStatus::RUNNING;
+  current_state_ = ModuleStatus::RUNNING;
   return current_state_;
 }
 
@@ -212,7 +218,8 @@ CandidateOutput LaneChangeModule::planCandidate() const
 
   LaneChangePath selected_path;
   // Get lane change lanes
-  const auto current_lanes = util::getCurrentLanes(planner_data_);
+  // const auto current_lanes = util::getCurrentLanes(planner_data_);
+  const auto current_lanes = getCurrentLanes(*path_data_.path);
   const auto lane_change_lanes = getLaneChangeLanes(current_lanes, lane_change_lane_length_);
 
   [[maybe_unused]] const auto [found_valid_path, found_safe_path] =
@@ -235,6 +242,7 @@ CandidateOutput LaneChangeModule::planCandidate() const
     selected_path.path.points, getEgoPose().position, selected_path.shift_line.end.position);
 
   updateSteeringFactorPtr(output, selected_path);
+
   return output;
 }
 
@@ -250,6 +258,7 @@ BehaviorModuleOutput LaneChangeModule::planWaitingApproval()
   BehaviorModuleOutput out;
   out.path = std::make_shared<PathWithLaneId>(prev_approved_path_);
 
+  updateLaneChangeStatus();
   const auto candidate = planCandidate();
   path_candidate_ = std::make_shared<PathWithLaneId>(candidate.path_candidate);
   updateRTCStatus(candidate);
@@ -375,7 +384,7 @@ std::pair<bool, bool> LaneChangeModule::getSafePath(
     // find candidate paths
     const auto lane_change_paths = lane_change_utils::getLaneChangePaths(
       *route_handler, current_lanes, lane_change_lanes, current_pose, current_twist,
-      common_parameters, *parameters_);
+      common_parameters, *parameters_, *path_data_.path);
 
     // get lanes used for detection
     lanelet::ConstLanelets check_lanes;

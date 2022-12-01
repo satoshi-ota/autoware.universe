@@ -15,15 +15,12 @@
 #ifndef BEHAVIOR_PATH_PLANNER__BEHAVIOR_PATH_PLANNER_NODE_HPP_
 #define BEHAVIOR_PATH_PLANNER__BEHAVIOR_PATH_PLANNER_NODE_HPP_
 
-#include "behavior_path_planner/behavior_tree_manager.hpp"
 #include "behavior_path_planner/data_manager.hpp"
-#include "behavior_path_planner/scene_module/avoidance/avoidance_module_data.hpp"
-#include "behavior_path_planner/scene_module/lane_change/external_request_lane_change_module.hpp"
-#include "behavior_path_planner/scene_module/lane_change/lane_change_module.hpp"
-#include "behavior_path_planner/scene_module/lane_following/lane_following_module.hpp"
-#include "behavior_path_planner/scene_module/pull_out/pull_out_module.hpp"
-#include "behavior_path_planner/scene_module/pull_over/pull_over_module.hpp"
-#include "behavior_path_planner/scene_module/side_shift/side_shift_module.hpp"
+#include "behavior_path_planner/planner_manager.hpp"
+// #include "behavior_path_planner/scene_module/lane_following/lane_following_module.hpp"
+// #include "behavior_path_planner/scene_module/pull_out/pull_out_module.hpp"
+// #include "behavior_path_planner/scene_module/pull_over/pull_over_module.hpp"
+// #include "behavior_path_planner/scene_module/side_shift/side_shift_module.hpp"
 #include "behavior_path_planner/steering_factor_interface.hpp"
 #include "behavior_path_planner/turn_signal_decider.hpp"
 
@@ -109,7 +106,7 @@ private:
   std::map<std::string, rclcpp::Publisher<Path>::SharedPtr> path_candidate_publishers_;
 
   std::shared_ptr<PlannerData> planner_data_;
-  std::shared_ptr<BehaviorTreeManager> bt_manager_;
+  std::shared_ptr<PlannerManager> planner_manager_;
   std::unique_ptr<SteeringFactorInterface> steering_factor_interface_ptr_;
   Scenario::SharedPtr current_scenario_{nullptr};
 
@@ -129,18 +126,7 @@ private:
   // update planner data
   std::shared_ptr<PlannerData> createLatestPlannerData();
 
-  // parameters
-  std::shared_ptr<AvoidanceParameters> avoidance_param_ptr;
-  std::shared_ptr<LaneChangeParameters> lane_change_param_ptr;
-
   BehaviorPathPlannerParameters getCommonParam();
-  BehaviorTreeManagerParam getBehaviorTreeManagerParam();
-  SideShiftParameters getSideShiftParam();
-  AvoidanceParameters getAvoidanceParam();
-  LaneFollowingParameters getLaneFollowingParam();
-  LaneChangeParameters getLaneChangeParam();
-  PullOverParameters getPullOverParam();
-  PullOutParameters getPullOutParam();
 
   // callback
   void onOdometry(const Odometry::SharedPtr msg);
@@ -174,10 +160,10 @@ private:
   /**
    * @brief skip smooth goal connection
    */
-  bool skipSmoothGoalConnection(
-    const std::vector<std::shared_ptr<SceneModuleStatus>> & statuses) const;
+  // bool skipSmoothGoalConnection(
+  //   const std::vector<std::shared_ptr<SceneModuleStatus>> & statuses) const;
 
-  bool keepInputPoints(const std::vector<std::shared_ptr<SceneModuleStatus>> & statuses) const;
+  // bool keepInputPoints(const std::vector<std::shared_ptr<SceneModuleStatus>> & statuses) const;
 
   /**
    * @brief skip smooth goal connection
@@ -210,7 +196,7 @@ private:
    * @brief publish path candidate
    */
   void publishPathCandidate(
-    const std::vector<std::shared_ptr<SceneModuleInterface>> & scene_modules);
+    const std::vector<std::shared_ptr<SceneModuleManagerInterface>> & scene_modules);
 
   /**
    * @brief convert path with lane id to path for publish path candidate

@@ -73,11 +73,13 @@ AvoidLine getNonStraightShiftLine(const AvoidLineArray & shift_lines)
 }  // namespace
 
 AvoidanceModule::AvoidanceModule(
-  const std::string & name, rclcpp::Node & node, std::shared_ptr<AvoidanceParameters> parameters)
+  const std::string & name, rclcpp::Node & node, std::shared_ptr<AvoidanceParameters> parameters,
+  std::shared_ptr<RTCInterface> & rtc_interface_left,
+  std::shared_ptr<RTCInterface> & rtc_interface_right)
 : SceneModuleInterface{name, node},
   parameters_{std::move(parameters)},
-  rtc_interface_left_(&node, "avoidance_left"),
-  rtc_interface_right_(&node, "avoidance_right"),
+  rtc_interface_left_{rtc_interface_left},
+  rtc_interface_right_{rtc_interface_right},
   uuid_left_{generateUUID()},
   uuid_right_{generateUUID()}
 {
@@ -89,9 +91,9 @@ bool AvoidanceModule::isExecutionRequested() const
 {
   DEBUG_PRINT("AVOIDANCE isExecutionRequested");
 
-  if (current_state_ == BT::NodeStatus::RUNNING) {
-    return true;
-  }
+  // if (current_state_ == ModuleStatus::RUNNING) {
+  //   return true;
+  // }
 
   const auto avoid_data = calcAvoidancePlanningData(debug_data_);
 
@@ -99,7 +101,8 @@ bool AvoidanceModule::isExecutionRequested() const
     setDebugData(avoid_data, path_shifter_, debug_data_);
   }
 
-  return !avoid_data.target_objects.empty();
+  const bool has_base_offset = std::abs(path_shifter_.getBaseOffset()) > 0.01;
+  return !avoid_data.target_objects.empty() || has_base_offset;
 }
 
 bool AvoidanceModule::isExecutionReady() const
@@ -111,14 +114,14 @@ bool AvoidanceModule::isExecutionReady() const
     static_cast<void>(calcAvoidancePlanningData(debug));
   }
 
-  if (current_state_ == BT::NodeStatus::RUNNING) {
+  if (current_state_ == ModuleStatus::RUNNING) {
     return true;
   }
 
   return true;
 }
 
-BT::NodeStatus AvoidanceModule::updateState()
+ModuleStatus AvoidanceModule::updateState()
 {
   const auto is_plan_running = isAvoidancePlanRunning();
 
@@ -127,14 +130,14 @@ BT::NodeStatus AvoidanceModule::updateState()
   const bool has_avoidance_target = !avoid_data.target_objects.empty();
 
   if (!is_plan_running && !has_avoidance_target) {
-    current_state_ = BT::NodeStatus::SUCCESS;
+    current_state_ = ModuleStatus::SUCCESS;
   } else if (
     !has_avoidance_target && parameters_->enable_update_path_when_object_is_gone &&
     !isAvoidanceManeuverRunning()) {
     // if dynamic objects are removed on path, change current state to reset path
-    current_state_ = BT::NodeStatus::SUCCESS;
+    current_state_ = ModuleStatus::SUCCESS;
   } else {
-    current_state_ = BT::NodeStatus::RUNNING;
+    current_state_ = ModuleStatus::RUNNING;
   }
 
   DEBUG_PRINT(
@@ -171,21 +174,23 @@ AvoidancePlanningData AvoidanceModule::calcAvoidancePlanningData(DebugData & deb
   data.reference_pose = reference_pose;
 
   // center line path (output of this function must have size > 1)
-  const auto center_path = calcCenterLinePath(planner_data_, reference_pose);
-  debug.center_line = center_path;
-  if (center_path.points.size() < 2) {
-    RCLCPP_WARN_THROTTLE(
-      getLogger(), *clock_, 5000, "calcCenterLinePath() must return path which size > 1");
-    return data;
-  }
+  // const auto center_path = calcCenterLinePath(planner_data_, reference_pose);
+  // debug.center_line = center_path;
+  // if (center_path.points.size() < 2) {
+  //   RCLCPP_WARN_THROTTLE(
+  //     getLogger(), *clock_, 5000, "calcCenterLinePath() must return path which size > 1");
+  //   return data;
+  // }
 
   // reference path
+  // data.reference_path =
+  //   util::resamplePathWithSpline(center_path, parameters_->resample_interval_for_planning);
+  // if (data.reference_path.points.size() < 2) {
+  //   // if the resampled path has only 1 point, use original path.
+  //   data.reference_path = center_path;
+  // }
   data.reference_path =
-    util::resamplePathWithSpline(center_path, parameters_->resample_interval_for_planning);
-  if (data.reference_path.points.size() < 2) {
-    // if the resampled path has only 1 point, use original path.
-    data.reference_path = center_path;
-  }
+    util::resamplePathWithSpline(*path_data_.path, parameters_->resample_interval_for_planning);
 
   const size_t nearest_segment_index =
     findNearestSegmentIndex(data.reference_path.points, data.reference_pose.position);
@@ -3155,6 +3160,26 @@ void AvoidanceModule::updateData()
   debug_data_ = DebugData();
   avoidance_data_ = calcAvoidancePlanningData(debug_data_);
 
+  // const auto has_same_lane = [this]() {
+  //   const auto ids = path_data_.path->points.front().lane_ids;
+  //   for (const auto & p : prev_reference_.points) {
+  //     for (const auto & prev_id : p.lane_ids) {
+  //       for (const auto & id : ids) {
+  //         if (id == prev_id) {
+  //           return true;
+  //         }
+  //       }
+  //     }
+  //   }
+
+  //   return false;
+  // }();
+
+  // if (!has_same_lane) {
+  //   std::cout << "avoidance UPDATE" << std::endl;
+  //   initVariables();
+  // }
+
   // TODO(Horibe): this is not tested yet, disable now.
   updateRegisteredObject(avoidance_data_.target_objects);
   compensateDetectionLost(avoidance_data_.target_objects, avoidance_data_.other_objects);
@@ -3293,14 +3318,14 @@ void AvoidanceModule::onEntry()
 {
   DEBUG_PRINT("AVOIDANCE onEntry. wait approval!");
   initVariables();
-  current_state_ = BT::NodeStatus::SUCCESS;
+  current_state_ = ModuleStatus::SUCCESS;
 }
 
 void AvoidanceModule::onExit()
 {
   DEBUG_PRINT("AVOIDANCE onExit");
   initVariables();
-  current_state_ = BT::NodeStatus::SUCCESS;
+  current_state_ = ModuleStatus::SUCCESS;
   clearWaitingApproval();
   removeRTCStatus();
   steering_factor_interface_ptr_->clearSteeringFactors();

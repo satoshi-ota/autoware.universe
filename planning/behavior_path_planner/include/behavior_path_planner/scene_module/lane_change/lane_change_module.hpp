@@ -51,12 +51,13 @@ class LaneChangeModule : public SceneModuleInterface
 {
 public:
   LaneChangeModule(
-    const std::string & name, rclcpp::Node & node,
-    std::shared_ptr<LaneChangeParameters> parameters);
+    const std::string & name, rclcpp::Node & node, std::shared_ptr<LaneChangeParameters> parameters,
+    std::shared_ptr<RTCInterface> & rtc_interface_left,
+    std::shared_ptr<RTCInterface> & rtc_interface_right);
 
   bool isExecutionRequested() const override;
   bool isExecutionReady() const override;
-  BT::NodeStatus updateState() override;
+  ModuleStatus updateState() override;
   BehaviorModuleOutput plan() override;
   BehaviorModuleOutput planWaitingApproval() override;
   CandidateOutput planCandidate() const override;
@@ -67,33 +68,38 @@ public:
   void acceptVisitor(
     [[maybe_unused]] const std::shared_ptr<SceneModuleVisitor> & visitor) const override;
 
+  void updateModuleParams(const std::shared_ptr<LaneChangeParameters> & parameters)
+  {
+    parameters_ = parameters;
+  }
+
   void publishRTCStatus() override
   {
-    rtc_interface_left_.publishCooperateStatus(clock_->now());
-    rtc_interface_right_.publishCooperateStatus(clock_->now());
+    rtc_interface_left_->publishCooperateStatus(clock_->now());
+    rtc_interface_right_->publishCooperateStatus(clock_->now());
   }
 
   bool isActivated() override
   {
-    if (rtc_interface_left_.isRegistered(uuid_left_)) {
-      return rtc_interface_left_.isActivated(uuid_left_);
+    if (rtc_interface_left_->isRegistered(uuid_left_)) {
+      return rtc_interface_left_->isActivated(uuid_left_);
     }
-    if (rtc_interface_right_.isRegistered(uuid_right_)) {
-      return rtc_interface_right_.isActivated(uuid_right_);
+    if (rtc_interface_right_->isRegistered(uuid_right_)) {
+      return rtc_interface_right_->isActivated(uuid_right_);
     }
     return false;
   }
 
   void lockRTCCommand() override
   {
-    rtc_interface_left_.lockCommandUpdate();
-    rtc_interface_right_.lockCommandUpdate();
+    rtc_interface_left_->lockCommandUpdate();
+    rtc_interface_right_->lockCommandUpdate();
   }
 
   void unlockRTCCommand() override
   {
-    rtc_interface_left_.unlockCommandUpdate();
-    rtc_interface_right_.unlockCommandUpdate();
+    rtc_interface_left_->unlockCommandUpdate();
+    rtc_interface_right_->unlockCommandUpdate();
   }
 
 private:
@@ -112,8 +118,8 @@ private:
   bool is_abort_condition_satisfied_{false};
   bool is_activated_ = false;
 
-  RTCInterface rtc_interface_left_;
-  RTCInterface rtc_interface_right_;
+  std::shared_ptr<RTCInterface> rtc_interface_left_;
+  std::shared_ptr<RTCInterface> rtc_interface_right_;
   UUID uuid_left_;
   UUID uuid_right_;
   UUID candidate_uuid_;
@@ -122,14 +128,14 @@ private:
 
   void waitApprovalLeft(const double start_distance, const double finish_distance)
   {
-    rtc_interface_left_.updateCooperateStatus(
+    rtc_interface_left_->updateCooperateStatus(
       uuid_left_, isExecutionReady(), start_distance, finish_distance, clock_->now());
     is_waiting_approval_ = true;
   }
 
   void waitApprovalRight(const double start_distance, const double finish_distance)
   {
-    rtc_interface_right_.updateCooperateStatus(
+    rtc_interface_right_->updateCooperateStatus(
       uuid_right_, isExecutionReady(), start_distance, finish_distance, clock_->now());
     is_waiting_approval_ = true;
   }
@@ -137,14 +143,14 @@ private:
   void updateRTCStatus(const CandidateOutput & candidate)
   {
     if (candidate.lateral_shift > 0.0) {
-      rtc_interface_left_.updateCooperateStatus(
+      rtc_interface_left_->updateCooperateStatus(
         uuid_left_, isExecutionReady(), candidate.start_distance_to_path_change,
         candidate.finish_distance_to_path_change, clock_->now());
       candidate_uuid_ = uuid_left_;
       return;
     }
     if (candidate.lateral_shift < 0.0) {
-      rtc_interface_right_.updateCooperateStatus(
+      rtc_interface_right_->updateCooperateStatus(
         uuid_right_, isExecutionReady(), candidate.start_distance_to_path_change,
         candidate.finish_distance_to_path_change, clock_->now());
       candidate_uuid_ = uuid_right_;
@@ -158,8 +164,18 @@ private:
 
   void removeRTCStatus() override
   {
-    rtc_interface_left_.clearCooperateStatus();
-    rtc_interface_right_.clearCooperateStatus();
+    rtc_interface_left_->clearCooperateStatus();
+    rtc_interface_right_->clearCooperateStatus();
+  }
+
+  lanelet::ConstLanelets getCurrentLanes(const PathWithLaneId & path) const
+  {
+    lanelet::ConstLanelets lanes{};
+    for (const auto & p : path.points) {
+      lanes.push_back(planner_data_->route_handler->getLaneletsFromId(p.lane_ids.front()));
+    }
+
+    return lanes;
   }
 
   void removePreviousRTCStatusLeft()

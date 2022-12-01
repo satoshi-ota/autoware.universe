@@ -1,0 +1,184 @@
+// Copyright 2022 TIER IV, Inc.
+//
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//
+//     http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+// limitations under the License.
+
+#include "behavior_path_planner/planner_manager.hpp"
+
+#include "behavior_path_planner/path_utilities.hpp"
+#include "behavior_path_planner/utilities.hpp"
+
+#include <lanelet2_extension/utility/utilities.hpp>
+
+#include <boost/format.hpp>
+
+#include <memory>
+#include <string>
+
+namespace behavior_path_planner
+{
+
+PlannerManager::PlannerManager(rclcpp::Node & node)
+: logger_(node.get_logger().get_child("planner_manager")), clock_(*node.get_clock())
+{
+}
+
+BehaviorModuleOutput PlannerManager::run(const std::shared_ptr<PlannerData> & data)
+{
+  if (!start_lanelet_) {
+    updateStartLanelet(data);
+  }
+
+  std::for_each(scene_manager_ptrs_.begin(), scene_manager_ptrs_.end(), [&data](const auto & m) {
+    m->setData(data);
+  });
+
+  while (rclcpp::ok()) {
+    const auto approved_path_data = update(data);
+
+    const auto opt_uuid = getCandidateModuleUUID(approved_path_data);
+
+    if (!opt_uuid) {
+      return approved_path_data;
+    }
+
+    const auto result = run(opt_uuid.get(), approved_path_data);
+
+    if (isWaitingApproval(opt_uuid.get())) {
+      candidate_module_ = opt_uuid.get();
+      return result;
+    }
+
+    candidate_module_ = boost::none;
+    addApprovedModule(opt_uuid.get());
+  }
+
+  return {};
+}
+
+boost::optional<UUID> PlannerManager::getCandidateModuleUUID(
+  const BehaviorModuleOutput & path_data) const
+{
+  for (const auto & m : scene_manager_ptrs_) {
+    std::cout << m->getModuleName() << ":" << __LINE__ << std::endl;
+    if (!m->isExecutionRequested(path_data)) {
+      std::cout << m->getModuleName() << ":" << __LINE__ << std::endl;
+      continue;
+    }
+
+    if (!!candidate_module_) {
+      const auto uuid = candidate_module_.get();
+      if (getModuleName(uuid) == m->getModuleName()) {
+        std::cout << m->getModuleName() << ":" << __LINE__ << std::endl;
+        return uuid;
+      } else {
+        std::cout << m->getModuleName() << ":" << __LINE__ << std::endl;
+        deleteExpiredModules(uuid);
+      }
+    }
+
+    if (!m->canLaunchNewModule()) {
+      std::cout << m->getModuleName() << ":" << __LINE__ << std::endl;
+      continue;
+    }
+
+    std::cout << m->getModuleName() << ":" << __LINE__ << std::endl;
+    return m->launchNewModule(path_data);
+  }
+
+  return {};
+}
+
+BehaviorModuleOutput PlannerManager::update(const std::shared_ptr<PlannerData> & data)
+{
+  BehaviorModuleOutput output = getReferencePath(data);
+
+  bool remove_after_module = false;
+
+  for (auto itr = approved_modules_.begin(); itr != approved_modules_.end();) {
+    if (remove_after_module) {
+      itr = approved_modules_.erase(itr);
+      continue;
+    }
+
+    const auto result = run(*itr, output);
+
+    if (!isExecutionRequested(*itr)) {
+      if (itr == approved_modules_.begin()) {
+        if (getModuleName(*itr) == "lane_change") {
+          updateStartLanelet(data);
+        }
+        deleteExpiredModules(*itr);
+        itr = approved_modules_.erase(itr);
+        output = result;
+        continue;
+      }
+    }
+
+    if (isWaitingApproval(*itr)) {
+      candidate_module_ = *itr;
+      itr = approved_modules_.erase(itr);
+      remove_after_module = true;
+      continue;
+    }
+
+    output = result;
+    itr++;
+  }
+
+  return output;
+}
+
+BehaviorModuleOutput PlannerManager::getReferencePath(
+  const std::shared_ptr<PlannerData> & data) const
+{
+  PathWithLaneId reference_path{};
+
+  const auto & route_handler = data->route_handler;
+  const auto & pose = data->self_pose->pose;
+  const auto p = data->parameters;
+
+  // Set header
+  reference_path.header = route_handler->getRouteHeader();
+
+  const auto current_lanes = data->route_handler->getLaneletSequence(
+    start_lanelet_.get(), pose, p.backward_path_length, p.forward_path_length);
+  const auto drivable_lanes = util::generateDrivableLanes(current_lanes);
+
+  // calculate path with backward margin to avoid end points' instability by spline interpolation
+  constexpr double extra_margin = 50.0;
+  const double backward_length =
+    std::max(p.backward_path_length, p.backward_path_length + extra_margin);
+
+  const auto current_lanes_with_backward_margin = route_handler->getLaneletSequence(
+    start_lanelet_.get(), pose, backward_length, p.forward_path_length);
+
+  reference_path = util::getCenterLinePath(
+    *route_handler, current_lanes_with_backward_margin, pose, backward_length,
+    p.forward_path_length, p);
+
+  // clip backward length
+  const size_t current_seg_idx = motion_utils::findFirstNearestSegmentIndexWithSoftConstraints(
+    reference_path.points, pose, 3.0, 1.0);
+  util::clipPathLength(reference_path, current_seg_idx, p.forward_path_length, backward_length);
+
+  const auto expanded_lanes = util::expandLanelets(drivable_lanes, 0.0, 0.0);
+  util::generateDrivableArea(reference_path, expanded_lanes, p.vehicle_length, data);
+
+  BehaviorModuleOutput output;
+  output.path = std::make_shared<PathWithLaneId>(reference_path);
+  output.reference_path = std::make_shared<PathWithLaneId>(reference_path);
+
+  return output;
+}
+
+}  // namespace behavior_path_planner

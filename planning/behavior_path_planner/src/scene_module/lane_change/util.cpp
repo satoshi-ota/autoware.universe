@@ -277,7 +277,8 @@ std::optional<LaneChangePath> constructCandidatePath(
 LaneChangePaths getLaneChangePaths(
   const RouteHandler & route_handler, const lanelet::ConstLanelets & original_lanelets,
   const lanelet::ConstLanelets & target_lanelets, const Pose & pose, const Twist & twist,
-  const BehaviorPathPlannerParameters & common_parameter, const LaneChangeParameters & parameter)
+  const BehaviorPathPlannerParameters & common_parameter, const LaneChangeParameters & parameter,
+  const PathWithLaneId & input)
 {
   LaneChangePaths candidate_paths{};
 
@@ -671,9 +672,6 @@ PathWithLaneId getLaneChangePathPrepareSegment(
       .get_child("util")
       .get_child("getLaneChangePathPrepareSegment"),
     "start: %f, end: %f", s_start, s_end);
-
-  PathWithLaneId prepare_segment =
-    route_handler.getCenterLinePath(original_lanelets, s_start, s_end);
 
   prepare_segment.points.back().point.longitudinal_velocity_mps = std::min(
     prepare_segment.points.back().point.longitudinal_velocity_mps,
