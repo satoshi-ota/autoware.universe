@@ -351,6 +351,8 @@ AvoidanceParameters BehaviorPathPlannerNode::getAvoidanceParam()
     std::string ns = "avoidance.path_generation.lateral.";
     p.lateral_collision_safety_buffer =
       declare_parameter<double>(ns + "lateral_collision_safety_buffer");
+    p.lateral_passable_safety_buffer =
+      declare_parameter<double>(ns + "lateral_passable_safety_buffer");
     p.road_shoulder_safety_margin = declare_parameter<double>(ns + "road_shoulder_safety_margin");
     p.max_right_shift_length = declare_parameter<double>(ns + "max_right_shift_length");
     p.max_left_shift_length = declare_parameter<double>(ns + "max_left_shift_length");

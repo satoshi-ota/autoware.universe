@@ -147,6 +147,8 @@ struct AvoidanceParameters
   // don't ever set this value to 0
   double lateral_collision_safety_buffer{0.5};
 
+  double lateral_passable_safety_buffer{0.5};
+
   // margin between object back and end point of avoid shift point
   double longitudinal_collision_safety_buffer_front;
 

@@ -273,9 +273,10 @@ void AvoidanceModule::fillAvoidanceTargetObjects(
 
     // Check whether the the ego should avoid the object.
     const auto & vehicle_width = planner_data_->parameters.vehicle_width;
+    const auto passable_buffer = 0.5 * vehicle_width + parameters_.lateral_passable_safety_buffer;
     object_data.avoid_required =
-      (isOnRight(object_data) && std::abs(object_data.overhang_dist) < 0.5 * vehicle_width) ||
-      (!isOnRight(object_data) && object_data.overhang_dist < 0.5 * vehicle_width);
+      (isOnRight(object_data) && std::abs(object_data.overhang_dist) < passable_buffer) ||
+      (!isOnRight(object_data) && object_data.overhang_dist < 0.5 * passable_buffer);
 
     if (object_data.move_time > parameters_.threshold_time_object_is_moving) {
       avoidance_debug_array_false_and_push_back("MovingObject", object_data);
