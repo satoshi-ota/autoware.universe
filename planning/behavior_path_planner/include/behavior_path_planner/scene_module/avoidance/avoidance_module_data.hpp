@@ -161,6 +161,8 @@ struct AvoidanceParameters
   // for longitudinal direction
   double longitudinal_collision_margin_time;
 
+  double safety_check_hysteresis_factor;
+
   // start avoidance after this time to avoid sudden path change
   double prepare_time;
 

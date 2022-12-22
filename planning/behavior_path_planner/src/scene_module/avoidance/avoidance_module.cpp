@@ -2558,19 +2558,21 @@ bool AvoidanceModule::isEnoughMargin(
 
   const auto v_obj_lon = getLongitudinalVelocity(p_ref, p_obj.get(), v_obj);
 
+  double hysteresis_factor = 1.0;
   if (yield_now_ && !is_stop_object) {
-    const auto forward_clearane = std::max(10.0, getEgoSpeed() * 10.0);
-    const auto backward_clearance = -1.0 * std::max(10.0, v_obj_lon * 10.0);
-    if (object.longitudinal < forward_clearane && object.longitudinal > backward_clearance) {
-      return false;  // tmp.
-    }
+    hysteresis_factor = parameters_.safety_check_hysteresis_factor;
+    // const auto forward_clearane = std::max(10.0, getEgoSpeed() * 10.0);
+    // const auto backward_clearance = -1.0 * std::max(10.0, v_obj_lon * 10.0);
+    // if (object.longitudinal < forward_clearane && object.longitudinal > backward_clearance) {
+    //   return false;  // tmp.
+    // }
   }
 
   const auto shift_length = calcLateralDeviation(p_ref, getPoint(p_ego));
   const auto lateral_distance = std::abs(object.overhang_dist - shift_length) - 0.5 * vehicle_width;
   const auto lateral_margin = getLateralMarginFromVelocity(std::abs(v_ego_lon - v_obj_lon));
 
-  if (lateral_distance > lateral_margin) {
+  if (lateral_distance > lateral_margin * hysteresis_factor) {
     return true;
   }
 
@@ -2594,7 +2596,7 @@ bool AvoidanceModule::isEnoughMargin(
     margin_data.base_link2rear = base_link2rear;
   }
 
-  if (longitudinal_distance > longitudinal_margin) {
+  if (longitudinal_distance > longitudinal_margin * hysteresis_factor) {
     return true;
   }
 

@@ -371,6 +371,8 @@ AvoidanceParameters BehaviorPathPlannerNode::getAvoidanceParam()
     p.yield_velocity = declare_parameter<double>(ns + "yield_velocity");
     p.min_longitudinal_margin_for_moving_object =
       declare_parameter<double>(ns + "min_longitudinal_margin_for_moving_object");
+    p.safety_check_hysteresis_factor =
+      declare_parameter<double>(ns + "safety_check_hysteresis_factor");
   }
 
   // target object
