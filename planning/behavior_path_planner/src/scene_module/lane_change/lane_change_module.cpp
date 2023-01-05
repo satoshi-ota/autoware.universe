@@ -180,6 +180,7 @@ BehaviorModuleOutput LaneChangeModule::plan()
   updateOutputTurnSignal(output);
 
   updateSteeringFactorPtr(output);
+  output.reference_path = std::make_shared<PathWithLaneId>(path);
 
   return output;
 }
@@ -269,7 +270,8 @@ BehaviorModuleOutput LaneChangeModule::planWaitingApproval()
 
 void LaneChangeModule::updateLaneChangeStatus()
 {
-  status_.current_lanes = util::getCurrentLanes(planner_data_);
+  // status_.current_lanes = util::getCurrentLanes(planner_data_);
+  status_.current_lanes = getCurrentLanes(*path_data_.path);
   status_.lane_change_lanes = getLaneChangeLanes(status_.current_lanes, lane_change_lane_length_);
 
   // Find lane change path

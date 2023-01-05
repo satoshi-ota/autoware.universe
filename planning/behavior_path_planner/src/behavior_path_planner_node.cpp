@@ -17,6 +17,7 @@
 #include "behavior_path_planner/debug_utilities.hpp"
 #include "behavior_path_planner/path_utilities.hpp"
 #include "behavior_path_planner/scene_module/avoidance/manager.hpp"
+#include "behavior_path_planner/scene_module/avoidance_by_lc/manager.hpp"
 #include "behavior_path_planner/scene_module/lane_change/manager.hpp"
 
 #include <tier4_autoware_utils/tier4_autoware_utils.hpp>
@@ -111,7 +112,16 @@ BehaviorPathPlannerNode::BehaviorPathPlannerNode(const rclcpp::NodeOptions & nod
   {
     const std::string path_candidate_name_space = "/planning/path_candidate/";
     mutex_bt_.lock();
-    planner_manager_ = std::make_shared<PlannerManager>(*this);
+    planner_manager_ = std::make_shared<PlannerManager>(
+      *this, planner_data_->parameters.enable_simultaneous_execution_of_multiple_modules);
+
+    if (planner_data_->parameters.launch_avoidance_by_lc) {
+      auto manager = std::make_shared<AvoidanceByLCModuleManager>(this, "avoidance_by_lc", 1);
+      planner_manager_->registerSceneModuleManager(manager);
+      path_candidate_publishers_.emplace(
+        "avoidance_by_lc",
+        create_publisher<Path>(path_candidate_name_space + "avoidance_by_lc", 1));
+    }
 
     if (planner_data_->parameters.launch_avoidance) {
       auto manager = std::make_shared<AvoidanceModuleManager>(this, "avoidance", 1);
@@ -184,8 +194,12 @@ BehaviorPathPlannerParameters BehaviorPathPlannerNode::getCommonParam()
   constexpr double min_backward_offset = 1.0;
   const double backward_offset = vehicle_info.rear_overhang_m + min_backward_offset;
 
+  p.launch_avoidance_by_lc = declare_parameter<bool>("launch_avoidance_by_lc");
   p.launch_avoidance = declare_parameter<bool>("launch_avoidance");
   p.launch_lane_change = declare_parameter<bool>("launch_lane_change");
+
+  p.enable_simultaneous_execution_of_multiple_modules =
+    declare_parameter<bool>("enable_simultaneous_execution_of_multiple_modules");
 
   // ROS parameters
   p.backward_path_length = declare_parameter("backward_path_length", 5.0) + backward_offset;

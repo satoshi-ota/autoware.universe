@@ -27,6 +27,7 @@ namespace behavior_path_planner
 {
 // Forward Declaration
 class AvoidanceModule;
+class AvoidanceByLCModule;
 class LaneChangeModule;
 class ExternalRequestLaneChangeModule;
 class LaneFollowingModule;
@@ -45,6 +46,7 @@ public:
   void visitLaneChangeModule(const LaneChangeModule * module) const;
   void visitExternalRequestLaneChangeModule(const ExternalRequestLaneChangeModule * module) const;
   void visitAvoidanceModule(const AvoidanceModule * module) const;
+  void visitAvoidanceByLCModule(const AvoidanceByLCModule * module) const;
 
   std::shared_ptr<AvoidanceDebugMsgArray> getAvoidanceModuleDebugMsg() const;
   std::shared_ptr<LaneChangeDebugMsgArray> getLaneChangeModuleDebugMsg() const;

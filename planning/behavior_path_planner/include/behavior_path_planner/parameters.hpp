@@ -19,11 +19,14 @@
 
 struct BehaviorPathPlannerParameters
 {
+  bool launch_avoidance_by_lc{false};
   bool launch_avoidance{false};
   bool launch_lane_change{false};
   bool launch_pull_out{false};
   bool launch_pull_over{false};
   bool launch_side_shift{false};
+
+  bool enable_simultaneous_execution_of_multiple_modules{false};
 
   double backward_path_length;
   double forward_path_length;

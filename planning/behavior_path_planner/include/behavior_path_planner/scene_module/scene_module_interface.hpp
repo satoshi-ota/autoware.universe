@@ -244,6 +244,9 @@ public:
 
   void publishReferencePath()
   {
+    if (path_data_.path == nullptr) {
+      return;
+    }
     path_data_.path->header = planner_data_->route_handler->getRouteHeader();
     pub_ref_path_->publish(*path_data_.path);
   }

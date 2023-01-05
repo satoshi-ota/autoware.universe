@@ -27,8 +27,10 @@
 namespace behavior_path_planner
 {
 
-PlannerManager::PlannerManager(rclcpp::Node & node)
-: logger_(node.get_logger().get_child("planner_manager")), clock_(*node.get_clock())
+PlannerManager::PlannerManager(rclcpp::Node & node, const bool enable_simultaneous_execution)
+: logger_(node.get_logger().get_child("planner_manager")),
+  clock_(*node.get_clock()),
+  enable_simultaneous_execution_{enable_simultaneous_execution}
 {
 }
 
@@ -48,6 +50,7 @@ BehaviorModuleOutput PlannerManager::run(const std::shared_ptr<PlannerData> & da
     const auto opt_uuid = getCandidateModuleUUID(approved_path_data);
 
     if (!opt_uuid) {
+      candidate_module_ = boost::none;
       return approved_path_data;
     }
 
@@ -68,30 +71,56 @@ BehaviorModuleOutput PlannerManager::run(const std::shared_ptr<PlannerData> & da
 boost::optional<UUID> PlannerManager::getCandidateModuleUUID(
   const BehaviorModuleOutput & path_data) const
 {
-  for (const auto & m : scene_manager_ptrs_) {
-    std::cout << m->getModuleName() << ":" << __LINE__ << std::endl;
-    if (!m->isExecutionRequested(path_data)) {
-      std::cout << m->getModuleName() << ":" << __LINE__ << std::endl;
-      continue;
-    }
+  const auto module_running = !approved_modules_.empty();
+  if (!enable_simultaneous_execution_ && module_running) {
+    return {};
+  }
 
-    if (!!candidate_module_) {
-      const auto uuid = candidate_module_.get();
-      if (getModuleName(uuid) == m->getModuleName()) {
-        std::cout << m->getModuleName() << ":" << __LINE__ << std::endl;
-        return uuid;
+  for (const auto & m : scene_manager_ptrs_) {
+    /**
+     * CASE1: there is no candidate module
+     */
+    if (!candidate_module_) {
+      if (m->isExecutionRequested(path_data) && m->canLaunchNewModule()) {
+        // launch new candidate module
+        return m->launchNewModule(path_data);
       } else {
-        std::cout << m->getModuleName() << ":" << __LINE__ << std::endl;
-        deleteExpiredModules(uuid);
+        // candidate module is not needed
+        continue;
       }
     }
 
-    if (!m->canLaunchNewModule()) {
-      std::cout << m->getModuleName() << ":" << __LINE__ << std::endl;
+    // candidate module already exist
+    const auto uuid = candidate_module_.get();
+    const auto name = getModuleName(uuid);
+
+    /**
+     * CASE2: same name module already launched as candidate
+     */
+    if (name == m->getModuleName()) {
+      if (isExecutionRequested(uuid)) {
+        // keep current candidate module
+        return uuid;
+      } else {
+        // candidate module is no longer needed
+        deleteExpiredModules(uuid);
+        continue;
+      }
+    }
+
+    /**
+     * CASE3: different name module already launched as candidate
+     */
+
+    // don't launch new module as candidate
+    if (!m->isExecutionRequested(path_data) || !m->canLaunchNewModule()) {
       continue;
     }
 
-    std::cout << m->getModuleName() << ":" << __LINE__ << std::endl;
+    // delete current candidate module from manager
+    deleteExpiredModules(uuid);
+
+    // override candidate module
     return m->launchNewModule(path_data);
   }
 
@@ -114,7 +143,8 @@ BehaviorModuleOutput PlannerManager::update(const std::shared_ptr<PlannerData> &
 
     if (!isExecutionRequested(*itr)) {
       if (itr == approved_modules_.begin()) {
-        if (getModuleName(*itr) == "lane_change") {
+        const auto module_name = getModuleName(*itr);
+        if (module_name == "lane_change" || module_name == "avoidance_by_lc") {
           updateStartLanelet(data);
         }
         deleteExpiredModules(*itr);

@@ -49,12 +49,6 @@ public:
 
   bool isExecutionRequested(const BehaviorModuleOutput & path_data)
   {
-    for (const auto & m : registered_modules_) {
-      if (!m.second->isWaitingApproval()) {
-        return false;
-      }
-    }
-
     const auto m = createNewSceneModuleInstance();
 
     m->setData(planner_data_);
