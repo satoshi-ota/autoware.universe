@@ -27,6 +27,7 @@ struct BehaviorPathPlannerParameters
   bool launch_side_shift{false};
 
   bool enable_simultaneous_execution_of_multiple_modules{false};
+  bool verbose{false};
 
   double backward_path_length;
   double forward_path_length;

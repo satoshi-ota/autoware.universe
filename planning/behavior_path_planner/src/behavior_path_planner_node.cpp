@@ -112,10 +112,12 @@ BehaviorPathPlannerNode::BehaviorPathPlannerNode(const rclcpp::NodeOptions & nod
   {
     const std::string path_candidate_name_space = "/planning/path_candidate/";
     mutex_bt_.lock();
-    planner_manager_ = std::make_shared<PlannerManager>(
-      *this, planner_data_->parameters.enable_simultaneous_execution_of_multiple_modules);
 
-    if (planner_data_->parameters.launch_avoidance_by_lc) {
+    const auto & p = planner_data_->parameters;
+    planner_manager_ = std::make_shared<PlannerManager>(
+      *this, p.enable_simultaneous_execution_of_multiple_modules, p.verbose);
+
+    if (p.launch_avoidance_by_lc) {
       auto manager = std::make_shared<AvoidanceByLCModuleManager>(this, "avoidance_by_lc", 1);
       planner_manager_->registerSceneModuleManager(manager);
       path_candidate_publishers_.emplace(
@@ -123,14 +125,14 @@ BehaviorPathPlannerNode::BehaviorPathPlannerNode(const rclcpp::NodeOptions & nod
         create_publisher<Path>(path_candidate_name_space + "avoidance_by_lc", 1));
     }
 
-    if (planner_data_->parameters.launch_avoidance) {
+    if (p.launch_avoidance) {
       auto manager = std::make_shared<AvoidanceModuleManager>(this, "avoidance", 1);
       planner_manager_->registerSceneModuleManager(manager);
       path_candidate_publishers_.emplace(
         "avoidance", create_publisher<Path>(path_candidate_name_space + "avoidance", 1));
     }
 
-    if (planner_data_->parameters.launch_lane_change) {
+    if (p.launch_lane_change) {
       auto manager = std::make_shared<LaneChangeModuleManager>(this, "lane_change", 1);
       planner_manager_->registerSceneModuleManager(manager);
       path_candidate_publishers_.emplace(
@@ -200,6 +202,7 @@ BehaviorPathPlannerParameters BehaviorPathPlannerNode::getCommonParam()
 
   p.enable_simultaneous_execution_of_multiple_modules =
     declare_parameter<bool>("enable_simultaneous_execution_of_multiple_modules");
+  p.verbose = declare_parameter<bool>("verbose");
 
   // ROS parameters
   p.backward_path_length = declare_parameter("backward_path_length", 5.0) + backward_offset;

@@ -27,10 +27,12 @@
 namespace behavior_path_planner
 {
 
-PlannerManager::PlannerManager(rclcpp::Node & node, const bool enable_simultaneous_execution)
+PlannerManager::PlannerManager(
+  rclcpp::Node & node, const bool enable_simultaneous_execution, const bool verbose)
 : logger_(node.get_logger().get_child("planner_manager")),
   clock_(*node.get_clock()),
-  enable_simultaneous_execution_{enable_simultaneous_execution}
+  enable_simultaneous_execution_{enable_simultaneous_execution},
+  verbose_{verbose}
 {
 }
 

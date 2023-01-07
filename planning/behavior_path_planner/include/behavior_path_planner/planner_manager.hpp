@@ -38,7 +38,7 @@ using unique_identifier_msgs::msg::UUID;
 class PlannerManager
 {
 public:
-  PlannerManager(rclcpp::Node & node, const bool enable_simultaneous_execution);
+  PlannerManager(rclcpp::Node & node, const bool enable_simultaneous_execution, const bool verbose);
 
   BehaviorModuleOutput run(const std::shared_ptr<PlannerData> & data);
 
@@ -67,6 +67,10 @@ public:
 
   void print()
   {
+    if (!verbose_) {
+      return;
+    }
+
     std::ostringstream string_stream;
     string_stream << "\n";
     string_stream << "***********************************************************\n";
@@ -201,6 +205,8 @@ private:
   rclcpp::Clock clock_;
 
   bool enable_simultaneous_execution_{false};
+
+  bool verbose_{false};
 };
 }  // namespace behavior_path_planner
 
