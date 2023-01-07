@@ -149,7 +149,16 @@ public:
     registered_modules_.erase(toHexString(uuid));
   }
 
-  bool exist(const UUID & uuid) const { return registered_modules_.count(toHexString(uuid)) > 0; }
+  bool exist(const UUID & uuid) const
+  {
+    if (registered_modules_.count(toHexString(uuid)) == 0) {
+      RCLCPP_WARN(
+        logger_, "uuid %s is not found in %s module.", toHexString(uuid).c_str(), name_.c_str());
+      return false;
+    }
+
+    return true;
+  }
 
   bool canLaunchNewModule() const { return registered_modules_.size() < max_module_num_; }
 

@@ -49,28 +49,28 @@ BehaviorModuleOutput PlannerManager::run(const std::shared_ptr<PlannerData> & da
   while (rclcpp::ok()) {
     const auto approved_path_data = update(data);
 
-    const auto opt_uuid = getCandidateModuleUUID(approved_path_data);
+    const auto candidate_module_id = getCandidateModuleID(approved_path_data);
 
-    if (!opt_uuid) {
-      candidate_module_ = boost::none;
+    if (!candidate_module_id) {
+      candidate_module_id_ = boost::none;
       return approved_path_data;
     }
 
-    const auto result = run(opt_uuid.get(), approved_path_data);
+    const auto result = run(candidate_module_id.get(), approved_path_data);
 
-    if (isWaitingApproval(opt_uuid.get())) {
-      candidate_module_ = opt_uuid.get();
+    if (isWaitingApproval(candidate_module_id.get())) {
+      candidate_module_id_ = candidate_module_id.get();
       return result;
     }
 
-    candidate_module_ = boost::none;
-    addApprovedModule(opt_uuid.get());
+    candidate_module_id_ = boost::none;
+    addApprovedModule(candidate_module_id.get());
   }
 
   return {};
 }
 
-boost::optional<UUID> PlannerManager::getCandidateModuleUUID(
+boost::optional<ModuleID> PlannerManager::getCandidateModuleID(
   const BehaviorModuleOutput & path_data) const
 {
   const auto module_running = !approved_modules_.empty();
@@ -82,10 +82,10 @@ boost::optional<UUID> PlannerManager::getCandidateModuleUUID(
     /**
      * CASE1: there is no candidate module
      */
-    if (!candidate_module_) {
+    if (!candidate_module_id_) {
       if (m->isExecutionRequested(path_data) && m->canLaunchNewModule()) {
         // launch new candidate module
-        return m->launchNewModule(path_data);
+        return std::make_pair(m, m->launchNewModule(path_data));
       } else {
         // candidate module is not needed
         continue;
@@ -93,19 +93,18 @@ boost::optional<UUID> PlannerManager::getCandidateModuleUUID(
     }
 
     // candidate module already exist
-    const auto uuid = candidate_module_.get();
-    const auto name = getModuleName(uuid);
+    const auto & manager = candidate_module_id_.get().first;
 
     /**
      * CASE2: same name module already launched as candidate
      */
-    if (name == m->getModuleName()) {
-      if (isExecutionRequested(uuid)) {
+    if (manager->getModuleName() == m->getModuleName()) {
+      if (isExecutionRequested(candidate_module_id_.get())) {
         // keep current candidate module
-        return uuid;
+        return candidate_module_id_.get();
       } else {
         // candidate module is no longer needed
-        deleteExpiredModules(uuid);
+        deleteExpiredModules(candidate_module_id_.get());
         continue;
       }
     }
@@ -120,10 +119,10 @@ boost::optional<UUID> PlannerManager::getCandidateModuleUUID(
     }
 
     // delete current candidate module from manager
-    deleteExpiredModules(uuid);
+    deleteExpiredModules(candidate_module_id_.get());
 
     // override candidate module
-    return m->launchNewModule(path_data);
+    return std::make_pair(m, m->launchNewModule(path_data));
   }
 
   return {};
@@ -145,8 +144,9 @@ BehaviorModuleOutput PlannerManager::update(const std::shared_ptr<PlannerData> &
 
     if (!isExecutionRequested(*itr)) {
       if (itr == approved_modules_.begin()) {
-        const auto module_name = getModuleName(*itr);
-        if (module_name == "lane_change" || module_name == "avoidance_by_lc") {
+        const auto & manager = itr->first;
+        const auto & name = manager->getModuleName();
+        if (name == "lane_change" || name == "avoidance_by_lc") {
           updateStartLanelet(data);
         }
         deleteExpiredModules(*itr);
@@ -157,7 +157,7 @@ BehaviorModuleOutput PlannerManager::update(const std::shared_ptr<PlannerData> &
     }
 
     if (isWaitingApproval(*itr)) {
-      candidate_module_ = *itr;
+      candidate_module_id_ = *itr;
       itr = approved_modules_.erase(itr);
       remove_after_module = true;
       continue;

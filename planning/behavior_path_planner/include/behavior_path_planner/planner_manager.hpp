@@ -34,6 +34,7 @@ namespace behavior_path_planner
 
 using autoware_auto_planning_msgs::msg::PathWithLaneId;
 using unique_identifier_msgs::msg::UUID;
+using ModuleID = std::pair<std::shared_ptr<SceneModuleManagerInterface>, UUID>;
 
 class PlannerManager
 {
@@ -59,7 +60,7 @@ public:
   void reset()
   {
     approved_modules_.clear();
-    candidate_module_ = boost::none;
+    candidate_module_id_ = boost::none;
     start_lanelet_ = boost::none;
     std::for_each(
       scene_manager_ptrs_.begin(), scene_manager_ptrs_.end(), [](const auto & m) { m->reset(); });
@@ -83,14 +84,16 @@ public:
 
     string_stream << "\n";
     string_stream << "approved modules  : ";
-    for (const auto & uuid : approved_modules_) {
-      string_stream << "[" << getModuleName(uuid) << "]->";
+    for (const auto & id : approved_modules_) {
+      const auto & manager = id.first;
+      string_stream << "[" << manager->getModuleName() << "]->";
     }
 
     string_stream << "\n";
     string_stream << "candidate module  : ";
-    if (!!candidate_module_) {
-      string_stream << "[" << getModuleName(candidate_module_.get()) << "]";
+    if (!!candidate_module_id_) {
+      const auto & manager = candidate_module_id_.get().first;
+      string_stream << "[" << manager->getModuleName() << "]";
     }
 
     RCLCPP_INFO_STREAM(logger_, string_stream.str());
@@ -102,67 +105,87 @@ public:
   }
 
 private:
-  BehaviorModuleOutput run(const UUID & uuid, const BehaviorModuleOutput & path_data) const
+  BehaviorModuleOutput run(const ModuleID & id, const BehaviorModuleOutput & path_data) const
   {
-    const auto m = getModuleManager(uuid);
-    if (m == nullptr) {
+    const auto & manager = id.first;
+    const auto & uuid = id.second;
+
+    if (manager == nullptr) {
       return {};
     }
 
-    return m->run(uuid, path_data);
+    if (!manager->exist(uuid)) {
+      return {};
+    }
+
+    return manager->run(uuid, path_data);
   }
 
-  bool isExecutionRequested(const UUID & uuid) const
+  bool isExecutionRequested(const ModuleID & id) const
   {
-    const auto m = getModuleManager(uuid);
-    if (m == nullptr) {
+    const auto & manager = id.first;
+    const auto & uuid = id.second;
+
+    if (manager == nullptr) {
       return false;
     }
 
-    return m->isExecutionRequested(uuid);
-  }
-
-  bool isWaitingApproval(const UUID & uuid) const
-  {
-    const auto m = getModuleManager(uuid);
-    if (m == nullptr) {
+    if (!manager->exist(uuid)) {
       return false;
     }
 
-    return m->isWaitingApproval(uuid);
+    return manager->isExecutionRequested(uuid);
   }
 
-  bool isRunning(const UUID & uuid) const
+  bool isWaitingApproval(const ModuleID & id) const
   {
-    const auto m = getModuleManager(uuid);
-    if (m == nullptr) {
+    const auto & manager = id.first;
+    const auto & uuid = id.second;
+
+    if (manager == nullptr) {
       return false;
     }
 
-    return m->getCurrentStatus(uuid) == ModuleStatus::RUNNING;
+    if (!manager->exist(uuid)) {
+      return false;
+    }
+
+    return manager->isWaitingApproval(uuid);
   }
 
-  void deleteExpiredModules(const UUID & uuid) const
+  bool isRunning(const ModuleID & id) const
   {
-    const auto m = getModuleManager(uuid);
-    if (m == nullptr) {
+    const auto & manager = id.first;
+    const auto & uuid = id.second;
+
+    if (manager == nullptr) {
+      return false;
+    }
+
+    if (!manager->exist(uuid)) {
+      return false;
+    }
+
+    return manager->getCurrentStatus(uuid) == ModuleStatus::RUNNING;
+  }
+
+  void deleteExpiredModules(const ModuleID & id) const
+  {
+    const auto & manager = id.first;
+    const auto & uuid = id.second;
+
+    if (manager == nullptr) {
       return;
     }
 
-    m->deleteModules(uuid);
-  }
-
-  void addApprovedModule(const UUID & uuid) { approved_modules_.push_back(uuid); }
-
-  std::string getModuleName(const UUID & uuid) const
-  {
-    const auto m = getModuleManager(uuid);
-    if (m == nullptr) {
-      return "";
+    if (!manager->exist(uuid)) {
+      return;
     }
 
-    return m->getModuleName();
+    manager->deleteModules(uuid);
   }
+
+  void addApprovedModule(const ModuleID & id) { approved_modules_.push_back(id); }
 
   void updateStartLanelet(const std::shared_ptr<PlannerData> & data)
   {
@@ -172,33 +195,19 @@ private:
     RCLCPP_WARN(logger_, "update start lanelet. id:%ld", start_lanelet_.get().id());
   }
 
-  std::shared_ptr<SceneModuleManagerInterface> getModuleManager(const UUID & uuid) const
-  {
-    const auto itr = std::find_if(
-      scene_manager_ptrs_.begin(), scene_manager_ptrs_.end(),
-      [&uuid](const auto & m) { return m->exist(uuid); });
-
-    if (itr == scene_manager_ptrs_.end()) {
-      RCLCPP_WARN(logger_, "the manager is not found.");
-      return nullptr;
-    }
-
-    return *itr;
-  }
-
   BehaviorModuleOutput update(const std::shared_ptr<PlannerData> & data);
 
   BehaviorModuleOutput getReferencePath(const std::shared_ptr<PlannerData> & data) const;
 
-  boost::optional<UUID> getCandidateModuleUUID(const BehaviorModuleOutput & path_data) const;
+  boost::optional<ModuleID> getCandidateModuleID(const BehaviorModuleOutput & path_data) const;
 
-  boost::optional<UUID> candidate_module_{boost::none};
+  boost::optional<ModuleID> candidate_module_id_{boost::none};
 
   boost::optional<lanelet::ConstLanelet> start_lanelet_{boost::none};
 
   std::vector<std::shared_ptr<SceneModuleManagerInterface>> scene_manager_ptrs_;
 
-  std::vector<UUID> approved_modules_;
+  std::vector<ModuleID> approved_modules_;
 
   rclcpp::Logger logger_;
 
