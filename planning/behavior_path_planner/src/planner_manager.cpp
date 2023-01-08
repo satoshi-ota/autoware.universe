@@ -47,22 +47,43 @@ BehaviorModuleOutput PlannerManager::run(const std::shared_ptr<PlannerData> & da
   });
 
   while (rclcpp::ok()) {
+    /**
+     * STEP1: get approved modules' output
+     */
     const auto approved_path_data = update(data);
 
+    /**
+     * STEP2: check modules that need to be launched
+     */
     const auto candidate_module_id = getCandidateModuleID(approved_path_data);
 
+    /**
+     * STEP3: if there is no module that need to be launched, return approved modues' output
+     */
     if (!candidate_module_id) {
       candidate_module_id_ = boost::none;
       return approved_path_data;
     }
 
+    /**
+     * STEP4: if there is module that should be launched, execute the module
+     */
     const auto result = run(candidate_module_id.get(), approved_path_data);
 
+    /**
+     * STEP5: if the candidate module's modification is NOT approved yet, return the result.
+     * NOTE: the result is output of the candidate module, but the output path don't contains path
+     * shape modification that needs approval. On the other hand, it could include velocity profile
+     * modification.
+     */
     if (isWaitingApproval(candidate_module_id.get())) {
       candidate_module_id_ = candidate_module_id.get();
       return result;
     }
 
+    /**
+     * STEP6: if the candidate module is approved, push the module into approved_modules_
+     */
     candidate_module_id_ = boost::none;
     addApprovedModule(candidate_module_id.get());
   }
@@ -135,20 +156,28 @@ BehaviorModuleOutput PlannerManager::update(const std::shared_ptr<PlannerData> &
   bool remove_after_module = false;
 
   for (auto itr = approved_modules_.begin(); itr != approved_modules_.end();) {
+    // if one of the approved_modules_ is waiting approval, remove all approved module from the
+    // waiting approval module.
     if (remove_after_module) {
       itr = approved_modules_.erase(itr);
       continue;
     }
 
+    // execute approved module
     const auto result = run(*itr, output);
 
     if (!isExecutionRequested(*itr)) {
+      // option: remove expired module in the order in which they are activated.
       if (itr == approved_modules_.begin()) {
         const auto & manager = itr->first;
         const auto & name = manager->getModuleName();
+
+        // update date on which lane the vhicle is driving
         if (name == "lane_change" || name == "avoidance_by_lc") {
           updateStartLanelet(data);
         }
+
+        // unregister the expired module from manager
         deleteExpiredModules(*itr);
         itr = approved_modules_.erase(itr);
         output = result;
@@ -156,6 +185,8 @@ BehaviorModuleOutput PlannerManager::update(const std::shared_ptr<PlannerData> &
       }
     }
 
+    // if one of the approved_modules_ is waiting approval, the module is handled as candidate
+    // module again.
     if (isWaitingApproval(*itr)) {
       candidate_module_id_ = *itr;
       itr = approved_modules_.erase(itr);
@@ -187,7 +218,7 @@ BehaviorModuleOutput PlannerManager::getReferencePath(
   const auto drivable_lanes = util::generateDrivableLanes(current_lanes);
 
   // calculate path with backward margin to avoid end points' instability by spline interpolation
-  constexpr double extra_margin = 50.0;
+  constexpr double extra_margin = 10.0;
   const double backward_length =
     std::max(p.backward_path_length, p.backward_path_length + extra_margin);
 
