@@ -189,8 +189,8 @@ AvoidancePlanningData AvoidanceModule::calcAvoidancePlanningData(DebugData & deb
   //   // if the resampled path has only 1 point, use original path.
   //   data.reference_path = center_path;
   // }
-  data.reference_path =
-    util::resamplePathWithSpline(*path_data_.path, parameters_->resample_interval_for_planning);
+  data.reference_path = util::resamplePathWithSpline(
+    *previous_module_output_.path, parameters_->resample_interval_for_planning);
 
   const size_t nearest_segment_index =
     findNearestSegmentIndex(data.reference_path.points, data.reference_pose.position);

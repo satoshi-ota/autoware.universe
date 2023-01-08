@@ -238,17 +238,20 @@ public:
    */
   void setData(const std::shared_ptr<const PlannerData> & data) { planner_data_ = data; }
 
-  void setPath(const BehaviorModuleOutput & path_data) { path_data_ = path_data; }
+  void setPreviousModuleOutput(const BehaviorModuleOutput & previous_module_output)
+  {
+    previous_module_output_ = previous_module_output;
+  }
 
   void publishDebugMarker() { pub_debug_marker_->publish(debug_marker_); }
 
   void publishReferencePath()
   {
-    if (path_data_.path == nullptr) {
+    if (previous_module_output_.path == nullptr) {
       return;
     }
-    path_data_.path->header = planner_data_->route_handler->getRouteHeader();
-    pub_ref_path_->publish(*path_data_.path);
+    previous_module_output_.path->header = planner_data_->route_handler->getRouteHeader();
+    pub_ref_path_->publish(*previous_module_output_.path);
   }
 
   std::string name() const { return name_; }
@@ -257,7 +260,7 @@ public:
 
   std::shared_ptr<const PlannerData> planner_data_;
 
-  BehaviorModuleOutput path_data_;
+  BehaviorModuleOutput previous_module_output_;
 
   bool isWaitingApproval() const { return is_waiting_approval_; }
 

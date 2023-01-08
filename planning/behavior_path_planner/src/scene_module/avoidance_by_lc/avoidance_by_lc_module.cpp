@@ -159,7 +159,7 @@ void AvoidanceByLCModule::onExit()
 {
   resetParameters();
   current_state_ = ModuleStatus::SUCCESS;
-  *path_data_.path = PathWithLaneId();
+  *previous_module_output_.path = PathWithLaneId();
   publishReferencePath();
   RCLCPP_DEBUG(getLogger(), "LANE_CHANGE onExit");
 }
@@ -181,7 +181,7 @@ bool AvoidanceByLCModule::isExecutionRequested() const
   }
 
   // const auto current_lanes = util::getCurrentLanes(planner_data_);
-  const auto current_lanes = getCurrentLanes(*path_data_.path);
+  const auto current_lanes = getCurrentLanes(*previous_module_output_.path);
   const auto lane_change_lanes = getLaneChangeLanes(current_lanes, lane_change_lane_length_);
 
   LaneChangePath selected_path;
@@ -198,7 +198,7 @@ bool AvoidanceByLCModule::isExecutionReady() const
   }
 
   // const auto current_lanes = util::getCurrentLanes(planner_data_);
-  const auto current_lanes = getCurrentLanes(*path_data_.path);
+  const auto current_lanes = getCurrentLanes(*previous_module_output_.path);
   const auto lane_change_lanes = getLaneChangeLanes(current_lanes, lane_change_lane_length_);
 
   LaneChangePath selected_path;
@@ -231,7 +231,7 @@ AvoidancePlanningData AvoidanceByLCModule::calcAvoidancePlanningData(DebugData &
   data.reference_pose = reference_pose;
 
   data.reference_path = util::resamplePathWithSpline(
-    *path_data_.path, parameters_avoidance_->resample_interval_for_planning);
+    *previous_module_output_.path, parameters_avoidance_->resample_interval_for_planning);
 
   const size_t nearest_segment_index =
     findNearestSegmentIndex(data.reference_path.points, data.reference_pose.position);
@@ -740,7 +740,7 @@ CandidateOutput AvoidanceByLCModule::planCandidate() const
 
   // Get lane change lanes
   // const auto current_lanes = util::getCurrentLanes(planner_data_);
-  const auto current_lanes = getCurrentLanes(*path_data_.path);
+  const auto current_lanes = getCurrentLanes(*previous_module_output_.path);
   const auto lane_change_lanes = getLaneChangeLanes(current_lanes, lane_change_lane_length_);
 
   LaneChangePath selected_path;
@@ -772,7 +772,7 @@ BehaviorModuleOutput AvoidanceByLCModule::planWaitingApproval()
 {
   BehaviorModuleOutput out;
   updateLaneChangeStatus();
-  out.path = std::make_shared<PathWithLaneId>(*path_data_.path);
+  out.path = std::make_shared<PathWithLaneId>(*previous_module_output_.path);
   // out.path = std::make_shared<PathWithLaneId>(getReferencePath());
   const auto candidate = planCandidate();
   path_candidate_ = std::make_shared<PathWithLaneId>(candidate.path_candidate);
@@ -940,7 +940,7 @@ std::pair<bool, bool> AvoidanceByLCModule::getSafePath(
     // find candidate paths
     const auto lane_change_paths = lane_change_utils::getLaneChangePaths(
       *route_handler, current_lanes, lane_change_lanes, current_pose, current_twist,
-      common_parameters, *parameters_lane_change_, *path_data_.path);
+      common_parameters, *parameters_lane_change_, *previous_module_output_.path);
 
     // get lanes used for detection
     lanelet::ConstLanelets check_lanes;

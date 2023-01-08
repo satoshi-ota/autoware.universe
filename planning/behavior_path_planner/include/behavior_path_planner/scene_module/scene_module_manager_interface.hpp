@@ -47,12 +47,12 @@ public:
 
   virtual ~SceneModuleManagerInterface() = default;
 
-  bool isExecutionRequested(const BehaviorModuleOutput & path_data)
+  bool isExecutionRequested(const BehaviorModuleOutput & previous_module_output)
   {
     const auto m = createNewSceneModuleInstance();
 
     m->setData(planner_data_);
-    m->setPath(path_data);
+    m->setPreviousModuleOutput(previous_module_output);
     m->onEntry();
     m->updateData();
 
@@ -96,7 +96,8 @@ public:
     return m->getCurrentStatus();
   }
 
-  BehaviorModuleOutput run(const UUID & uuid, const BehaviorModuleOutput & path_data) const
+  BehaviorModuleOutput run(
+    const UUID & uuid, const BehaviorModuleOutput & previous_module_output) const
   {
     const auto m = findSceneModule(uuid);
 
@@ -105,7 +106,7 @@ public:
     }
 
     m->setData(planner_data_);
-    m->setPath(path_data);
+    m->setPreviousModuleOutput(previous_module_output);
     m->updateData();
 
     m->lockRTCCommand();
@@ -121,13 +122,13 @@ public:
     return result;
   }
 
-  UUID launchNewModule(const BehaviorModuleOutput & path_data)
+  UUID launchNewModule(const BehaviorModuleOutput & previous_module_output)
   {
     const auto uuid = generateUUID();
     const auto m = createNewSceneModuleInstance();
 
     m->setData(planner_data_);
-    m->setPath(path_data);
+    m->setPreviousModuleOutput(previous_module_output);
     m->onEntry();
 
     registered_modules_.insert(std::make_pair(toHexString(uuid), m));

@@ -75,7 +75,7 @@ void LaneChangeModule::onExit()
 {
   resetParameters();
   current_state_ = ModuleStatus::SUCCESS;
-  *path_data_.path = PathWithLaneId();
+  *previous_module_output_.path = PathWithLaneId();
   publishReferencePath();
   RCLCPP_DEBUG(getLogger(), "LANE_CHANGE onExit");
 }
@@ -87,7 +87,7 @@ bool LaneChangeModule::isExecutionRequested() const
   }
 
   // const auto current_lanes = util::getCurrentLanes(planner_data_);
-  const auto current_lanes = getCurrentLanes(*path_data_.path);
+  const auto current_lanes = getCurrentLanes(*previous_module_output_.path);
   const auto lane_change_lanes = getLaneChangeLanes(current_lanes, lane_change_lane_length_);
 
   LaneChangePath selected_path;
@@ -104,7 +104,7 @@ bool LaneChangeModule::isExecutionReady() const
   }
 
   // const auto current_lanes = util::getCurrentLanes(planner_data_);
-  const auto current_lanes = getCurrentLanes(*path_data_.path);
+  const auto current_lanes = getCurrentLanes(*previous_module_output_.path);
   const auto lane_change_lanes = getLaneChangeLanes(current_lanes, lane_change_lane_length_);
 
   LaneChangePath selected_path;
@@ -220,7 +220,7 @@ CandidateOutput LaneChangeModule::planCandidate() const
   LaneChangePath selected_path;
   // Get lane change lanes
   // const auto current_lanes = util::getCurrentLanes(planner_data_);
-  const auto current_lanes = getCurrentLanes(*path_data_.path);
+  const auto current_lanes = getCurrentLanes(*previous_module_output_.path);
   const auto lane_change_lanes = getLaneChangeLanes(current_lanes, lane_change_lane_length_);
 
   [[maybe_unused]] const auto [found_valid_path, found_safe_path] =
@@ -260,6 +260,7 @@ BehaviorModuleOutput LaneChangeModule::planWaitingApproval()
   out.path = std::make_shared<PathWithLaneId>(prev_approved_path_);
 
   updateLaneChangeStatus();
+
   const auto candidate = planCandidate();
   path_candidate_ = std::make_shared<PathWithLaneId>(candidate.path_candidate);
   updateRTCStatus(candidate);
@@ -271,7 +272,7 @@ BehaviorModuleOutput LaneChangeModule::planWaitingApproval()
 void LaneChangeModule::updateLaneChangeStatus()
 {
   // status_.current_lanes = util::getCurrentLanes(planner_data_);
-  status_.current_lanes = getCurrentLanes(*path_data_.path);
+  status_.current_lanes = getCurrentLanes(*previous_module_output_.path);
   status_.lane_change_lanes = getLaneChangeLanes(status_.current_lanes, lane_change_lane_length_);
 
   // Find lane change path
@@ -386,7 +387,7 @@ std::pair<bool, bool> LaneChangeModule::getSafePath(
     // find candidate paths
     const auto lane_change_paths = lane_change_utils::getLaneChangePaths(
       *route_handler, current_lanes, lane_change_lanes, current_pose, current_twist,
-      common_parameters, *parameters_, *path_data_.path);
+      common_parameters, *parameters_, *previous_module_output_.path);
 
     // get lanes used for detection
     lanelet::ConstLanelets check_lanes;

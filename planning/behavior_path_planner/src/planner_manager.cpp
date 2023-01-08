@@ -71,7 +71,7 @@ BehaviorModuleOutput PlannerManager::run(const std::shared_ptr<PlannerData> & da
 }
 
 boost::optional<ModuleID> PlannerManager::getCandidateModuleID(
-  const BehaviorModuleOutput & path_data) const
+  const BehaviorModuleOutput & previous_module_output) const
 {
   const auto module_running = !approved_modules_.empty();
   if (!enable_simultaneous_execution_ && module_running) {
@@ -83,9 +83,9 @@ boost::optional<ModuleID> PlannerManager::getCandidateModuleID(
      * CASE1: there is no candidate module
      */
     if (!candidate_module_id_) {
-      if (m->isExecutionRequested(path_data) && m->canLaunchNewModule()) {
+      if (m->isExecutionRequested(previous_module_output) && m->canLaunchNewModule()) {
         // launch new candidate module
-        return std::make_pair(m, m->launchNewModule(path_data));
+        return std::make_pair(m, m->launchNewModule(previous_module_output));
       } else {
         // candidate module is not needed
         continue;
@@ -114,7 +114,7 @@ boost::optional<ModuleID> PlannerManager::getCandidateModuleID(
      */
 
     // don't launch new module as candidate
-    if (!m->isExecutionRequested(path_data) || !m->canLaunchNewModule()) {
+    if (!m->isExecutionRequested(previous_module_output) || !m->canLaunchNewModule()) {
       continue;
     }
 
@@ -122,7 +122,7 @@ boost::optional<ModuleID> PlannerManager::getCandidateModuleID(
     deleteExpiredModules(candidate_module_id_.get());
 
     // override candidate module
-    return std::make_pair(m, m->launchNewModule(path_data));
+    return std::make_pair(m, m->launchNewModule(previous_module_output));
   }
 
   return {};

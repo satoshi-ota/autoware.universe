@@ -105,7 +105,8 @@ public:
   }
 
 private:
-  BehaviorModuleOutput run(const ModuleID & id, const BehaviorModuleOutput & path_data) const
+  BehaviorModuleOutput run(
+    const ModuleID & id, const BehaviorModuleOutput & previous_module_output) const
   {
     const auto & manager = id.first;
     const auto & uuid = id.second;
@@ -118,7 +119,7 @@ private:
       return {};
     }
 
-    return manager->run(uuid, path_data);
+    return manager->run(uuid, previous_module_output);
   }
 
   bool isExecutionRequested(const ModuleID & id) const
@@ -199,7 +200,8 @@ private:
 
   BehaviorModuleOutput getReferencePath(const std::shared_ptr<PlannerData> & data) const;
 
-  boost::optional<ModuleID> getCandidateModuleID(const BehaviorModuleOutput & path_data) const;
+  boost::optional<ModuleID> getCandidateModuleID(
+    const BehaviorModuleOutput & previous_module_output) const;
 
   boost::optional<ModuleID> candidate_module_id_{boost::none};
 
