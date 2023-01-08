@@ -792,7 +792,8 @@ BehaviorModuleOutput AvoidanceByLCModule::planWaitingApproval()
 
 void AvoidanceByLCModule::updateLaneChangeStatus()
 {
-  status_.current_lanes = util::getCurrentLanes(planner_data_);
+  // status_.current_lanes = util::getCurrentLanes(planner_data_);
+  status_.current_lanes = getCurrentLanes(*previous_module_output_.path);
   status_.lane_change_lanes = getLaneChangeLanes(status_.current_lanes, lane_change_lane_length_);
 
   // Find lane change path
@@ -823,7 +824,8 @@ PathWithLaneId AvoidanceByLCModule::getReferencePath() const
   // Set header
   reference_path.header = getRouteHeader();
 
-  const auto current_lanes = util::getCurrentLanes(planner_data_);
+  // const auto current_lanes = util::getCurrentLanes(planner_data_);
+  const auto current_lanes = getCurrentLanes(*previous_module_output_.path);
 
   if (current_lanes.empty()) {
     return reference_path;
@@ -934,7 +936,8 @@ std::pair<bool, bool> AvoidanceByLCModule::getSafePath(
   const auto current_twist = getEgoTwist();
   const auto & common_parameters = planner_data_->parameters;
 
-  const auto current_lanes = util::getCurrentLanes(planner_data_);
+  // const auto current_lanes = util::getCurrentLanes(planner_data_);
+  const auto current_lanes = getCurrentLanes(*previous_module_output_.path);
 
   if (!lane_change_lanes.empty()) {
     // find candidate paths

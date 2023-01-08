@@ -303,7 +303,8 @@ PathWithLaneId LaneChangeModule::getReferencePath() const
   // Set header
   reference_path.header = getRouteHeader();
 
-  const auto current_lanes = util::getCurrentLanes(planner_data_);
+  // const auto current_lanes = util::getCurrentLanes(planner_data_);
+  const auto current_lanes = getCurrentLanes(*previous_module_output_.path);
 
   if (current_lanes.empty()) {
     return reference_path;
@@ -381,7 +382,8 @@ std::pair<bool, bool> LaneChangeModule::getSafePath(
   const auto current_twist = getEgoTwist();
   const auto & common_parameters = planner_data_->parameters;
 
-  const auto current_lanes = util::getCurrentLanes(planner_data_);
+  // const auto current_lanes = util::getCurrentLanes(planner_data_);
+  const auto current_lanes = getCurrentLanes(*previous_module_output_.path);
 
   if (!lane_change_lanes.empty()) {
     // find candidate paths
