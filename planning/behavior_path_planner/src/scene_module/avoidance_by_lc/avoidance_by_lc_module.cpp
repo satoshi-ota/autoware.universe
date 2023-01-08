@@ -682,6 +682,10 @@ void AvoidanceByLCModule::compensateDetectionLost(
 ModuleStatus AvoidanceByLCModule::updateState()
 {
   RCLCPP_DEBUG(getLogger(), "LANE_CHANGE updateState");
+  if (current_state_ == ModuleStatus::IDLE) {
+    return current_state_;
+  }
+
   if (!isSafe()) {
     current_state_ = ModuleStatus::SUCCESS;
     return current_state_;
@@ -772,8 +776,17 @@ BehaviorModuleOutput AvoidanceByLCModule::planWaitingApproval()
   // out.path = std::make_shared<PathWithLaneId>(getReferencePath());
   const auto candidate = planCandidate();
   path_candidate_ = std::make_shared<PathWithLaneId>(candidate.path_candidate);
-  updateRTCStatus(candidate);
-  waitApproval();
+  // updateRTCStatus(candidate);
+  // waitApproval();
+  constexpr double threshold_to_update_status = -1.0e-03;
+  if (candidate.start_distance_to_path_change > threshold_to_update_status) {
+    updateRTCStatus(candidate);
+    waitApproval();
+  } else {
+    clearWaitingApproval();
+    removeRTCStatus();
+    current_state_ = ModuleStatus::IDLE;
+  }
   return out;
 }
 
