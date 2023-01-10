@@ -126,8 +126,6 @@ BehaviorModuleOutput PullOverModule::run()
   current_state_ = ModuleStatus::RUNNING;
   updateOccupancyGrid();
 
-  std::cout << std::boolalpha << "activate: " << isActivated() << std::endl;
-
   if (!isActivated()) {
     return planWaitingApproval();
   }

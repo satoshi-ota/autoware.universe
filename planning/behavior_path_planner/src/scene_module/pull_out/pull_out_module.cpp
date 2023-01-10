@@ -35,12 +35,14 @@ using tier4_autoware_utils::calcOffsetPose;
 namespace behavior_path_planner
 {
 PullOutModule::PullOutModule(
-  const std::string & name, rclcpp::Node & node, const PullOutParameters & parameters)
+  const std::string & name, rclcpp::Node & node, const PullOutParameters & parameters,
+  const std::shared_ptr<RTCInterface> & rtc_interface)
 : SceneModuleInterface{name, node},
   parameters_{parameters},
   vehicle_info_{vehicle_info_util::VehicleInfoUtil(node).getVehicleInfo()}
 {
-  rtc_interface_ptr_ = std::make_shared<RTCInterface>(&node, "pull_out");
+  // rtc_interface_ptr_ = std::make_shared<RTCInterface>(&node, "pull_out");
+  rtc_interface_ptr_ = rtc_interface;
   steering_factor_interface_ptr_ = std::make_unique<SteeringFactorInterface>(&node, "pull_out");
   lane_departure_checker_ = std::make_shared<LaneDepartureChecker>();
   lane_departure_checker_->setVehicleInfo(vehicle_info_);
@@ -61,14 +63,19 @@ PullOutModule::PullOutModule(
 
 BehaviorModuleOutput PullOutModule::run()
 {
-  current_state_ = BT::NodeStatus::RUNNING;
+  current_state_ = ModuleStatus::RUNNING;
+
+  if (!isActivated()) {
+    return planWaitingApproval();
+  }
+
   return plan();
 }
 
 void PullOutModule::onEntry()
 {
   RCLCPP_DEBUG(getLogger(), "PULL_OUT onEntry");
-  current_state_ = BT::NodeStatus::SUCCESS;
+  current_state_ = ModuleStatus::SUCCESS;
 
   // initialize when receiving new route
   if (
@@ -102,13 +109,13 @@ void PullOutModule::onExit()
   removeRTCStatus();
   steering_factor_interface_ptr_->clearSteeringFactors();
   resetPathCandidate();
-  current_state_ = BT::NodeStatus::SUCCESS;
+  current_state_ = ModuleStatus::SUCCESS;
   RCLCPP_DEBUG(getLogger(), "PULL_OUT onExit");
 }
 
 bool PullOutModule::isExecutionRequested() const
 {
-  if (current_state_ == BT::NodeStatus::RUNNING) {
+  if (current_state_ == ModuleStatus::RUNNING) {
     return true;
   }
 
@@ -149,12 +156,12 @@ bool PullOutModule::isExecutionRequested() const
 bool PullOutModule::isExecutionReady() const { return true; }
 
 // this runs only when RUNNING
-BT::NodeStatus PullOutModule::updateState()
+ModuleStatus PullOutModule::updateState()
 {
   RCLCPP_DEBUG(getLogger(), "PULL_OUT updateState");
 
   if (hasFinishedPullOut()) {
-    current_state_ = BT::NodeStatus::SUCCESS;
+    current_state_ = ModuleStatus::SUCCESS;
     return current_state_;
   }
 
@@ -678,7 +685,7 @@ void PullOutModule::checkBackFinished()
     waitApproval();
     removeRTCStatus();
     uuid_ = generateUUID();
-    current_state_ = BT::NodeStatus::SUCCESS;  // for breaking loop
+    current_state_ = ModuleStatus::SUCCESS;  // for breaking loop
   }
 }
 

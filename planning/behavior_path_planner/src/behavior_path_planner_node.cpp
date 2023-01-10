@@ -19,6 +19,7 @@
 #include "behavior_path_planner/scene_module/avoidance/manager.hpp"
 #include "behavior_path_planner/scene_module/avoidance_by_lc/manager.hpp"
 #include "behavior_path_planner/scene_module/lane_change/manager.hpp"
+#include "behavior_path_planner/scene_module/pull_out/manager.hpp"
 #include "behavior_path_planner/scene_module/pull_over/manager.hpp"
 
 #include <tier4_autoware_utils/tier4_autoware_utils.hpp>
@@ -147,13 +148,12 @@ BehaviorPathPlannerNode::BehaviorPathPlannerNode(const rclcpp::NodeOptions & nod
         "lane_change", create_publisher<Path>(path_candidate_name_space + "lane_change", 1));
     }
 
-    // if (p.launch_pull_out) {
-    //   auto manager = std::make_shared<PullOutModuleManager>(this, "pull_out", 1);
-    //   planner_manager_->registerSceneModuleManager(manager);
-    //   path_candidate_publishers_.emplace(
-    //     "pull_out",
-    //     create_publisher<Path>(path_candidate_name_space + "pull_out", 1));
-    // }
+    if (p.launch_pull_out) {
+      auto manager = std::make_shared<PullOutModuleManager>(this, "pull_out", 1);
+      planner_manager_->registerSceneModuleManager(manager);
+      path_candidate_publishers_.emplace(
+        "pull_out", create_publisher<Path>(path_candidate_name_space + "pull_out", 1));
+    }
 
     mutex_bt_.unlock();
   }
@@ -213,6 +213,7 @@ BehaviorPathPlannerParameters BehaviorPathPlannerNode::getCommonParam()
   const double backward_offset = vehicle_info.rear_overhang_m + min_backward_offset;
 
   p.launch_pull_over = declare_parameter<bool>("launch_pull_over");
+  p.launch_pull_out = declare_parameter<bool>("launch_pull_out");
   p.launch_avoidance_by_lc = declare_parameter<bool>("launch_avoidance_by_lc");
   p.launch_avoidance = declare_parameter<bool>("launch_avoidance");
   p.launch_lane_change = declare_parameter<bool>("launch_lane_change");
@@ -552,22 +553,22 @@ PathWithLaneId::SharedPtr BehaviorPathPlannerNode::getPath(
 
   PathWithLaneId connected_path;
   // const auto module_status_ptr_vec = bt_manager_->getModulesStatus();
-  if (skipSmoothGoalConnection(planner_manager_->getModulesStatus())) {
+  const auto module_statuses = planner_manager_->getSceneModuleStatus();
+  if (skipSmoothGoalConnection(module_statuses)) {
     connected_path = *path;
   } else {
     connected_path = modifyPathForSmoothGoalConnection(*path);
   }
 
-  const auto resampled_path =
-    util::resamplePathWithSpline(connected_path, planner_data_->parameters.path_interval, false);
-  // keepInputPoints(module_status_ptr_vec));
+  const auto resampled_path = util::resamplePathWithSpline(
+    connected_path, planner_data_->parameters.path_interval, keepInputPoints(module_statuses));
   return std::make_shared<PathWithLaneId>(resampled_path);
 }
 
 bool BehaviorPathPlannerNode::skipSmoothGoalConnection(
   const std::vector<std::shared_ptr<SceneModuleStatus>> & statuses) const
 {
-  const auto target_module = "PullOver";
+  const auto target_module = "pull_over";
 
   for (auto & status : statuses) {
     if (status->is_waiting_approval || status->status == ModuleStatus::RUNNING) {
@@ -580,20 +581,20 @@ bool BehaviorPathPlannerNode::skipSmoothGoalConnection(
 }
 
 // This is a temporary process until motion planning can take the terminal pose into account
-// bool BehaviorPathPlannerNode::keepInputPoints(
-//   const std::vector<std::shared_ptr<SceneModuleStatus>> & statuses) const
-// {
-//   const auto target_module = "PullOver";
+bool BehaviorPathPlannerNode::keepInputPoints(
+  const std::vector<std::shared_ptr<SceneModuleStatus>> & statuses) const
+{
+  const auto target_module = "pull_over";
 
-//   for (auto & status : statuses) {
-//     if (status->is_waiting_approval || status->status == BT::NodeStatus::RUNNING) {
-//       if (target_module == status->module_name) {
-//         return true;
-//       }
-//     }
-//   }
-//   return false;
-// }
+  for (auto & status : statuses) {
+    if (status->is_waiting_approval || status->status == ModuleStatus::RUNNING) {
+      if (target_module == status->module_name) {
+        return true;
+      }
+    }
+  }
+  return false;
+}
 
 void BehaviorPathPlannerNode::onOdometry(const Odometry::SharedPtr msg)
 {

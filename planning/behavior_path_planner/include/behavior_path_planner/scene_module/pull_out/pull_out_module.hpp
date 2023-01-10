@@ -64,17 +64,17 @@ class PullOutModule : public SceneModuleInterface
 {
 public:
   PullOutModule(
-    const std::string & name, rclcpp::Node & node, const PullOutParameters & parameters);
+    const std::string & name, rclcpp::Node & node, const PullOutParameters & parameters,
+    const std::shared_ptr<RTCInterface> & rtc_interface);
+
+  void updateModuleParams(const PullOutParameters & parameters) { parameters_ = parameters; }
 
   BehaviorModuleOutput run() override;
 
   bool isExecutionRequested() const override;
   bool isExecutionReady() const override;
-  BT::NodeStatus updateState() override;
-  BT::NodeStatus getNodeStatusWhileWaitingApproval() const override
-  {
-    return BT::NodeStatus::SUCCESS;
-  }
+  ModuleStatus updateState() override;
+  ModuleStatus getNodeStatusWhileWaitingApproval() const override { return ModuleStatus::SUCCESS; }
   BehaviorModuleOutput plan() override;
   BehaviorModuleOutput planWaitingApproval() override;
   CandidateOutput planCandidate() const override;
