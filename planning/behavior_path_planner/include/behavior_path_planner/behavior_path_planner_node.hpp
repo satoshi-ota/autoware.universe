@@ -160,8 +160,8 @@ private:
   /**
    * @brief skip smooth goal connection
    */
-  // bool skipSmoothGoalConnection(
-  //   const std::vector<std::shared_ptr<SceneModuleStatus>> & statuses) const;
+  bool skipSmoothGoalConnection(
+    const std::vector<std::shared_ptr<SceneModuleStatus>> & statuses) const;
 
   // bool keepInputPoints(const std::vector<std::shared_ptr<SceneModuleStatus>> & statuses) const;
 

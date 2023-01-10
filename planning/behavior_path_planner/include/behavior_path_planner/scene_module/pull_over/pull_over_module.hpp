@@ -71,17 +71,17 @@ class PullOverModule : public SceneModuleInterface
 {
 public:
   PullOverModule(
-    const std::string & name, rclcpp::Node & node, const PullOverParameters & parameters);
+    const std::string & name, rclcpp::Node & node, const PullOverParameters & parameters,
+    std::shared_ptr<RTCInterface> & rtc_interface);
+
+  void updateModuleParams(const PullOverParameters & parameters) { parameters_ = parameters; }
 
   BehaviorModuleOutput run() override;
 
   bool isExecutionRequested() const override;
   bool isExecutionReady() const override;
-  BT::NodeStatus updateState() override;
-  BT::NodeStatus getNodeStatusWhileWaitingApproval() const override
-  {
-    return BT::NodeStatus::SUCCESS;
-  }
+  ModuleStatus updateState() override;
+  ModuleStatus getNodeStatusWhileWaitingApproval() const override { return ModuleStatus::SUCCESS; }
   BehaviorModuleOutput plan() override;
   BehaviorModuleOutput planWaitingApproval() override;
   CandidateOutput planCandidate() const override;
@@ -100,6 +100,7 @@ private:
 
   std::vector<std::shared_ptr<PullOverPlannerBase>> pull_over_planners_;
   std::shared_ptr<GoalSearcherBase> goal_searcher_;
+  // std::shared_ptr<RTCInterface> rtc_interface_ptr_;
 
   PullOverPath shift_parking_path_;
   vehicle_info_util::VehicleInfo vehicle_info_;

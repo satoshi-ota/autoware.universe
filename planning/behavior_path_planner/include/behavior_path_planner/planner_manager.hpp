@@ -36,6 +36,19 @@ using autoware_auto_planning_msgs::msg::PathWithLaneId;
 using unique_identifier_msgs::msg::UUID;
 using ModuleID = std::pair<std::shared_ptr<SceneModuleManagerInterface>, UUID>;
 
+struct SceneModuleStatus
+{
+  explicit SceneModuleStatus(const std::string & n) : module_name(n) {}
+
+  std::string module_name;
+
+  bool is_requested{false};
+  bool is_execution_ready{false};
+  bool is_waiting_approval{false};
+
+  ModuleStatus status{ModuleStatus::SUCCESS};
+};
+
 class PlannerManager
 {
 public:
@@ -99,9 +112,36 @@ public:
     RCLCPP_INFO_STREAM(logger_, string_stream.str());
   }
 
-  std::vector<std::shared_ptr<SceneModuleManagerInterface>> getSceneModuleManagers()
+  std::vector<std::shared_ptr<SceneModuleManagerInterface>> getSceneModuleManagers() const
   {
     return scene_manager_ptrs_;
+  }
+
+  std::vector<std::shared_ptr<SceneModuleStatus>> getSceneModuleStatus() const
+  {
+    std::vector<std::shared_ptr<SceneModuleStatus>> ret;
+
+    for (const auto & m : approved_modules_) {
+      const auto & manager = m.first;
+      const auto & uuid = m.second;
+      auto s = std::make_shared<SceneModuleStatus>(manager->getModuleName());
+      s->is_requested = manager->isExecutionRequested(uuid);
+      s->is_waiting_approval = manager->isWaitingApproval(uuid);
+      s->status = manager->getCurrentStatus(uuid);
+      ret.push_back(s);
+    }
+
+    if (!!candidate_module_id_) {
+      const auto & manager = candidate_module_id_.get().first;
+      const auto & uuid = candidate_module_id_.get().second;
+      auto s = std::make_shared<SceneModuleStatus>(manager->getModuleName());
+      s->is_requested = manager->isExecutionRequested(uuid);
+      s->is_waiting_approval = manager->isWaitingApproval(uuid);
+      s->status = manager->getCurrentStatus(uuid);
+      ret.push_back(s);
+    }
+
+    return ret;
   }
 
 private:

@@ -46,12 +46,15 @@ using tier4_autoware_utils::inverseTransformPose;
 namespace behavior_path_planner
 {
 PullOverModule::PullOverModule(
-  const std::string & name, rclcpp::Node & node, const PullOverParameters & parameters)
+  const std::string & name, rclcpp::Node & node, const PullOverParameters & parameters,
+  std::shared_ptr<RTCInterface> & rtc_interface)
 : SceneModuleInterface{name, node},
   parameters_{parameters},
+  // rtc_interface_ptr_{rtc_interface},
   vehicle_info_{vehicle_info_util::VehicleInfoUtil(node).getVehicleInfo()}
 {
-  rtc_interface_ptr_ = std::make_shared<RTCInterface>(&node, "pull_over");
+  // rtc_interface_ptr_ = std::make_shared<RTCInterface>(&node, "pull_over");
+  rtc_interface_ptr_ = rtc_interface;
   steering_factor_interface_ptr_ = std::make_unique<SteeringFactorInterface>(&node, "pull_over");
 
   LaneDepartureChecker lane_departure_checker{};
@@ -118,74 +121,17 @@ void PullOverModule::updateOccupancyGrid()
   occupancy_grid_map_->setMap(*(planner_data_->occupancy_grid));
 }
 
-// generate pull over candidate paths
-void PullOverModule::onTimer()
-{
-  // already generated pull over candidate paths
-  if (!pull_over_path_candidates_.empty()) {
-    return;
-  }
-
-  // goals are not yet available.
-  if (goal_candidates_.empty()) {
-    return;
-  }
-
-  // generate valid pull over path candidates and calculate closest start pose
-  const auto current_lanes = util::getExtendedCurrentLanes(planner_data_);
-  std::vector<PullOverPath> path_candidates{};
-  std::optional<Pose> closest_start_pose{};
-  double min_start_arc_length = std::numeric_limits<double>::max();
-  const auto planCandidatePaths = [&](
-                                    const std::shared_ptr<PullOverPlannerBase> & planner,
-                                    const GoalCandidate & goal_candidate) {
-    planner->setPlannerData(planner_data_);
-    auto pull_over_path = planner->plan(goal_candidate.goal_pose);
-    pull_over_path->goal_id = goal_candidate.id;
-    if (pull_over_path) {
-      path_candidates.push_back(*pull_over_path);
-      // calculate closest pull over start pose for stop path
-      const double start_arc_length =
-        lanelet::utils::getArcCoordinates(current_lanes, pull_over_path->start_pose).length;
-      if (start_arc_length < min_start_arc_length) {
-        min_start_arc_length = start_arc_length;
-        // closest start pose is stop point when not finding safe path
-        closest_start_pose = pull_over_path->start_pose;
-      }
-    }
-  };
-
-  // plan candidate paths and set them to the member variable
-  if (parameters_.search_priority == "efficient_path") {
-    for (const auto & planner : pull_over_planners_) {
-      for (const auto & goal_candidate : goal_candidates_) {
-        planCandidatePaths(planner, goal_candidate);
-      }
-    }
-  } else if (parameters_.search_priority == "close_goal") {
-    for (const auto & goal_candidate : goal_candidates_) {
-      for (const auto & planner : pull_over_planners_) {
-        planCandidatePaths(planner, goal_candidate);
-      }
-    }
-  } else {
-    RCLCPP_ERROR(
-      getLogger(), "search_priority should be efficient_path or close_goal, but %s is given.",
-      parameters_.search_priority.c_str());
-    throw std::domain_error("[pull_over] invalid search_priority");
-  }
-
-  // set member variables
-  mutex_.lock();
-  pull_over_path_candidates_ = path_candidates;
-  closest_start_pose_ = closest_start_pose;
-  mutex_.unlock();
-}
-
 BehaviorModuleOutput PullOverModule::run()
 {
-  current_state_ = BT::NodeStatus::RUNNING;
+  current_state_ = ModuleStatus::RUNNING;
   updateOccupancyGrid();
+
+  std::cout << std::boolalpha << "activate: " << isActivated() << std::endl;
+
+  if (!isActivated()) {
+    return planWaitingApproval();
+  }
+
   return plan();
 }
 
@@ -214,7 +160,7 @@ ParallelParkingParameters PullOverModule::getGeometricPullOverParameters() const
 void PullOverModule::onEntry()
 {
   RCLCPP_DEBUG(getLogger(), "PULL_OVER onEntry");
-  current_state_ = BT::NodeStatus::SUCCESS;
+  current_state_ = ModuleStatus::SUCCESS;
 
   // Initialize occupancy grid map
   if (parameters_.use_occupancy_grid) {
@@ -264,12 +210,14 @@ void PullOverModule::onExit()
   resetPathCandidate();
   steering_factor_interface_ptr_->clearSteeringFactors();
   debug_marker_.markers.clear();
-  current_state_ = BT::NodeStatus::SUCCESS;
+
+  // A child node must never return IDLE
+  current_state_ = ModuleStatus::SUCCESS;
 }
 
 bool PullOverModule::isExecutionRequested() const
 {
-  if (current_state_ == BT::NodeStatus::RUNNING) {
+  if (current_state_ == ModuleStatus::RUNNING) {
     return true;
   }
   const auto & current_lanes = util::getCurrentLanes(planner_data_);
@@ -338,6 +286,9 @@ Pose PullOverModule::calcRefinedGoal(const Pose & goal_pose) const
     const auto lanelet_point = lanelet::utils::conversion::toLaneletPoint(goal_pose.position);
     const auto segment = lanelet::utils::getClosestSegment(
       lanelet::utils::to2D(lanelet_point), closest_shoulder_lanelet.centerline());
+    if (segment.empty()) {
+      return goal_pose;
+    }
     const auto p1 = segment.front().basicPoint();
     const auto p2 = segment.back().basicPoint();
     const auto direction_vector = (p2 - p1).normalized();
@@ -370,7 +321,7 @@ Pose PullOverModule::calcRefinedGoal(const Pose & goal_pose) const
   return refined_goal_pose;
 }
 
-BT::NodeStatus PullOverModule::updateState()
+ModuleStatus PullOverModule::updateState()
 {
   // pull_out module will be run when setting new goal, so not need finishing pull_over module.
   // Finishing it causes wrong lane_following path generation.
@@ -407,7 +358,7 @@ BehaviorModuleOutput PullOverModule::plan()
       removeRTCStatus();
       steering_factor_interface_ptr_->clearSteeringFactors();
       uuid_ = generateUUID();
-      current_state_ = BT::NodeStatus::SUCCESS;  // for breaking loop
+      current_state_ = ModuleStatus::SUCCESS;  // for breaking loop
       status_.has_requested_approval = true;
     } else if (isActivated() && isWaitingApproval()) {
       // When it is approved again after path is decided
