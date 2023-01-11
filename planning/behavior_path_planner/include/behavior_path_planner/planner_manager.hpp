@@ -112,6 +112,13 @@ public:
     RCLCPP_INFO_STREAM(logger_, string_stream.str());
   }
 
+  void publishDebugMarker()
+  {
+    std::for_each(scene_manager_ptrs_.begin(), scene_manager_ptrs_.end(), [](const auto & m) {
+      m->publishDebugMarker();
+    });
+  }
+
   std::vector<std::shared_ptr<SceneModuleManagerInterface>> getSceneModuleManagers() const
   {
     return scene_manager_ptrs_;

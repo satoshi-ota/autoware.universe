@@ -43,6 +43,7 @@ public:
     name_(name),
     max_module_num_(max_module_num)
   {
+    pub_debug_marker_ = node->create_publisher<MarkerArray>("~/debug/" + name, 20);
   }
 
   virtual ~SceneModuleManagerInterface() = default;
@@ -116,7 +117,6 @@ public:
     m->updateState();
 
     m->publishRTCStatus();
-    m->publishDebugMarker();
     m->publishReferencePath();
 
     return result;
@@ -150,7 +150,22 @@ public:
     registered_modules_.erase(toHexString(uuid));
   }
 
-  void publishDebugMarker() {}
+  void publishDebugMarker()
+  {
+    using tier4_autoware_utils::appendMarkerArray;
+
+    MarkerArray markers{};
+
+    for (const auto & m : registered_modules_) {
+      appendMarkerArray(m.second->getDebugMarkers(), &markers);
+    }
+
+    if (idling_module_ != nullptr) {
+      appendMarkerArray(idling_module_->getDebugMarkers(), &markers);
+    }
+
+    pub_debug_marker_->publish(markers);
+  }
 
   bool exist(const UUID & uuid) const
   {
@@ -199,6 +214,8 @@ protected:
   rclcpp::Clock clock_;
 
   rclcpp::Logger logger_;
+
+  rclcpp::Publisher<MarkerArray>::SharedPtr pub_debug_marker_;
 
   std::string name_;
 

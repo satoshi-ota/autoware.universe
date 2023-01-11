@@ -107,7 +107,6 @@ public:
     std::transform(name.begin(), name.end(), module_ns.begin(), tolower);
 
     const auto ns = std::string("~/debug/") + module_ns;
-    pub_debug_marker_ = node.create_publisher<MarkerArray>(ns, 20);
     pub_ref_path_ = node.create_publisher<PathWithLaneId>(ns + "/reference_path", 20);
   }
 
@@ -243,8 +242,6 @@ public:
     previous_module_output_ = previous_module_output;
   }
 
-  void publishDebugMarker() { pub_debug_marker_->publish(debug_marker_); }
-
   void publishReferencePath()
   {
     if (previous_module_output_.path == nullptr) {
@@ -261,6 +258,8 @@ public:
   std::shared_ptr<const PlannerData> planner_data_;
 
   BehaviorModuleOutput previous_module_output_;
+
+  MarkerArray getDebugMarkers() const { return debug_marker_; }
 
   bool isWaitingApproval() const { return is_waiting_approval_; }
 
@@ -293,7 +292,6 @@ private:
 
 protected:
   rclcpp::Clock::SharedPtr clock_;
-  rclcpp::Publisher<MarkerArray>::SharedPtr pub_debug_marker_;
   rclcpp::Publisher<PathWithLaneId>::SharedPtr pub_ref_path_;
   mutable MarkerArray debug_marker_;
 

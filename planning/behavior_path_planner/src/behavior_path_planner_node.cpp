@@ -397,6 +397,7 @@ void BehaviorPathPlannerNode::run()
   }
 
   planner_manager_->print();
+  planner_manager_->publishDebugMarker();
 
   mutex_bt_.unlock();
   RCLCPP_DEBUG(get_logger(), "----- behavior path planner end -----\n\n");
