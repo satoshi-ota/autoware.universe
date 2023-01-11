@@ -167,9 +167,12 @@ void AvoidanceByLCModule::onExit()
 bool AvoidanceByLCModule::isExecutionRequested() const
 {
   const auto avoid_data_ = calcAvoidancePlanningData(debug_data_);
+  const auto current_lanes = getCurrentLanes(*previous_module_output_.path);
+  const auto lane_change_lanes = getLaneChangeLanes(current_lanes, lane_change_lane_length_);
 
   if (current_state_ == ModuleStatus::IDLE) {
-    return !avoid_data_.target_objects.empty();
+    // return !avoid_data_.target_objects.empty();
+    return !lane_change_lanes.empty();
   }
 
   if (avoid_data_.target_objects.empty()) {
@@ -181,8 +184,8 @@ bool AvoidanceByLCModule::isExecutionRequested() const
   }
 
   // const auto current_lanes = util::getCurrentLanes(planner_data_);
-  const auto current_lanes = getCurrentLanes(*previous_module_output_.path);
-  const auto lane_change_lanes = getLaneChangeLanes(current_lanes, lane_change_lane_length_);
+  // const auto current_lanes = getCurrentLanes(*previous_module_output_.path);
+  // const auto lane_change_lanes = getLaneChangeLanes(current_lanes, lane_change_lane_length_);
 
   LaneChangePath selected_path;
   const auto [found_valid_path, found_safe_path] =
