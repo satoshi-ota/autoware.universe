@@ -120,14 +120,16 @@ BehaviorPathPlannerNode::BehaviorPathPlannerNode(const rclcpp::NodeOptions & nod
       *this, p.enable_simultaneous_execution_of_multiple_modules, p.verbose);
 
     if (p.launch_pull_over) {
-      auto manager = std::make_shared<PullOverModuleManager>(this, "pull_over", 1);
+      auto manager =
+        std::make_shared<PullOverModuleManager>(this, "pull_over", 1, p.priority_pull_over);
       planner_manager_->registerSceneModuleManager(manager);
       path_candidate_publishers_.emplace(
         "pull_over", create_publisher<Path>(path_candidate_name_space + "pull_over", 1));
     }
 
     if (p.launch_avoidance_by_lc) {
-      auto manager = std::make_shared<AvoidanceByLCModuleManager>(this, "avoidance_by_lc", 1);
+      auto manager = std::make_shared<AvoidanceByLCModuleManager>(
+        this, "avoidance_by_lc", 1, p.priority_avoidance_by_lc);
       planner_manager_->registerSceneModuleManager(manager);
       path_candidate_publishers_.emplace(
         "avoidance_by_lc",
@@ -135,21 +137,24 @@ BehaviorPathPlannerNode::BehaviorPathPlannerNode(const rclcpp::NodeOptions & nod
     }
 
     if (p.launch_avoidance) {
-      auto manager = std::make_shared<AvoidanceModuleManager>(this, "avoidance", 1);
+      auto manager =
+        std::make_shared<AvoidanceModuleManager>(this, "avoidance", 1, p.priority_avoidance);
       planner_manager_->registerSceneModuleManager(manager);
       path_candidate_publishers_.emplace(
         "avoidance", create_publisher<Path>(path_candidate_name_space + "avoidance", 1));
     }
 
     if (p.launch_lane_change) {
-      auto manager = std::make_shared<LaneChangeModuleManager>(this, "lane_change", 1);
+      auto manager =
+        std::make_shared<LaneChangeModuleManager>(this, "lane_change", 1, p.priority_lane_change);
       planner_manager_->registerSceneModuleManager(manager);
       path_candidate_publishers_.emplace(
         "lane_change", create_publisher<Path>(path_candidate_name_space + "lane_change", 1));
     }
 
     if (p.launch_pull_out) {
-      auto manager = std::make_shared<PullOutModuleManager>(this, "pull_out", 1);
+      auto manager =
+        std::make_shared<PullOutModuleManager>(this, "pull_out", 1, p.priority_pull_out);
       planner_manager_->registerSceneModuleManager(manager);
       path_candidate_publishers_.emplace(
         "pull_out", create_publisher<Path>(path_candidate_name_space + "pull_out", 1));
@@ -217,6 +222,12 @@ BehaviorPathPlannerParameters BehaviorPathPlannerNode::getCommonParam()
   p.launch_avoidance_by_lc = declare_parameter<bool>("launch_avoidance_by_lc");
   p.launch_avoidance = declare_parameter<bool>("launch_avoidance");
   p.launch_lane_change = declare_parameter<bool>("launch_lane_change");
+
+  p.priority_pull_over = declare_parameter<int>("priority_pull_over");
+  p.priority_avoidance_by_lc = declare_parameter<int>("priority_avoidance_by_lc");
+  p.priority_avoidance = declare_parameter<int>("priority_avoidance");
+  p.priority_lane_change = declare_parameter<int>("priority_lane_change");
+  p.priority_pull_out = declare_parameter<int>("priority_pull_out");
 
   p.enable_simultaneous_execution_of_multiple_modules =
     declare_parameter<bool>("enable_simultaneous_execution_of_multiple_modules");

@@ -36,12 +36,14 @@ class SceneModuleManagerInterface
 {
 public:
   SceneModuleManagerInterface(
-    rclcpp::Node * node, const std::string & name, const size_t max_module_num)
+    rclcpp::Node * node, const std::string & name, const size_t max_module_num,
+    const size_t priority)
   : node_(node),
     clock_(*node->get_clock()),
     logger_(node->get_logger().get_child(name)),
     name_(name),
-    max_module_num_(max_module_num)
+    max_module_num_(max_module_num),
+    priority_(priority)
   {
     pub_debug_marker_ = node->create_publisher<MarkerArray>("~/debug/" + name, 20);
   }
@@ -122,9 +124,8 @@ public:
     return result;
   }
 
-  UUID launchNewModule(const BehaviorModuleOutput & previous_module_output)
+  void registerNewModule(const BehaviorModuleOutput & previous_module_output, const UUID & uuid)
   {
-    const auto uuid = generateUUID();
     const auto m = createNewSceneModuleInstance();
 
     m->setData(planner_data_);
@@ -132,8 +133,6 @@ public:
     m->onEntry();
 
     registered_modules_.insert(std::make_pair(toHexString(uuid), m));
-
-    return uuid;
   }
 
   void deleteModules(const UUID & uuid)
@@ -170,7 +169,7 @@ public:
   bool exist(const UUID & uuid) const
   {
     if (registered_modules_.count(toHexString(uuid)) == 0) {
-      RCLCPP_WARN(
+      RCLCPP_DEBUG(
         logger_, "uuid %s is not found in %s module.", toHexString(uuid).c_str(), name_.c_str());
       return false;
     }
@@ -189,6 +188,8 @@ public:
     });
     registered_modules_.clear();
   }
+
+  size_t getPriority() const { return priority_; }
 
   std::string getModuleName() const { return name_; }
 
@@ -246,17 +247,6 @@ private:
     return idling_module_;
   }
 
-  static UUID generateUUID()
-  {
-    // Generate random number
-    UUID uuid;
-    std::mt19937 gen(std::random_device{}());
-    std::independent_bits_engine<std::mt19937, 8, uint8_t> bit_eng(gen);
-    std::generate(uuid.uuid.begin(), uuid.uuid.end(), bit_eng);
-
-    return uuid;
-  }
-
   static std::string toHexString(const unique_identifier_msgs::msg::UUID & uuid)
   {
     std::stringstream ss;
@@ -266,7 +256,9 @@ private:
     return ss.str();
   }
 
-  uint16_t max_module_num_;
+  size_t max_module_num_;
+
+  size_t priority_;
 };
 
 }  // namespace behavior_path_planner

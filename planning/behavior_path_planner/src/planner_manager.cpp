@@ -27,6 +27,20 @@
 namespace behavior_path_planner
 {
 
+namespace
+{
+static UUID generateUUID()
+{
+  // Generate random number
+  UUID uuid;
+  std::mt19937 gen(std::random_device{}());
+  std::independent_bits_engine<std::mt19937, 8, uint8_t> bit_eng(gen);
+  std::generate(uuid.uuid.begin(), uuid.uuid.end(), bit_eng);
+
+  return uuid;
+}
+}  // namespace
+
 PlannerManager::PlannerManager(
   rclcpp::Node & node, const bool enable_simultaneous_execution, const bool verbose)
 : logger_(node.get_logger().get_child("planner_manager")),
@@ -105,30 +119,36 @@ boost::optional<ModuleID> PlannerManager::getCandidateModuleID(
     return {};
   }
 
+  std::vector<ModuleID> request_modules{};
+
+  // pickup execution requested modules
   for (const auto & m : scene_manager_ptrs_) {
+    // generate temporary uuid
+    const auto uuid = generateUUID();
+
     /**
      * CASE1: there is no candidate module
      */
     if (!candidate_module_id_) {
       if (m->isExecutionRequested(previous_module_output) && m->canLaunchNewModule()) {
         // launch new candidate module
-        return std::make_pair(m, m->launchNewModule(previous_module_output));
-      } else {
-        // candidate module is not needed
-        continue;
+        request_modules.emplace_back(m, uuid);
       }
+
+      continue;
     }
 
     // candidate module already exist
     const auto & manager = candidate_module_id_.get().first;
+    const auto & name = manager->getModuleName();
 
     /**
      * CASE2: same name module already launched as candidate
      */
-    if (manager->getModuleName() == m->getModuleName()) {
+    if (name == m->getModuleName()) {
       if (isExecutionRequested(candidate_module_id_.get())) {
         // keep current candidate module
-        return candidate_module_id_.get();
+        request_modules.push_back(candidate_module_id_.get());
       } else {
         // candidate module is no longer needed
         deleteExpiredModules(candidate_module_id_.get());
@@ -145,14 +165,50 @@ boost::optional<ModuleID> PlannerManager::getCandidateModuleID(
       continue;
     }
 
-    // delete current candidate module from manager
-    deleteExpiredModules(candidate_module_id_.get());
-
-    // override candidate module
-    return std::make_pair(m, m->launchNewModule(previous_module_output));
+    request_modules.emplace_back(m, uuid);
   }
 
-  return {};
+  // select one module to run
+  const auto high_priority_module = selectHighestPriorityModule(request_modules);
+
+  if (!high_priority_module) {
+    return {};
+  }
+
+  // post process
+  {
+    const auto & manager = high_priority_module.get().first;
+    const auto & uuid = high_priority_module.get().second;
+
+    // if the selected module is NOT registered in manager, registered the module
+    if (!manager->exist(uuid)) {
+      manager->registerNewModule(previous_module_output, uuid);
+    }
+
+    // if the current candidate module is NOT selected as high priority module, delete the candidate
+    // module from manager
+    for (const auto & m : request_modules) {
+      if (m.first->getModuleName() != manager->getModuleName() && m.first->exist(m.second)) {
+        deleteExpiredModules(m);
+      }
+    }
+  }
+
+  return high_priority_module;
+}
+
+boost::optional<ModuleID> PlannerManager::selectHighestPriorityModule(
+  std::vector<ModuleID> & request_modules) const
+{
+  if (request_modules.empty()) {
+    return {};
+  }
+
+  std::sort(request_modules.begin(), request_modules.end(), [](auto a, auto b) {
+    return a.first->getPriority() < b.first->getPriority();
+  });
+
+  return request_modules.front();
 }
 
 BehaviorModuleOutput PlannerManager::update(const std::shared_ptr<PlannerData> & data)

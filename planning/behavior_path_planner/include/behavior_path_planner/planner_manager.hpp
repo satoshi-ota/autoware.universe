@@ -24,6 +24,7 @@
 #include <diagnostic_msgs/msg/diagnostic_status.hpp>
 #include <unique_identifier_msgs/msg/uuid.hpp>
 
+#include <algorithm>
 #include <memory>
 #include <string>
 #include <utility>
@@ -253,6 +254,9 @@ private:
 
   boost::optional<ModuleID> getCandidateModuleID(
     const BehaviorModuleOutput & previous_module_output) const;
+
+  boost::optional<ModuleID> selectHighestPriorityModule(
+    std::vector<ModuleID> & request_modules) const;
 
   boost::optional<ModuleID> candidate_module_id_{boost::none};
 

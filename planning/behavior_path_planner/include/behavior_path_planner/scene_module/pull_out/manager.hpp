@@ -32,7 +32,9 @@ namespace behavior_path_planner
 class PullOutModuleManager : public SceneModuleManagerInterface
 {
 public:
-  PullOutModuleManager(rclcpp::Node * node, const std::string & name, const size_t max_module_num);
+  PullOutModuleManager(
+    rclcpp::Node * node, const std::string & name, const size_t max_module_num,
+    const size_t priority);
 
   std::shared_ptr<SceneModuleInterface> createNewSceneModuleInstance() override
   {
