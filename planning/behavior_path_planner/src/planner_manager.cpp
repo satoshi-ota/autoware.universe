@@ -38,6 +38,8 @@ PlannerManager::PlannerManager(
 
 BehaviorModuleOutput PlannerManager::run(const std::shared_ptr<PlannerData> & data)
 {
+  stop_watch_.tic("processing_time");
+
   if (!start_lanelet_) {
     updateStartLanelet(data);
   }
@@ -62,6 +64,7 @@ BehaviorModuleOutput PlannerManager::run(const std::shared_ptr<PlannerData> & da
      */
     if (!candidate_module_id) {
       candidate_module_id_ = boost::none;
+      processing_time_ = stop_watch_.toc("processing_time", true);
       return approved_path_data;
     }
 
@@ -78,6 +81,7 @@ BehaviorModuleOutput PlannerManager::run(const std::shared_ptr<PlannerData> & da
      */
     if (isWaitingApproval(candidate_module_id.get())) {
       candidate_module_id_ = candidate_module_id.get();
+      processing_time_ = stop_watch_.toc("processing_time", true);
       return result;
     }
 
@@ -87,6 +91,8 @@ BehaviorModuleOutput PlannerManager::run(const std::shared_ptr<PlannerData> & da
     candidate_module_id_ = boost::none;
     addApprovedModule(candidate_module_id.get());
   }
+
+  processing_time_ = stop_watch_.toc("processing_time", true);
 
   return {};
 }

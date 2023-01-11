@@ -33,6 +33,7 @@ namespace behavior_path_planner
 {
 
 using autoware_auto_planning_msgs::msg::PathWithLaneId;
+using tier4_autoware_utils::StopWatch;
 using unique_identifier_msgs::msg::UUID;
 using ModuleID = std::pair<std::shared_ptr<SceneModuleManagerInterface>, UUID>;
 
@@ -108,6 +109,9 @@ public:
       const auto & manager = candidate_module_id_.get().first;
       string_stream << "[" << manager->getModuleName() << "]";
     }
+
+    string_stream << "\n" << std::fixed << std::setprecision(1);
+    string_stream << "processing time   : " << std::setw(6) << processing_time_ << " [ms]";
 
     RCLCPP_INFO_STREAM(logger_, string_stream.str());
   }
@@ -261,6 +265,10 @@ private:
   rclcpp::Logger logger_;
 
   rclcpp::Clock clock_;
+
+  StopWatch<std::chrono::milliseconds> stop_watch_;
+
+  double processing_time_{0.0};
 
   bool enable_simultaneous_execution_{false};
 
