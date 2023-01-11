@@ -49,7 +49,7 @@ public:
 
   bool isExecutionRequested(const BehaviorModuleOutput & previous_module_output)
   {
-    const auto m = createNewSceneModuleInstance();
+    const auto m = getIdlingModule();
 
     m->setData(planner_data_);
     m->setPreviousModuleOutput(previous_module_output);
@@ -150,6 +150,8 @@ public:
     registered_modules_.erase(toHexString(uuid));
   }
 
+  void publishDebugMarker() {}
+
   bool exist(const UUID & uuid) const
   {
     if (registered_modules_.count(toHexString(uuid)) == 0) {
@@ -202,6 +204,8 @@ protected:
 
   std::shared_ptr<PlannerData> planner_data_;
 
+  std::shared_ptr<SceneModuleInterface> idling_module_;
+
   std::unordered_map<std::string, std::shared_ptr<SceneModuleInterface>> registered_modules_;
 
 private:
@@ -213,6 +217,16 @@ private:
     }
 
     return registered_modules_.at(toHexString(uuid));
+  }
+
+  std::shared_ptr<SceneModuleInterface> getIdlingModule()
+  {
+    if (idling_module_ != nullptr) {
+      return idling_module_;
+    }
+
+    idling_module_ = createNewSceneModuleInstance();
+    return idling_module_;
   }
 
   static UUID generateUUID()
