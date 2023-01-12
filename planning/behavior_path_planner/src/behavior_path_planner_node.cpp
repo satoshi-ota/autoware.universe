@@ -113,6 +113,7 @@ BehaviorPathPlannerNode::BehaviorPathPlannerNode(const rclcpp::NodeOptions & nod
   // behavior tree manager
   {
     const std::string path_candidate_name_space = "/planning/path_candidate/";
+    const std::string path_reference_name_space = "/planning/path_reference/";
     mutex_bt_.lock();
 
     const auto & p = planner_data_->parameters;
@@ -125,6 +126,8 @@ BehaviorPathPlannerNode::BehaviorPathPlannerNode(const rclcpp::NodeOptions & nod
       planner_manager_->registerSceneModuleManager(manager);
       path_candidate_publishers_.emplace(
         "pull_over", create_publisher<Path>(path_candidate_name_space + "pull_over", 1));
+      path_reference_publishers_.emplace(
+        "pull_over", create_publisher<Path>(path_reference_name_space + "pull_over", 1));
     }
 
     if (p.launch_avoidance_by_lc) {
@@ -134,6 +137,9 @@ BehaviorPathPlannerNode::BehaviorPathPlannerNode(const rclcpp::NodeOptions & nod
       path_candidate_publishers_.emplace(
         "avoidance_by_lc",
         create_publisher<Path>(path_candidate_name_space + "avoidance_by_lc", 1));
+      path_reference_publishers_.emplace(
+        "avoidance_by_lc",
+        create_publisher<Path>(path_reference_name_space + "avoidance_by_lc", 1));
     }
 
     if (p.launch_avoidance) {
@@ -142,6 +148,8 @@ BehaviorPathPlannerNode::BehaviorPathPlannerNode(const rclcpp::NodeOptions & nod
       planner_manager_->registerSceneModuleManager(manager);
       path_candidate_publishers_.emplace(
         "avoidance", create_publisher<Path>(path_candidate_name_space + "avoidance", 1));
+      path_reference_publishers_.emplace(
+        "avoidance", create_publisher<Path>(path_reference_name_space + "avoidance", 1));
     }
 
     if (p.launch_lane_change) {
@@ -150,6 +158,8 @@ BehaviorPathPlannerNode::BehaviorPathPlannerNode(const rclcpp::NodeOptions & nod
       planner_manager_->registerSceneModuleManager(manager);
       path_candidate_publishers_.emplace(
         "lane_change", create_publisher<Path>(path_candidate_name_space + "lane_change", 1));
+      path_reference_publishers_.emplace(
+        "lane_change", create_publisher<Path>(path_reference_name_space + "lane_change", 1));
     }
 
     if (p.launch_pull_out) {
@@ -158,6 +168,8 @@ BehaviorPathPlannerNode::BehaviorPathPlannerNode(const rclcpp::NodeOptions & nod
       planner_manager_->registerSceneModuleManager(manager);
       path_candidate_publishers_.emplace(
         "pull_out", create_publisher<Path>(path_candidate_name_space + "pull_out", 1));
+      path_reference_publishers_.emplace(
+        "pull_out", create_publisher<Path>(path_reference_name_space + "pull_out", 1));
     }
 
     mutex_bt_.unlock();
@@ -392,6 +404,7 @@ void BehaviorPathPlannerNode::run()
   }
 
   publishPathCandidate(planner_manager_->getSceneModuleManagers());
+  publishPathReference(planner_manager_->getSceneModuleManagers());
 
   // publishSceneModuleDebugMsg();
 
@@ -518,11 +531,40 @@ void BehaviorPathPlannerNode::publishPathCandidate(
   const std::vector<std::shared_ptr<SceneModuleManagerInterface>> & managers)
 {
   for (auto & manager : managers) {
+    if (path_candidate_publishers_.count(manager->getModuleName()) == 0) {
+      continue;
+    }
+
+    if (manager->getSceneModules().empty()) {
+      path_candidate_publishers_.at(manager->getModuleName())
+        ->publish(convertToPath(nullptr, false));
+      continue;
+    }
+
     for (auto & module : manager->getSceneModules()) {
-      if (path_candidate_publishers_.count(module->name()) != 0) {
-        path_candidate_publishers_.at(module->name())
-          ->publish(convertToPath(module->getPathCandidate(), module->isExecutionReady()));
-      }
+      path_candidate_publishers_.at(module->name())
+        ->publish(convertToPath(module->getPathCandidate(), module->isExecutionReady()));
+    }
+  }
+}
+
+void BehaviorPathPlannerNode::publishPathReference(
+  const std::vector<std::shared_ptr<SceneModuleManagerInterface>> & managers)
+{
+  for (auto & manager : managers) {
+    if (path_reference_publishers_.count(manager->getModuleName()) == 0) {
+      continue;
+    }
+
+    if (manager->getSceneModules().empty()) {
+      path_reference_publishers_.at(manager->getModuleName())
+        ->publish(convertToPath(nullptr, false));
+      continue;
+    }
+
+    for (auto & module : manager->getSceneModules()) {
+      path_reference_publishers_.at(module->name())
+        ->publish(convertToPath(module->getPathReference(), true));
     }
   }
 }

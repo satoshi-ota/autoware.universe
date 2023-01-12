@@ -159,7 +159,6 @@ void AvoidanceByLCModule::onExit()
 {
   resetParameters();
   current_state_ = ModuleStatus::SUCCESS;
-  *previous_module_output_.path = PathWithLaneId();
   publishReferencePath();
   RCLCPP_DEBUG(getLogger(), "LANE_CHANGE onExit");
 }
@@ -715,6 +714,7 @@ ModuleStatus AvoidanceByLCModule::updateState()
 BehaviorModuleOutput AvoidanceByLCModule::plan()
 {
   resetPathCandidate();
+  resetPathReference();
 
   auto path = status_.lane_change_path.path;
 
@@ -732,7 +732,21 @@ BehaviorModuleOutput AvoidanceByLCModule::plan()
 
   BehaviorModuleOutput output;
   output.path = std::make_shared<PathWithLaneId>(path);
+
+  const auto & route_handler = planner_data_->route_handler;
+  const auto p = planner_data_->parameters;
+
+  const auto current_lanes_with_backward_margin = route_handler->getLaneletSequence(
+    status_.lane_change_lanes.front(), getEgoPose(), p.backward_path_length, p.forward_path_length);
+
+  const auto reference_path = util::getCenterLinePath(
+    *route_handler, current_lanes_with_backward_margin, getEgoPose(), p.backward_path_length,
+    p.forward_path_length, p);
+
+  output.reference_path = std::make_shared<PathWithLaneId>(reference_path);
   updateOutputTurnSignal(output);
+
+  path_reference_ = output.reference_path;
 
   return output;
 }
@@ -775,7 +789,9 @@ BehaviorModuleOutput AvoidanceByLCModule::planWaitingApproval()
 {
   BehaviorModuleOutput out;
   updateLaneChangeStatus();
-  out.path = std::make_shared<PathWithLaneId>(*previous_module_output_.path);
+  out.path = previous_module_output_.path;
+  out.reference_path = previous_module_output_.reference_path;
+  path_reference_ = out.reference_path;
   // out.path = std::make_shared<PathWithLaneId>(getReferencePath());
   const auto candidate = planCandidate();
   path_candidate_ = std::make_shared<PathWithLaneId>(candidate.path_candidate);
@@ -1260,6 +1276,7 @@ void AvoidanceByLCModule::resetParameters()
   object_debug_.clear();
   debug_marker_.markers.clear();
   resetPathCandidate();
+  resetPathReference();
 }
 
 bool AvoidanceByLCModule::isTargetObjectType(const PredictedObject & object) const

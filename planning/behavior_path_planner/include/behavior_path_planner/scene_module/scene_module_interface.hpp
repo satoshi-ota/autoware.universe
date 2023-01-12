@@ -150,6 +150,7 @@ public:
     out.path = util::generateCenterLinePath(planner_data_);
     const auto candidate = planCandidate();
     path_candidate_ = std::make_shared<PathWithLaneId>(candidate.path_candidate);
+    path_reference_ = previous_module_output_.reference_path;
     return out;
   }
 
@@ -265,9 +266,13 @@ public:
 
   PlanResult getPathCandidate() const { return path_candidate_; }
 
+  PlanResult getPathReference() const { return path_reference_; }
+
   ModuleStatus getCurrentStatus() const { return current_state_; }
 
   void resetPathCandidate() { path_candidate_.reset(); }
+
+  void resetPathReference() { path_reference_.reset(); }
 
   virtual void lockRTCCommand()
   {
@@ -300,6 +305,7 @@ protected:
   UUID uuid_;
   bool is_waiting_approval_;
   PlanResult path_candidate_;
+  PlanResult path_reference_;
 
   void updateRTCStatus(const double start_distance, const double finish_distance)
   {

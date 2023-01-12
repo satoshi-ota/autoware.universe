@@ -75,7 +75,6 @@ void LaneChangeModule::onExit()
 {
   resetParameters();
   current_state_ = ModuleStatus::SUCCESS;
-  *previous_module_output_.path = PathWithLaneId();
   publishReferencePath();
   RCLCPP_DEBUG(getLogger(), "LANE_CHANGE onExit");
 }
@@ -774,6 +773,7 @@ void LaneChangeModule::resetParameters()
   object_debug_.clear();
   debug_marker_.markers.clear();
   resetPathCandidate();
+  resetPathReference();
 }
 
 void LaneChangeModule::acceptVisitor(const std::shared_ptr<SceneModuleVisitor> & visitor) const

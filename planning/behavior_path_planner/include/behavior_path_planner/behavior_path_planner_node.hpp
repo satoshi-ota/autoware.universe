@@ -104,6 +104,7 @@ private:
   rclcpp::TimerBase::SharedPtr timer_;
 
   std::map<std::string, rclcpp::Publisher<Path>::SharedPtr> path_candidate_publishers_;
+  std::map<std::string, rclcpp::Publisher<Path>::SharedPtr> path_reference_publishers_;
 
   std::shared_ptr<PlannerData> planner_data_;
   std::shared_ptr<PlannerManager> planner_manager_;
@@ -196,6 +197,12 @@ private:
    * @brief publish path candidate
    */
   void publishPathCandidate(
+    const std::vector<std::shared_ptr<SceneModuleManagerInterface>> & scene_modules);
+
+  /**
+   * @brief publish path reference
+   */
+  void publishPathReference(
     const std::vector<std::shared_ptr<SceneModuleManagerInterface>> & scene_modules);
 
   /**

@@ -2833,6 +2833,7 @@ BehaviorModuleOutput AvoidanceModule::plan()
   const auto & data = avoidance_data_;
 
   resetPathCandidate();
+  resetPathReference();
 
   /**
    * Has new shift point?
@@ -2896,6 +2897,8 @@ BehaviorModuleOutput AvoidanceModule::plan()
   }
 
   output.path = std::make_shared<PathWithLaneId>(avoidance_path.path);
+  output.reference_path = previous_module_output_.reference_path;
+  path_reference_ = previous_module_output_.reference_path;
 
   const size_t ego_idx = findEgoIndex(output.path->points);
   util::clipPathLength(*output.path, ego_idx, planner_data_->parameters);
@@ -3343,6 +3346,7 @@ void AvoidanceModule::initVariables()
   debug_data_ = DebugData();
   debug_marker_.markers.clear();
   resetPathCandidate();
+  resetPathReference();
   registered_raw_shift_lines_ = {};
   current_raw_shift_lines_ = {};
   original_unique_id = 0;
