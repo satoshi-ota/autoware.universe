@@ -86,7 +86,7 @@ bool LaneChangeModule::isExecutionRequested() const
   }
 
   // const auto current_lanes = util::getCurrentLanes(planner_data_);
-  const auto current_lanes = getCurrentLanes(*previous_module_output_.path);
+  const auto current_lanes = getCurrentLanes(*previous_module_output_.reference_path);
   const auto lane_change_lanes = getLaneChangeLanes(current_lanes, lane_change_lane_length_);
 
   LaneChangePath selected_path;
@@ -103,7 +103,7 @@ bool LaneChangeModule::isExecutionReady() const
   }
 
   // const auto current_lanes = util::getCurrentLanes(planner_data_);
-  const auto current_lanes = getCurrentLanes(*previous_module_output_.path);
+  const auto current_lanes = getCurrentLanes(*previous_module_output_.reference_path);
   const auto lane_change_lanes = getLaneChangeLanes(current_lanes, lane_change_lane_length_);
 
   LaneChangePath selected_path;
@@ -219,7 +219,7 @@ CandidateOutput LaneChangeModule::planCandidate() const
   LaneChangePath selected_path;
   // Get lane change lanes
   // const auto current_lanes = util::getCurrentLanes(planner_data_);
-  const auto current_lanes = getCurrentLanes(*previous_module_output_.path);
+  const auto current_lanes = getCurrentLanes(*previous_module_output_.reference_path);
   const auto lane_change_lanes = getLaneChangeLanes(current_lanes, lane_change_lane_length_);
 
   [[maybe_unused]] const auto [found_valid_path, found_safe_path] =
@@ -271,7 +271,7 @@ BehaviorModuleOutput LaneChangeModule::planWaitingApproval()
 void LaneChangeModule::updateLaneChangeStatus()
 {
   // status_.current_lanes = util::getCurrentLanes(planner_data_);
-  status_.current_lanes = getCurrentLanes(*previous_module_output_.path);
+  status_.current_lanes = getCurrentLanes(*previous_module_output_.reference_path);
   status_.lane_change_lanes = getLaneChangeLanes(status_.current_lanes, lane_change_lane_length_);
 
   // Find lane change path
@@ -303,7 +303,7 @@ PathWithLaneId LaneChangeModule::getReferencePath() const
   reference_path.header = getRouteHeader();
 
   // const auto current_lanes = util::getCurrentLanes(planner_data_);
-  const auto current_lanes = getCurrentLanes(*previous_module_output_.path);
+  const auto current_lanes = getCurrentLanes(*previous_module_output_.reference_path);
 
   if (current_lanes.empty()) {
     return reference_path;
@@ -382,7 +382,7 @@ std::pair<bool, bool> LaneChangeModule::getSafePath(
   const auto & common_parameters = planner_data_->parameters;
 
   // const auto current_lanes = util::getCurrentLanes(planner_data_);
-  const auto current_lanes = getCurrentLanes(*previous_module_output_.path);
+  const auto current_lanes = getCurrentLanes(*previous_module_output_.reference_path);
 
   if (!lane_change_lanes.empty()) {
     // find candidate paths
