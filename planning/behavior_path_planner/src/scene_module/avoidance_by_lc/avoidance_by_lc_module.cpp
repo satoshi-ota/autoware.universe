@@ -736,12 +736,12 @@ BehaviorModuleOutput AvoidanceByLCModule::plan()
   const auto & route_handler = planner_data_->route_handler;
   const auto p = planner_data_->parameters;
 
-  const auto current_lanes_with_backward_margin = route_handler->getLaneletSequence(
+  const auto reference_lanes = route_handler->getLaneletSequence(
     status_.lane_change_lanes.front(), getEgoPose(), p.backward_path_length, p.forward_path_length);
 
   const auto reference_path = util::getCenterLinePath(
-    *route_handler, current_lanes_with_backward_margin, getEgoPose(), p.backward_path_length,
-    p.forward_path_length, p);
+    *route_handler, reference_lanes, getEgoPose(), p.backward_path_length, p.forward_path_length,
+    p);
 
   output.reference_path = std::make_shared<PathWithLaneId>(reference_path);
   updateOutputTurnSignal(output);

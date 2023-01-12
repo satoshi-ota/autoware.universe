@@ -149,6 +149,7 @@ ModuleStatus LaneChangeModule::updateState()
 BehaviorModuleOutput LaneChangeModule::plan()
 {
   resetPathCandidate();
+  resetPathReference();
   is_activated_ = isActivated();
 
   PathWithLaneId path = status_.lane_change_path.path;
@@ -179,7 +180,18 @@ BehaviorModuleOutput LaneChangeModule::plan()
   updateOutputTurnSignal(output);
 
   updateSteeringFactorPtr(output);
-  output.reference_path = std::make_shared<PathWithLaneId>(path);
+  const auto & route_handler = planner_data_->route_handler;
+  const auto p = planner_data_->parameters;
+
+  const auto reference_lanes = route_handler->getLaneletSequence(
+    status_.lane_change_lanes.front(), getEgoPose(), p.backward_path_length, p.forward_path_length);
+
+  const auto reference_path = util::getCenterLinePath(
+    *route_handler, reference_lanes, getEgoPose(), p.backward_path_length, p.forward_path_length,
+    p);
+
+  output.reference_path = std::make_shared<PathWithLaneId>(reference_path);
+  path_reference_ = output.reference_path;
 
   return output;
 }
@@ -260,7 +272,9 @@ BehaviorModuleOutput LaneChangeModule::planWaitingApproval()
 
   updateLaneChangeStatus();
 
+  out.reference_path = previous_module_output_.reference_path;
   const auto candidate = planCandidate();
+  path_reference_ = previous_module_output_.reference_path;
   path_candidate_ = std::make_shared<PathWithLaneId>(candidate.path_candidate);
   updateRTCStatus(candidate);
   waitApproval();
