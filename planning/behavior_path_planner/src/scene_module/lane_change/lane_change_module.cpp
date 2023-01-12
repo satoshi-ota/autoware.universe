@@ -66,8 +66,8 @@ LaneChangeModule::LaneChangeModule(
 void LaneChangeModule::onEntry()
 {
   RCLCPP_DEBUG(getLogger(), "LANE_CHANGE onEntry");
-  current_state_ = BT::NodeStatus::SUCCESS;
   current_lane_change_state_ = LaneChangeStates::Normal;
+  current_state_ = ModuleStatus::IDLE;
   updateLaneChangeStatus();
 }
 
@@ -80,6 +80,10 @@ void LaneChangeModule::onExit()
 
 bool LaneChangeModule::isExecutionRequested() const
 {
+  if (current_state_ == ModuleStatus::SUCCESS) {
+    return false;
+  }
+
   if (current_state_ == ModuleStatus::RUNNING) {
     return true;
   }
