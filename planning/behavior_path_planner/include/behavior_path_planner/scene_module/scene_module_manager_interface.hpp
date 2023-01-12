@@ -73,6 +73,17 @@ public:
     return m->isExecutionRequested();
   }
 
+  bool isExecutionReady(const UUID & uuid) const
+  {
+    const auto m = findSceneModule(uuid);
+
+    if (m == nullptr) {
+      return false;
+    }
+
+    return m->isExecutionReady();
+  }
+
   bool isWaitingApproval(const UUID & uuid) const
   {
     const auto m = findSceneModule(uuid);
@@ -119,7 +130,6 @@ public:
     m->updateState();
 
     m->publishRTCStatus();
-    m->publishReferencePath();
 
     return result;
   }

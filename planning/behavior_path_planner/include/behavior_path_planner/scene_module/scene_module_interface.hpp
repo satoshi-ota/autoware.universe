@@ -102,12 +102,6 @@ public:
     is_waiting_approval_{false},
     current_state_{ModuleStatus::SUCCESS}
   {
-    std::string module_ns;
-    module_ns.resize(name.size());
-    std::transform(name.begin(), name.end(), module_ns.begin(), tolower);
-
-    const auto ns = std::string("~/debug/") + module_ns;
-    pub_ref_path_ = node.create_publisher<PathWithLaneId>(ns + "/reference_path", 20);
   }
 
   virtual ~SceneModuleInterface() = default;
@@ -243,15 +237,6 @@ public:
     previous_module_output_ = previous_module_output;
   }
 
-  void publishReferencePath()
-  {
-    if (previous_module_output_.path == nullptr) {
-      return;
-    }
-    previous_module_output_.path->header = planner_data_->route_handler->getRouteHeader();
-    pub_ref_path_->publish(*previous_module_output_.path);
-  }
-
   std::string name() const { return name_; }
 
   rclcpp::Logger getLogger() const { return logger_; }
@@ -297,7 +282,6 @@ private:
 
 protected:
   rclcpp::Clock::SharedPtr clock_;
-  rclcpp::Publisher<PathWithLaneId>::SharedPtr pub_ref_path_;
   mutable MarkerArray debug_marker_;
 
   std::shared_ptr<RTCInterface> rtc_interface_ptr_;

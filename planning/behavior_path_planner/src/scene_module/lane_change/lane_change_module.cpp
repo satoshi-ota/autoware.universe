@@ -75,7 +75,6 @@ void LaneChangeModule::onExit()
 {
   resetParameters();
   current_state_ = ModuleStatus::SUCCESS;
-  publishReferencePath();
   RCLCPP_DEBUG(getLogger(), "LANE_CHANGE onExit");
 }
 

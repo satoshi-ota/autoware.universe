@@ -159,7 +159,6 @@ void AvoidanceByLCModule::onExit()
 {
   resetParameters();
   current_state_ = ModuleStatus::SUCCESS;
-  publishReferencePath();
   RCLCPP_DEBUG(getLogger(), "LANE_CHANGE onExit");
 }
 
@@ -169,9 +168,13 @@ bool AvoidanceByLCModule::isExecutionRequested() const
   const auto current_lanes = getCurrentLanes(*previous_module_output_.reference_path);
   const auto lane_change_lanes = getLaneChangeLanes(current_lanes, lane_change_lane_length_);
 
+  LaneChangePath selected_path;
+  const auto [found_valid_path, found_safe_path] =
+    getSafePath(lane_change_lanes, check_distance_, selected_path);
+
   if (current_state_ == ModuleStatus::IDLE) {
     // return !avoid_data_.target_objects.empty();
-    return !lane_change_lanes.empty();
+    return !lane_change_lanes.empty() && found_valid_path;
   }
 
   if (avoid_data_.target_objects.empty()) {
@@ -186,9 +189,9 @@ bool AvoidanceByLCModule::isExecutionRequested() const
   // const auto current_lanes = getCurrentLanes(*previous_module_output_.path);
   // const auto lane_change_lanes = getLaneChangeLanes(current_lanes, lane_change_lane_length_);
 
-  LaneChangePath selected_path;
-  const auto [found_valid_path, found_safe_path] =
-    getSafePath(lane_change_lanes, check_distance_, selected_path);
+  // LaneChangePath selected_path;
+  // const auto [found_valid_path, found_safe_path] =
+  //   getSafePath(lane_change_lanes, check_distance_, selected_path);
 
   return found_valid_path;
 }

@@ -190,6 +190,22 @@ private:
     return manager->isExecutionRequested(uuid);
   }
 
+  bool isExecutionReady(const ModuleID & id) const
+  {
+    const auto & manager = id.first;
+    const auto & uuid = id.second;
+
+    if (manager == nullptr) {
+      return false;
+    }
+
+    if (!manager->exist(uuid)) {
+      return false;
+    }
+
+    return manager->isExecutionReady(uuid);
+  }
+
   bool isWaitingApproval(const ModuleID & id) const
   {
     const auto & manager = id.first;
