@@ -121,10 +121,23 @@ boost::optional<ModuleID> PlannerManager::getCandidateModuleID(
 
   std::vector<ModuleID> request_modules{};
 
+  bool lc_running = false;
+  for (const auto & m : approved_modules_) {
+    const auto & manager = m.first;
+    if (manager->getModuleName() == "lane_change") {
+      lc_running = true;
+      break;
+    }
+  }
+
   // pickup execution requested modules
   for (const auto & m : scene_manager_ptrs_) {
     // generate temporary uuid
     const auto uuid = generateUUID();
+
+    if (lc_running && m->getModuleName() == "avoidance_by_lc") {
+      continue;
+    }
 
     /**
      * CASE1: there is no candidate module
