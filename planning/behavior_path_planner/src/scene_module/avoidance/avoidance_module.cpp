@@ -94,8 +94,15 @@ bool AvoidanceModule::isExecutionRequested() const
   // if (current_state_ == ModuleStatus::RUNNING) {
   //   return true;
   // }
+  auto avoid_data = calcAvoidancePlanningData(debug_data_);
 
-  const auto avoid_data = calcAvoidancePlanningData(debug_data_);
+  fillShiftLine(avoid_data, debug_data_);
+
+  if (current_state_ == ModuleStatus::IDLE) {
+    if (avoid_data.unapproved_new_sl.empty()) {
+      return false;
+    }
+  }
 
   if (parameters_->publish_debug_marker) {
     setDebugData(avoid_data, path_shifter_, debug_data_);
@@ -3321,7 +3328,7 @@ void AvoidanceModule::onEntry()
 {
   DEBUG_PRINT("AVOIDANCE onEntry. wait approval!");
   initVariables();
-  current_state_ = ModuleStatus::SUCCESS;
+  current_state_ = ModuleStatus::IDLE;
 }
 
 void AvoidanceModule::onExit()
