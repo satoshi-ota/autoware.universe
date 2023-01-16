@@ -239,6 +239,8 @@ struct AvoidanceParameters
   // minimum road shoulder width. maybe 0.5 [m]
   double minimum_road_shoulder_width;
 
+  double min_executable_distance;
+
   // target velocity matrix
   std::vector<double> target_velocity_matrix;
 
