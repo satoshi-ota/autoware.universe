@@ -647,6 +647,81 @@ std::vector<size_t> filterObjectsByLanelets(
   return indices;
 }
 
+std::pair<std::vector<size_t>, std::vector<size_t>> separateObjectIndicesByLanelets(
+  const PredictedObjects & objects, const lanelet::ConstLanelets & target_lanelets)
+{
+  if (target_lanelets.empty()) {
+    return {};
+  }
+
+  std::vector<size_t> target_indices;
+  std::vector<size_t> other_indices;
+
+  for (size_t i = 0; i < objects.objects.size(); i++) {
+    // create object polygon
+    const auto & obj = objects.objects.at(i);
+    // create object polygon
+    Polygon2d obj_polygon;
+    if (!util::calcObjectPolygon(obj, &obj_polygon)) {
+      RCLCPP_ERROR_STREAM(
+        rclcpp::get_logger("behavior_path_planner").get_child("utilities"),
+        "Failed to calcObjectPolygon...!!!");
+      continue;
+    }
+
+    bool is_filtered_object = false;
+
+    for (const auto & llt : target_lanelets) {
+      // create lanelet polygon
+      const auto polygon2d = llt.polygon2d().basicPolygon();
+      if (polygon2d.empty()) {
+        // no lanelet polygon
+        continue;
+      }
+      Polygon2d lanelet_polygon;
+      for (const auto & lanelet_point : polygon2d) {
+        lanelet_polygon.outer().emplace_back(lanelet_point.x(), lanelet_point.y());
+      }
+      lanelet_polygon.outer().push_back(lanelet_polygon.outer().front());
+      // check the object does not intersect the lanelet
+      if (!boost::geometry::disjoint(lanelet_polygon, obj_polygon)) {
+        target_indices.push_back(i);
+        is_filtered_object = true;
+        break;
+      }
+    }
+
+    if (!is_filtered_object) {
+      other_indices.push_back(i);
+    }
+  }
+
+  return std::make_pair(target_indices, other_indices);
+}
+
+std::pair<PredictedObjects, PredictedObjects> separateObjectsByLanelets(
+  const PredictedObjects & objects, const lanelet::ConstLanelets & target_lanelets)
+{
+  PredictedObjects target_objects;
+  PredictedObjects other_objects;
+
+  const auto [target_indices, other_indices] =
+    separateObjectIndicesByLanelets(objects, target_lanelets);
+
+  target_objects.objects.reserve(target_indices.size());
+  other_objects.objects.reserve(other_indices.size());
+
+  for (const size_t i : target_indices) {
+    target_objects.objects.push_back(objects.objects.at(i));
+  }
+
+  for (const size_t i : other_indices) {
+    other_objects.objects.push_back(objects.objects.at(i));
+  }
+
+  return std::make_pair(target_objects, other_objects);
+}
+
 bool isObjectWithinLanelets(
   const PredictedObject & object, const lanelet::ConstLanelets & target_lanelets)
 {
@@ -2045,6 +2120,25 @@ lanelet::ConstLanelets getExtendedCurrentLanes(
     // TODO(kosuke55) which lane should be added?
     current_lanes.insert(current_lanes.begin(), 0, prev_lanes.front());
   }
+
+  return current_lanes;
+}
+
+lanelet::ConstLanelets calcLaneAroundPose(
+  const std::shared_ptr<RouteHandler> route_handler, const Pose & pose, const double forward_length,
+  const double backward_length)
+{
+  lanelet::ConstLanelet current_lane;
+  if (!route_handler->getClosestLaneletWithinRoute(pose, &current_lane)) {
+    RCLCPP_ERROR(
+      rclcpp::get_logger("behavior_path_planner").get_child("avoidance"),
+      "failed to find closest lanelet within route!!!");
+    return {};  // TODO(Horibe)
+  }
+
+  // For current_lanes with desired length
+  lanelet::ConstLanelets current_lanes =
+    route_handler->getLaneletSequence(current_lane, pose, backward_length, forward_length);
 
   return current_lanes;
 }

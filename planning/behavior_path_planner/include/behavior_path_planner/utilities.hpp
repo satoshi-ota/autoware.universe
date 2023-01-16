@@ -57,6 +57,7 @@
 #include <limits>
 #include <memory>
 #include <string>
+#include <utility>
 #include <vector>
 
 namespace behavior_path_planner
@@ -185,6 +186,22 @@ std::vector<size_t> filterObjectIndicesByLanelets(
   const PredictedObjects & objects, const lanelet::ConstLanelets & target_lanelets,
   std::vector<size_t> & ignore_object_indices);
 
+/**
+ * @brief Separate index of the obstacles into two part based on whether the object is within
+ * lanelet.
+ * @return Indices of objects pair. first objects are in the lanelet, and second others are out of
+ * lanelet.
+ */
+std::pair<std::vector<size_t>, std::vector<size_t>> separateObjectIndicesByLanelets(
+  const PredictedObjects & objects, const lanelet::ConstLanelets & target_lanelets);
+
+/**
+ * @brief Separate the objects into two part based on whether the object is within lanelet.
+ * @return Objects pair. first objects are in the lanelet, and second others are out of lanelet.
+ */
+std::pair<PredictedObjects, PredictedObjects> separateObjectsByLanelets(
+  const PredictedObjects & objects, const lanelet::ConstLanelets & target_lanelets);
+
 PredictedObjects filterObjectsByLanelets(
   const PredictedObjects & objects, const lanelet::ConstLanelets & target_lanelets);
 
@@ -312,6 +329,10 @@ lanelet::ConstLanelets getCurrentLanes(const std::shared_ptr<const PlannerData> 
 
 lanelet::ConstLanelets getExtendedCurrentLanes(
   const std::shared_ptr<const PlannerData> & planner_data);
+
+lanelet::ConstLanelets calcLaneAroundPose(
+  const std::shared_ptr<RouteHandler> route_handler, const geometry_msgs::msg::Pose & pose,
+  const double forward_length, const double backward_length);
 
 bool applyVelocitySmoothing(
   const std::shared_ptr<const PlannerData> & planner_data, const PathWithLaneId & input,
