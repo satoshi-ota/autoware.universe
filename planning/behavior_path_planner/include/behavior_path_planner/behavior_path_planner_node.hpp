@@ -15,14 +15,8 @@
 #ifndef BEHAVIOR_PATH_PLANNER__BEHAVIOR_PATH_PLANNER_NODE_HPP_
 #define BEHAVIOR_PATH_PLANNER__BEHAVIOR_PATH_PLANNER_NODE_HPP_
 
-#include "behavior_path_planner/behavior_tree_manager.hpp"
 #include "behavior_path_planner/data_manager.hpp"
-#include "behavior_path_planner/scene_module/avoidance/avoidance_module.hpp"
-#include "behavior_path_planner/scene_module/lane_change/lane_change_module.hpp"
-#include "behavior_path_planner/scene_module/lane_following/lane_following_module.hpp"
-#include "behavior_path_planner/scene_module/pull_out/pull_out_module.hpp"
-#include "behavior_path_planner/scene_module/pull_over/pull_over_module.hpp"
-#include "behavior_path_planner/scene_module/side_shift/side_shift_module.hpp"
+#include "behavior_path_planner/planner_manager.hpp"
 #include "behavior_path_planner/turn_signal_decider.hpp"
 
 #include <route_handler/route_handler.hpp>
@@ -38,9 +32,9 @@
 #include <nav_msgs/msg/occupancy_grid.hpp>
 #include <nav_msgs/msg/odometry.hpp>
 #include <tier4_planning_msgs/msg/approval.hpp>
-#include <tier4_planning_msgs/msg/avoidance_debug_factor.hpp>
-#include <tier4_planning_msgs/msg/avoidance_debug_msg.hpp>
-#include <tier4_planning_msgs/msg/avoidance_debug_msg_array.hpp>
+// #include <tier4_planning_msgs/msg/avoidance_debug_factor.hpp>
+// #include <tier4_planning_msgs/msg/avoidance_debug_msg.hpp>
+// #include <tier4_planning_msgs/msg/avoidance_debug_msg_array.hpp>
 #include <tier4_planning_msgs/msg/path_change_module.hpp>
 #include <tier4_planning_msgs/msg/path_change_module_array.hpp>
 #include <tier4_planning_msgs/msg/path_change_module_id.hpp>
@@ -51,6 +45,7 @@
 #include <lanelet2_routing/RoutingGraph.h>
 #include <lanelet2_traffic_rules/TrafficRulesFactory.h>
 
+#include <map>
 #include <memory>
 #include <mutex>
 #include <string>
@@ -96,7 +91,6 @@ private:
   rclcpp::Subscription<PathChangeModule>::SharedPtr force_approval_subscriber_;
   rclcpp::Subscription<VelocityLimit>::SharedPtr velocity_limit_subscriber_;
   rclcpp::Publisher<PathWithLaneId>::SharedPtr path_publisher_;
-  rclcpp::Publisher<Path>::SharedPtr path_candidate_publisher_;
   rclcpp::Publisher<PathChangeModuleArray>::SharedPtr force_available_publisher_;
   rclcpp::Publisher<PathChangeModule>::SharedPtr plan_ready_publisher_;
   rclcpp::Publisher<PathChangeModuleArray>::SharedPtr plan_running_publisher_;
@@ -104,8 +98,11 @@ private:
   rclcpp::Publisher<HazardLightsCommand>::SharedPtr hazard_signal_publisher_;
   rclcpp::TimerBase::SharedPtr timer_;
 
+  std::map<std::string, rclcpp::Publisher<Path>::SharedPtr> path_candidate_publishers_;
+  std::map<std::string, rclcpp::Publisher<Path>::SharedPtr> path_reference_publishers_;
+
   std::shared_ptr<PlannerData> planner_data_;
-  std::shared_ptr<BehaviorTreeManager> bt_manager_;
+  std::shared_ptr<PlannerManager> planner_manager_;
   tier4_autoware_utils::SelfPoseListener self_pose_listener_{this};
   Scenario::SharedPtr current_scenario_{nullptr};
 
@@ -116,20 +113,13 @@ private:
   TurnSignalDecider turn_signal_decider_;
 
   std::mutex mutex_pd_;  // mutex for planner_data_
-  std::mutex mutex_bt_;  // mutex for bt_manager_
+  std::mutex mutex_pm_;  // mutex for planner_manager_
 
   // setup
   void waitForData();
 
   // parameters
   BehaviorPathPlannerParameters getCommonParam();
-  BehaviorTreeManagerParam getBehaviorTreeManagerParam();
-  SideShiftParameters getSideShiftParam();
-  AvoidanceParameters getAvoidanceParam();
-  LaneFollowingParameters getLaneFollowingParam();
-  LaneChangeParameters getLaneChangeParam();
-  PullOverParameters getPullOverParam();
-  PullOutParameters getPullOutParam();
 
   // callback
   void onVelocity(const Odometry::ConstSharedPtr msg);
@@ -173,7 +163,23 @@ private:
   bool skipSmoothGoalConnection(
     const std::vector<std::shared_ptr<SceneModuleStatus>> & statuses) const;
 
-  // debug
+  /**
+   * @brief publish path candidate
+   */
+  void publishPathCandidate(
+    const std::vector<std::shared_ptr<SceneModuleManagerInterface>> & scene_modules);
+
+  /**
+   * @brief publish path reference
+   */
+  void publishPathReference(
+    const std::vector<std::shared_ptr<SceneModuleManagerInterface>> & scene_modules);
+
+  /**
+   * @brief convert path with lane id to path for publish path candidate
+   */
+  Path convertToPath(
+    const std::shared_ptr<PathWithLaneId> & path_candidate_ptr, const bool is_ready);
 
 private:
   rclcpp::Publisher<OccupancyGrid>::SharedPtr debug_drivable_area_publisher_;

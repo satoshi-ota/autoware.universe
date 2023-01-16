@@ -8,24 +8,26 @@ find_package(OpenCV REQUIRED)
 
 ament_auto_add_library(behavior_path_planner_node SHARED
   src/behavior_path_planner_node.cpp
-  src/behavior_tree_manager.cpp
+  src/planner_manager.cpp
   src/utilities.cpp
   src/path_utilities.cpp
   src/debug_utilities.cpp
   src/turn_signal_decider.cpp
-  src/scene_module/scene_module_bt_node_interface.cpp
-  src/scene_module/side_shift/side_shift_module.cpp
-  src/scene_module/side_shift/util.cpp
+  # src/scene_module/side_shift/side_shift_module.cpp
+  # src/scene_module/side_shift/util.cpp
   src/scene_module/avoidance/avoidance_module.cpp
   src/scene_module/avoidance/avoidance_utils.cpp
   src/scene_module/avoidance/debug.cpp
-  src/scene_module/lane_following/lane_following_module.cpp
+  src/scene_module/avoidance/manager.cpp
+  src/scene_module/avoidance_by_lc/avoidance_by_lc_module.cpp
+  src/scene_module/avoidance_by_lc/manager.cpp
   src/scene_module/lane_change/lane_change_module.cpp
   src/scene_module/lane_change/util.cpp
-  src/scene_module/pull_over/pull_over_module.cpp
-  src/scene_module/pull_over/util.cpp
-  src/scene_module/pull_out/pull_out_module.cpp
-  src/scene_module/pull_out/util.cpp
+  src/scene_module/lane_change/manager.cpp
+  # src/scene_module/pull_over/pull_over_module.cpp
+  # src/scene_module/pull_over/util.cpp
+  # src/scene_module/pull_out/pull_out_module.cpp
+  # src/scene_module/pull_out/util.cpp
   src/scene_module/utils/geometric_parallel_parking.cpp
   src/scene_module/utils/occupancy_grid_based_collision_detector.cpp
   src/scene_module/utils/path_shifter.cpp
