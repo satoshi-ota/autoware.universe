@@ -17,7 +17,7 @@
         <link rel="next" href="behavior_path_planner_avoidance-design/">
       
       <link rel="icon" href="../../docs/assets/images/autoware-foundation.png">
-      <meta name="generator" content="mkdocs-1.4.2, mkdocs-material-9.0.3">
+      <meta name="generator" content="mkdocs-1.4.2, mkdocs-material-9.0.5">
     
     
       
@@ -25,7 +25,7 @@
       
     
     
-      <link rel="stylesheet" href="../../assets/stylesheets/main.6b71719e.min.css">
+      <link rel="stylesheet" href="../../assets/stylesheets/main.558e4712.min.css">
       
         
         <link rel="stylesheet" href="../../assets/stylesheets/palette.2505c338.min.css">
@@ -171,7 +171,7 @@
           <div class="md-search-result__meta">
             Initializing search
           </div>
-          <ol class="md-search-result__list"></ol>
+          <ol class="md-search-result__list" role="presentation"></ol>
         </div>
       </div>
     </div>
@@ -11722,6 +11722,13 @@
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
+  <a href="#parameters-for-drivable-area-expansion" class="md-nav__link">
+    Parameters for drivable area expansion
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
   <a href="#behavior-tree" class="md-nav__link">
     Behavior Tree
   </a>
@@ -12249,6 +12256,43 @@
 <li>path_change_force [<code>tier4_planning_msgs::PathChangeModule</code>] : (For remote control)</li>
 </ul>
 <h2 id="inner-workings-algorithms">Inner-workings / Algorithms<a class="headerlink" href="#inner-workings-algorithms" title="Permanent link">#</a></h2>
+<h3 id="parameters-for-drivable-area-expansion">Parameters for drivable area expansion<a class="headerlink" href="#parameters-for-drivable-area-expansion" title="Permanent link">#</a></h3>
+<p>Optionally, the drivable area can be expanded by a static distance.
+Expansion parameters are defined for each module of the <code>behavior_path_planner</code> and should be prefixed accordingly (see <code>config/drivable_area_expansion.yaml</code> for an example).</p>
+<table>
+<thead>
+<tr>
+<th align="left">Name</th>
+<th align="left">Unit</th>
+<th align="left">Type</th>
+<th align="left">Description</th>
+<th align="left">Default value</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td align="left">drivable_area_right_bound_offset</td>
+<td align="left">[m]</td>
+<td align="left">double</td>
+<td align="left">expansion distance of the right bound</td>
+<td align="left">0.0</td>
+</tr>
+<tr>
+<td align="left">drivable_area_right_bound_offset</td>
+<td align="left">[m]</td>
+<td align="left">double</td>
+<td align="left">expansion distance of the left bound</td>
+<td align="left">0.0</td>
+</tr>
+<tr>
+<td align="left">drivable_area_types_to_skip</td>
+<td align="left"></td>
+<td align="left">list of strings</td>
+<td align="left">types of linestrings that are not expanded</td>
+<td align="left">[road_border]</td>
+</tr>
+</tbody>
+</table>
 <h3 id="behavior-tree">Behavior Tree<a class="headerlink" href="#behavior-tree" title="Permanent link">#</a></h3>
 <p>In the behavior path planner, the behavior tree mechanism is used to manage which modules are activated in which situations. In general, this "behavior manager" like function is expected to become bigger as more and more modules are added in the future. To improve maintainability, we adopted the behavior tree. The behavior tree has the following advantages: easy visualization, easy configuration management (behaviors can be changed by replacing configuration files), and high scalability compared to the state machine.</p>
 <p>The current behavior tree structure is shown below. Each modules (LaneChange, Avoidance, etc) have <em>Request</em>, <em>Ready</em>, and <em>Plan</em> nodes as a common function.</p>
@@ -13216,7 +13260,7 @@ See also <a href="https://www.sciencedirect.com/science/article/pii/S14746670153
     <script id="__config" type="application/json">{"base": "../..", "features": ["navigation.expand", "navigation.indexes", "navigation.instant", "navigation.sections", "navigation.tabs", "navigation.tabs.sticky", "navigation.top"], "search": "../../assets/javascripts/workers/search.e5c33ebb.min.js", "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": {"provider": "mike"}}</script>
     
     
-      <script src="../../assets/javascripts/bundle.ba449ae6.min.js"></script>
+      <script src="../../assets/javascripts/bundle.51d95adb.min.js"></script>
       
         <script src="https://cdn.jsdelivr.net/npm/mathjax@2/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
       
