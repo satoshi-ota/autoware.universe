@@ -49,7 +49,7 @@ std::vector<LaneChangePath> getLaneChangePaths(
   const RouteHandler & route_handler, const lanelet::ConstLanelets & original_lanelets,
   const lanelet::ConstLanelets & target_lanelets, const Pose & pose, const Twist & twist,
   const BehaviorPathPlannerParameters & common_parameter,
-  const behavior_path_planner::LaneChangeParameters & parameter);
+  const behavior_path_planner::LaneChangeParameters & parameter, const PathWithLaneId & input);
 std::vector<LaneChangePath> selectValidPaths(
   const std::vector<LaneChangePath> & paths, const lanelet::ConstLanelets & current_lanes,
   const lanelet::ConstLanelets & target_lanes,

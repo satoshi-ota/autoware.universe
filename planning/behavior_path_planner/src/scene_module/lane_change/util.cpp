@@ -14,6 +14,7 @@
 
 #include "behavior_path_planner/scene_module/lane_change/util.hpp"
 
+#include "behavior_path_planner/path_utilities.hpp"
 #include "behavior_path_planner/scene_module/utils/path_shifter.hpp"
 
 #include <lanelet2_extension/utility/query.hpp>
@@ -34,6 +35,29 @@ namespace behavior_path_planner
 {
 namespace lane_change_utils
 {
+
+// PathWithLaneId getLaneChangePathPrepareSegment(
+//   const PathWithLaneId & input, const Pose & current_pose, const double & backward_path_length,
+//   const double & prepare_distance, const double & prepare_duration,
+//   const double & minimum_lane_change_velocity)
+// {
+//   if (input.points.empty()) {
+//     return input;
+//   }
+
+//   auto prepare_segment = input;
+//   const size_t current_seg_idx = motion_utils::findFirstNearestSegmentIndexWithSoftConstraints(
+//     prepare_segment.points, current_pose, 3.0, 1.0);
+//   util::clipPathLength(prepare_segment, current_seg_idx, prepare_duration, backward_path_length);
+
+//   prepare_segment.points.back().point.longitudinal_velocity_mps = std::min(
+//     prepare_segment.points.back().point.longitudinal_velocity_mps,
+//     static_cast<float>(
+//       std::max(prepare_distance / prepare_duration, minimum_lane_change_velocity)));
+
+//   return prepare_segment;
+// }
+
 PathWithLaneId combineReferencePath(const PathWithLaneId path1, const PathWithLaneId path2)
 {
   PathWithLaneId path;
@@ -71,7 +95,8 @@ bool isPathInLanelets(
 std::vector<LaneChangePath> getLaneChangePaths(
   const RouteHandler & route_handler, const lanelet::ConstLanelets & original_lanelets,
   const lanelet::ConstLanelets & target_lanelets, const Pose & pose, const Twist & twist,
-  const BehaviorPathPlannerParameters & common_parameter, const LaneChangeParameters & parameter)
+  const BehaviorPathPlannerParameters & common_parameter, const LaneChangeParameters & parameter,
+  const PathWithLaneId & input)
 {
   std::vector<LaneChangePath> candidate_paths;
 
@@ -122,10 +147,13 @@ std::vector<LaneChangePath> getLaneChangePaths(
 
     PathWithLaneId reference_path1;
     {
-      const auto arc_position = lanelet::utils::getArcCoordinates(original_lanelets, pose);
-      const double s_start = arc_position.length - backward_path_length;
-      const double s_end = arc_position.length + straight_distance;
-      reference_path1 = route_handler.getCenterLinePath(original_lanelets, s_start, s_end);
+      // const auto arc_position = lanelet::utils::getArcCoordinates(original_lanelets, pose);
+      // const double s_start = arc_position.length - backward_path_length;
+      // const double s_end = arc_position.length + straight_distance;
+      // reference_path1 = route_handler.getCenterLinePath(original_lanelets, s_start, s_end);
+      reference_path1 = input;
+      util::clipPathLength(
+        reference_path1, pose, lane_change_prepare_duration, backward_path_length);
     }
 
     reference_path1.points.back().point.longitudinal_velocity_mps = std::min(
