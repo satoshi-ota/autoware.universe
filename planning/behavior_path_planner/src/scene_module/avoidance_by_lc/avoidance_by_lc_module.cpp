@@ -638,13 +638,13 @@ ModuleStatus AvoidanceByLCModule::updateState()
     return current_state_;
   }
 
-  // if (!avoidance_data_.target_objects.empty()) {
-  //   const auto o_front = avoidance_data_.target_objects.front();
-  //   if (o_front.longitudinal < parameters_avoidance_->min_executable_distance) {
-  //     current_state_ = ModuleStatus::FAILURE;
-  //     return current_state_;
-  //   }
-  // }
+  if (!avoidance_data_.target_objects.empty() && isWaitingApproval()) {
+    const auto o_front = avoidance_data_.target_objects.front();
+    if (o_front.longitudinal < parameters_avoidance_->min_executable_distance) {
+      current_state_ = ModuleStatus::FAILURE;
+      return current_state_;
+    }
+  }
 
   // if (!isSafe()) {
   //   current_state_ = ModuleStatus::SUCCESS;
@@ -758,6 +758,17 @@ BehaviorModuleOutput AvoidanceByLCModule::planWaitingApproval()
   updateLaneChangeStatus();
   out.path = previous_module_output_.path;
   out.reference_path = previous_module_output_.reference_path;
+  if (!avoidance_data_.target_objects.empty()) {
+    constexpr double extra_margin = 5.0;
+    const auto o_front = avoidance_data_.target_objects.front();
+    const auto forward_length = o_front.longitudinal;
+    const auto lane_change_buffer = planner_data_->parameters.minimum_lane_change_length;
+
+    boost::optional<Pose> p_insert{};
+    insertDecelPoint(
+      getEgoPose().position, forward_length - lane_change_buffer - extra_margin, 0.0, *out.path,
+      p_insert);
+  }
   path_reference_ = out.reference_path;
   const auto candidate = planCandidate();
   path_candidate_ = std::make_shared<PathWithLaneId>(candidate.path_candidate);
