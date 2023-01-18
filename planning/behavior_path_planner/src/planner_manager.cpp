@@ -313,7 +313,8 @@ BehaviorModuleOutput PlannerManager::getReferencePath(
   //   std::max(p.backward_path_length, p.backward_path_length + extra_margin);
 
   const auto current_lanes_with_backward_margin = route_handler->getLaneletSequence(
-    start_lanelet_.get(), pose, backward_length, p.forward_path_length);
+    start_lanelet_.get(), pose, backward_length, std::numeric_limits<double>::max());
+  // start_lanelet_.get(), pose, backward_length, p.forward_path_length);
 
   reference_path = util::getCenterLinePath(
     *route_handler, current_lanes_with_backward_margin, pose, backward_length,
