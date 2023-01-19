@@ -153,23 +153,23 @@ AvoidancePlanningData AvoidanceModule::calcAvoidancePlanningData(DebugData & deb
   data.reference_pose = reference_pose.pose;
 
   // center line path (output of this function must have size > 1)
-  // const auto center_path = calcCenterLinePath(planner_data_, reference_pose);
-  // debug.center_line = center_path;
-  // if (center_path.points.size() < 2) {
-  //   RCLCPP_WARN_THROTTLE(
-  //     getLogger(), *clock_, 5000, "calcCenterLinePath() must return path which size > 1");
-  //   return data;
-  // }
+  const auto center_path = calcCenterLinePath(planner_data_, reference_pose);
+  debug.center_line = center_path;
+  if (center_path.points.size() < 2) {
+    RCLCPP_WARN_THROTTLE(
+      getLogger(), *clock_, 5000, "calcCenterLinePath() must return path which size > 1");
+    return data;
+  }
 
   // reference path
-  // data.reference_path =
-  //   util::resamplePathWithSpline(center_path, parameters_->resample_interval_for_planning);
-  // if (data.reference_path.points.size() < 2) {
-  //   // if the resampled path has only 1 point, use original path.
-  //   data.reference_path = center_path;
-  // }
-  data.reference_path = util::resamplePathWithSpline(
-    *previous_module_output_.path, parameters_->resample_interval_for_planning);
+  data.reference_path =
+    util::resamplePathWithSpline(center_path, parameters_->resample_interval_for_planning);
+  if (data.reference_path.points.size() < 2) {
+    // if the resampled path has only 1 point, use original path.
+    data.reference_path = center_path;
+  }
+  // data.reference_path = util::resamplePathWithSpline(
+  //   *previous_module_output_.path, parameters_->resample_interval_for_planning);
 
   const size_t nearest_segment_index =
     findNearestSegmentIndex(data.reference_path.points, data.reference_pose.position);
@@ -2157,8 +2157,24 @@ PathWithLaneId AvoidanceModule::calcCenterLinePath(
     "p.backward_path_length = %f, longest_dist_to_shift_point = %f, backward_length = %f",
     p.backward_path_length, longest_dist_to_shift_point, backward_length);
 
-  const lanelet::ConstLanelets current_lanes =
-    calcLaneAroundPose(planner_data, pose.pose, backward_length);
+  const auto input_lanes = [this]() {
+    lanelet::ConstLanelets ret{};
+    for (const auto & p : previous_module_output_.reference_path->points) {
+      ret.push_back(planner_data_->route_handler->getLaneletsFromId(p.lane_ids.front()));
+    }
+    return ret;
+  }();
+
+  lanelet::ConstLanelet current_lane;
+  if (!lanelet::utils::query::getClosestLanelet(input_lanes, getEgoPose().pose, &current_lane)) {
+    return centerline_path;
+  }
+
+  const auto current_lanes = route_handler->getLaneletSequence(
+    current_lane, pose.pose, backward_length, p.forward_path_length);
+
+  // const lanelet::ConstLanelets current_lanes =
+  //   calcLaneAroundPose(planner_data, pose.pose, backward_length);
   centerline_path = util::getCenterLinePath(
     *route_handler, current_lanes, pose.pose, backward_length, p.forward_path_length, p);
 
