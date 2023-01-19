@@ -127,6 +127,15 @@ bool AvoidanceByLCModule::isExecutionRequested() const
   const auto [found_valid_path, found_safe_path] =
     getSafePath(lane_change_lanes, check_distance_, selected_path);
 
+  if (!avoidance_data_.target_objects.empty()) {
+    const auto o_front = avoidance_data_.target_objects.front();
+    const auto lc_end_longitudinal = calcSignedArcLength(
+      selected_path.path.points, getEgoPose().position, selected_path.shift_point.end.position);
+    if (o_front.longitudinal < lc_end_longitudinal) {
+      return false;
+    }
+  }
+
   if (current_state_ == ModuleStatus::IDLE) {
     return !lane_change_lanes.empty() && found_valid_path;
   }
@@ -641,6 +650,13 @@ ModuleStatus AvoidanceByLCModule::updateState()
   if (!avoidance_data_.target_objects.empty() && isWaitingApproval()) {
     const auto o_front = avoidance_data_.target_objects.front();
     if (o_front.longitudinal < parameters_avoidance_->min_executable_distance) {
+      current_state_ = ModuleStatus::FAILURE;
+      return current_state_;
+    }
+    const auto lc_end_longitudinal = calcSignedArcLength(
+      status_.lane_change_path.path.points, getEgoPose().position,
+      status_.lane_change_path.shift_point.end.position);
+    if (o_front.longitudinal < lc_end_longitudinal) {
       current_state_ = ModuleStatus::FAILURE;
       return current_state_;
     }
