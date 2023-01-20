@@ -267,6 +267,8 @@ BehaviorPathPlannerParameters BehaviorPathPlannerNode::getCommonParam()
   p.shift_request_time_limit = declare_parameter<double>("shift_request_time_limit");
 
   // ROS parameters
+  p.backward_path_length_output =
+    declare_parameter("backward_path_length_output", 5.0) + backward_offset;
   p.backward_path_length = declare_parameter("backward_path_length", 5.0) + backward_offset;
   p.forward_path_length = declare_parameter("forward_path_length", 100.0);
   p.backward_length_buffer_for_end_of_lane =
@@ -426,6 +428,12 @@ PathWithLaneId::SharedPtr BehaviorPathPlannerNode::getPath(
   auto path = bt_output.path ? bt_output.path : planner_data->prev_output_path;
   path->header = planner_data->route_handler->getRouteHeader();
   path->header.stamp = this->now();
+
+  const auto & forward = planner_data_->parameters.forward_path_length;
+  const auto & backward = planner_data_->parameters.backward_path_length_output;
+  const auto & ego_pose = planner_data_->self_pose->pose;
+  util::clipPathLength(*path, ego_pose, forward, backward);
+
   RCLCPP_DEBUG(
     get_logger(), "BehaviorTreeManager: output is %s.", bt_output.path ? "FOUND" : "NOT FOUND");
   return path;

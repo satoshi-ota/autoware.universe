@@ -37,6 +37,7 @@ struct BehaviorPathPlannerParameters
   bool verbose{false};
 
   double backward_path_length;
+  double backward_path_length_output;
   double forward_path_length;
   double backward_length_buffer_for_end_of_lane;
   double backward_length_buffer_for_end_of_pull_over;

@@ -152,24 +152,24 @@ AvoidancePlanningData AvoidanceModule::calcAvoidancePlanningData(DebugData & deb
   const auto reference_pose = getUnshiftedEgoPose(prev_output_);
   data.reference_pose = reference_pose.pose;
 
-  // center line path (output of this function must have size > 1)
-  const auto center_path = calcCenterLinePath(planner_data_, reference_pose);
-  debug.center_line = center_path;
-  if (center_path.points.size() < 2) {
-    RCLCPP_WARN_THROTTLE(
-      getLogger(), *clock_, 5000, "calcCenterLinePath() must return path which size > 1");
-    return data;
-  }
+  // // center line path (output of this function must have size > 1)
+  // const auto center_path = calcCenterLinePath(planner_data_, reference_pose);
+  // debug.center_line = center_path;
+  // if (center_path.points.size() < 2) {
+  //   RCLCPP_WARN_THROTTLE(
+  //     getLogger(), *clock_, 5000, "calcCenterLinePath() must return path which size > 1");
+  //   return data;
+  // }
 
-  // reference path
-  data.reference_path =
-    util::resamplePathWithSpline(center_path, parameters_->resample_interval_for_planning);
-  if (data.reference_path.points.size() < 2) {
-    // if the resampled path has only 1 point, use original path.
-    data.reference_path = center_path;
-  }
-  // data.reference_path = util::resamplePathWithSpline(
-  //   *previous_module_output_.path, parameters_->resample_interval_for_planning);
+  // // reference path
+  // data.reference_path =
+  //   util::resamplePathWithSpline(center_path, parameters_->resample_interval_for_planning);
+  // if (data.reference_path.points.size() < 2) {
+  //   // if the resampled path has only 1 point, use original path.
+  //   data.reference_path = center_path;
+  // }
+  data.reference_path = util::resamplePathWithSpline(
+    *previous_module_output_.path, parameters_->resample_interval_for_planning);
 
   const size_t nearest_segment_index =
     findNearestSegmentIndex(data.reference_path.points, data.reference_pose.position);
@@ -3066,6 +3066,7 @@ BehaviorModuleOutput AvoidanceModule::planWaitingApproval()
     removeCandidateRTCStatus();
   }
   path_candidate_ = std::make_shared<PathWithLaneId>(candidate.path_candidate);
+  path_reference_ = out.reference_path;
   return out;
 }
 
