@@ -774,6 +774,7 @@ BehaviorModuleOutput AvoidanceByLCModule::planWaitingApproval()
   updateLaneChangeStatus();
   out.path = previous_module_output_.path;
   out.reference_path = previous_module_output_.reference_path;
+  out.turn_signal_info = previous_module_output_.turn_signal_info;
   if (!avoidance_data_.target_objects.empty()) {
     constexpr double extra_margin = 5.0;
     const auto o_front = avoidance_data_.target_objects.front();

@@ -250,6 +250,7 @@ BehaviorModuleOutput LaneChangeModule::planWaitingApproval()
   updateLaneChangeStatus();
   out.path = std::make_shared<PathWithLaneId>(*previous_module_output_.path);
   out.reference_path = previous_module_output_.reference_path;
+  out.turn_signal_info = previous_module_output_.turn_signal_info;
   const auto candidate = planCandidate();
   path_reference_ = previous_module_output_.reference_path;
   path_candidate_ = std::make_shared<PathWithLaneId>(candidate.path_candidate);

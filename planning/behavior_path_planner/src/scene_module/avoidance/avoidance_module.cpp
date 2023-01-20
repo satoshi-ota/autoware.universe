@@ -3055,6 +3055,7 @@ BehaviorModuleOutput AvoidanceModule::planWaitingApproval()
 {
   // we can execute the plan() since it handles the approval appropriately.
   BehaviorModuleOutput out = plan();
+  out.turn_signal_info = previous_module_output_.turn_signal_info;
   const auto candidate = planCandidate();
   constexpr double threshold_to_update_status = -1.0e-03;
   if (candidate.distance_to_path_change > threshold_to_update_status) {
