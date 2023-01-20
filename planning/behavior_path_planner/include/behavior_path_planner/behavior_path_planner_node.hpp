@@ -27,6 +27,7 @@
 #include <autoware_auto_planning_msgs/msg/had_map_route.hpp>
 #include <autoware_auto_planning_msgs/msg/path.hpp>
 #include <autoware_auto_planning_msgs/msg/path_with_lane_id.hpp>
+#include <autoware_auto_system_msgs/msg/autoware_state.hpp>
 #include <autoware_auto_vehicle_msgs/msg/hazard_lights_command.hpp>
 #include <autoware_auto_vehicle_msgs/msg/turn_indicators_command.hpp>
 #include <nav_msgs/msg/occupancy_grid.hpp>
@@ -60,6 +61,7 @@ using autoware_auto_perception_msgs::msg::PredictedObjects;
 using autoware_auto_planning_msgs::msg::HADMapRoute;
 using autoware_auto_planning_msgs::msg::Path;
 using autoware_auto_planning_msgs::msg::PathWithLaneId;
+using autoware_auto_system_msgs::msg::AutowareState;
 using autoware_auto_vehicle_msgs::msg::HazardLightsCommand;
 using autoware_auto_vehicle_msgs::msg::TurnIndicatorsCommand;
 using geometry_msgs::msg::TwistStamped;
@@ -93,6 +95,7 @@ private:
   rclcpp::Subscription<PathChangeModule>::SharedPtr force_approval_subscriber_;
   rclcpp::Subscription<VelocityLimit>::SharedPtr velocity_limit_subscriber_;
   rclcpp::Subscription<LateralOffset>::SharedPtr lateral_offset_subscriber_;
+  rclcpp::Subscription<AutowareState>::SharedPtr autoware_state_subscriber_;
   rclcpp::Publisher<PathWithLaneId>::SharedPtr path_publisher_;
   rclcpp::Publisher<PathChangeModuleArray>::SharedPtr force_available_publisher_;
   rclcpp::Publisher<PathChangeModule>::SharedPtr plan_ready_publisher_;
@@ -135,6 +138,7 @@ private:
   void onMap(const HADMapBin::ConstSharedPtr map_msg);
   void onRoute(const HADMapRoute::ConstSharedPtr route_msg);
   void onLateralOffset(const LateralOffset::ConstSharedPtr msg);
+  void onState(const AutowareState::ConstSharedPtr msg);
 
   /**
    * @brief Modify the path points near the goal to smoothly connect the lanelet and the goal point.

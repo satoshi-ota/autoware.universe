@@ -520,6 +520,7 @@ void BehaviorPathPlannerNode::onRoute(const HADMapRoute::ConstSharedPtr msg)
     planner_manager_->reset();
   }
 }
+void BehaviorPathPlannerNode::onState(const AutowareState::ConstSharedPtr msg)
 
 void BehaviorPathPlannerNode::onLateralOffset(const LateralOffset::ConstSharedPtr msg)
 {
@@ -558,30 +559,6 @@ bool BehaviorPathPlannerNode::isReadyForNextRequest(
   }
 
   return false;
-}
-
-void BehaviorPathPlannerNode::onState(const AutowareState::ConstSharedPtr msg)
-{
-  std::lock_guard<std::mutex> lock_pd(mutex_pd_);
-  std::lock_guard<std::mutex> lock_pm(mutex_pm_);
-
-  if (!planner_data_->state) {
-    planner_data_->state = msg;
-    return;
-  }
-
-  if (planner_data_->state->state != AutowareState::DRIVING) {
-    planner_data_->state = msg;
-    return;
-  }
-
-  if (msg->state == AutowareState::DRIVING) {
-    planner_data_->state = msg;
-    return;
-  }
-
-  planner_manager_->reset();
-  planner_data_->state = msg;
 }
 
 void BehaviorPathPlannerNode::clipPathLength(PathWithLaneId & path) const
