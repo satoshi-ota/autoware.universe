@@ -49,7 +49,7 @@ struct SideShiftParameters
   double drivable_area_resolution;
   double drivable_area_width;
   double drivable_area_height;
-  double shift_request_time_limit;
+  // double shift_request_time_limit;
 };
 
 class SideShiftModule : public SceneModuleInterface
@@ -60,9 +60,7 @@ public:
 
   bool isExecutionRequested() const override;
   bool isExecutionReady() const override;
-  bool isReadyForNextRequest(
-    const double & min_request_time_sec, bool override_requests = false) const noexcept;
-  BT::NodeStatus updateState() override;
+  ModuleStatus updateState() override;
   void updateData() override;
   BehaviorModuleOutput plan() override;
   BehaviorModuleOutput planWaitingApproval() override;
@@ -70,14 +68,12 @@ public:
   void onEntry() override;
   void onExit() override;
 
+  void updateModuleParams(const SideShiftParameters & parameters) { parameters_ = parameters; }
+
   void setParameters(const SideShiftParameters & parameters);
 
 private:
-  rclcpp::Subscription<LateralOffset>::SharedPtr lateral_offset_subscriber_;
-
   void initVariables();
-
-  void onLateralOffset(const LateralOffset::ConstSharedPtr lateral_offset_msg);
 
   // non-const methods
   void adjustDrivableArea(ShiftedPath * path) const;
@@ -97,9 +93,6 @@ private:
   lanelet::ConstLanelets current_lanelets_;
   SideShiftParameters parameters_;
 
-  // Current lateral offset to shift the reference path.
-  double lateral_offset_{0.0};
-
   // Flag to check lateral offset change is requested
   bool lateral_offset_change_request_{false};
 
@@ -116,8 +109,6 @@ private:
   inline PoseStamped getEgoPose() const { return *(planner_data_->self_pose); }
   PathWithLaneId calcCenterLinePath(
     const std::shared_ptr<const PlannerData> & planner_data, const PoseStamped & pose) const;
-
-  mutable rclcpp::Time last_requested_shift_change_time_{clock_->now()};
 };
 
 }  // namespace behavior_path_planner

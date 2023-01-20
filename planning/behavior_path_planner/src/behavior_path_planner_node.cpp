@@ -19,6 +19,7 @@
 #include "behavior_path_planner/scene_module/avoidance/manager.hpp"
 #include "behavior_path_planner/scene_module/avoidance_by_lc/manager.hpp"
 #include "behavior_path_planner/scene_module/lane_change/manager.hpp"
+#include "behavior_path_planner/scene_module/side_shift/manager.hpp"
 // #include "behavior_path_planner/scene_module/pull_out/manager.hpp"
 // #include "behavior_path_planner/scene_module/pull_over/manager.hpp"
 #include "behavior_path_planner/utilities.hpp"
@@ -112,6 +113,8 @@ BehaviorPathPlannerNode::BehaviorPathPlannerNode(const rclcpp::NodeOptions & nod
   velocity_limit_subscriber_ = this->create_subscription<VelocityLimit>(
     "~/input/external_velocity_limit_mps", rclcpp::QoS{1}.transient_local(),
     std::bind(&BehaviorPathPlannerNode::onVelocityLimit, this, _1));
+  lateral_offset_subscriber_ = this->create_subscription<LateralOffset>(
+    "~/input/lateral_offset", 1, std::bind(&BehaviorPathPlannerNode::onLateralOffset, this, _1));
 
   // route_handler
   auto qos_transient_local = rclcpp::QoS{1}.transient_local();
@@ -172,6 +175,16 @@ BehaviorPathPlannerNode::BehaviorPathPlannerNode(const rclcpp::NodeOptions & nod
         "lane_change", create_publisher<Path>(path_candidate_name_space + "lane_change", 1));
       path_reference_publishers_.emplace(
         "lane_change", create_publisher<Path>(path_reference_name_space + "lane_change", 1));
+    }
+
+    if (p.launch_side_shift) {
+      auto manager =
+        std::make_shared<SideShiftModuleManager>(this, "side_shift", 1, p.priority_side_shift);
+      planner_manager_->registerSceneModuleManager(manager);
+      path_candidate_publishers_.emplace(
+        "side_shift", create_publisher<Path>(path_candidate_name_space + "side_shift", 1));
+      path_reference_publishers_.emplace(
+        "side_shift", create_publisher<Path>(path_reference_name_space + "side_shift", 1));
     }
 
     // if (p.launch_pull_out) {
@@ -238,16 +251,20 @@ BehaviorPathPlannerParameters BehaviorPathPlannerNode::getCommonParam()
   p.launch_avoidance_by_lc = declare_parameter<bool>("launch_avoidance_by_lc");
   p.launch_avoidance = declare_parameter<bool>("launch_avoidance");
   p.launch_lane_change = declare_parameter<bool>("launch_lane_change");
+  p.launch_side_shift = declare_parameter<bool>("launch_side_shift");
 
   p.priority_pull_over = declare_parameter<int>("priority_pull_over");
   p.priority_avoidance_by_lc = declare_parameter<int>("priority_avoidance_by_lc");
   p.priority_avoidance = declare_parameter<int>("priority_avoidance");
   p.priority_lane_change = declare_parameter<int>("priority_lane_change");
   p.priority_pull_out = declare_parameter<int>("priority_pull_out");
+  p.priority_side_shift = declare_parameter<int>("priority_side_shift");
 
   p.enable_simultaneous_execution_of_multiple_modules =
     declare_parameter<bool>("enable_simultaneous_execution_of_multiple_modules");
   p.verbose = declare_parameter<bool>("verbose");
+
+  p.shift_request_time_limit = declare_parameter<double>("shift_request_time_limit");
 
   // ROS parameters
   p.backward_path_length = declare_parameter("backward_path_length", 5.0) + backward_offset;
@@ -492,6 +509,45 @@ void BehaviorPathPlannerNode::onRoute(const HADMapRoute::ConstSharedPtr msg)
     RCLCPP_DEBUG(get_logger(), "new route is received. reset behavior tree.");
     planner_manager_->reset();
   }
+}
+
+void BehaviorPathPlannerNode::onLateralOffset(const LateralOffset::ConstSharedPtr msg)
+{
+  std::lock_guard<std::mutex> lock(mutex_pd_);
+
+  if (!planner_data_->lateral_offset) {
+    planner_data_->lateral_offset = msg;
+    return;
+  }
+
+  const auto & new_offset = msg->lateral_offset;
+  const auto & old_offset = planner_data_->lateral_offset->lateral_offset;
+
+  // offset is not changed.
+  if (std::abs(old_offset - new_offset) < 1e-4) {
+    return;
+  }
+
+  const auto latest_update_time = planner_data_->lateral_offset->stamp;
+
+  // new offset is requested.
+  if (isReadyForNextRequest(
+        latest_update_time, planner_data_->parameters.shift_request_time_limit)) {
+    planner_data_->lateral_offset = msg;
+  }
+}
+
+bool BehaviorPathPlannerNode::isReadyForNextRequest(
+  const rclcpp::Time & latest_update_time, const double & min_request_time_sec,
+  bool override_requests) const
+{
+  const auto interval_from_last_request_sec = this->now() - latest_update_time;
+
+  if (interval_from_last_request_sec.seconds() >= min_request_time_sec && !override_requests) {
+    return true;
+  }
+
+  return false;
 }
 
 void BehaviorPathPlannerNode::clipPathLength(PathWithLaneId & path) const

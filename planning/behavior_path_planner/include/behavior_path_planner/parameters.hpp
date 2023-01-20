@@ -31,6 +31,7 @@ struct BehaviorPathPlannerParameters
   size_t priority_lane_change;
   size_t priority_pull_out;
   size_t priority_pull_over;
+  size_t priority_side_shift;
 
   bool enable_simultaneous_execution_of_multiple_modules{false};
   bool verbose{false};
@@ -54,6 +55,8 @@ struct BehaviorPathPlannerParameters
   double turn_light_on_threshold_dis_lat;
   double turn_light_on_threshold_dis_long;
   double turn_light_on_threshold_time;
+
+  double shift_request_time_limit;
 
   // vehicle info
   vehicle_info_util::VehicleInfo vehicle_info;

@@ -13,8 +13,9 @@ ament_auto_add_library(behavior_path_planner_node SHARED
   src/path_utilities.cpp
   src/debug_utilities.cpp
   src/turn_signal_decider.cpp
-  # src/scene_module/side_shift/side_shift_module.cpp
-  # src/scene_module/side_shift/util.cpp
+  src/scene_module/side_shift/side_shift_module.cpp
+  src/scene_module/side_shift/util.cpp
+  src/scene_module/side_shift/manager.cpp
   src/scene_module/avoidance/avoidance_module.cpp
   src/scene_module/avoidance/avoidance_utils.cpp
   src/scene_module/avoidance/debug.cpp

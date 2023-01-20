@@ -35,6 +35,7 @@
 // #include <tier4_planning_msgs/msg/avoidance_debug_factor.hpp>
 // #include <tier4_planning_msgs/msg/avoidance_debug_msg.hpp>
 // #include <tier4_planning_msgs/msg/avoidance_debug_msg_array.hpp>
+#include <tier4_planning_msgs/msg/lateral_offset.hpp>
 #include <tier4_planning_msgs/msg/path_change_module.hpp>
 #include <tier4_planning_msgs/msg/path_change_module_array.hpp>
 #include <tier4_planning_msgs/msg/path_change_module_id.hpp>
@@ -68,6 +69,7 @@ using route_handler::RouteHandler;
 using tier4_planning_msgs::msg::AvoidanceDebugFactor;
 using tier4_planning_msgs::msg::AvoidanceDebugMsg;
 using tier4_planning_msgs::msg::AvoidanceDebugMsgArray;
+using tier4_planning_msgs::msg::LateralOffset;
 using tier4_planning_msgs::msg::PathChangeModule;
 using tier4_planning_msgs::msg::PathChangeModuleArray;
 using tier4_planning_msgs::msg::Scenario;
@@ -90,6 +92,7 @@ private:
   rclcpp::Subscription<ApprovalMsg>::SharedPtr external_approval_subscriber_;
   rclcpp::Subscription<PathChangeModule>::SharedPtr force_approval_subscriber_;
   rclcpp::Subscription<VelocityLimit>::SharedPtr velocity_limit_subscriber_;
+  rclcpp::Subscription<LateralOffset>::SharedPtr lateral_offset_subscriber_;
   rclcpp::Publisher<PathWithLaneId>::SharedPtr path_publisher_;
   rclcpp::Publisher<PathChangeModuleArray>::SharedPtr force_available_publisher_;
   rclcpp::Publisher<PathChangeModule>::SharedPtr plan_ready_publisher_;
@@ -131,6 +134,7 @@ private:
   void onForceApproval(const PathChangeModule::ConstSharedPtr msg);
   void onMap(const HADMapBin::ConstSharedPtr map_msg);
   void onRoute(const HADMapRoute::ConstSharedPtr route_msg);
+  void onLateralOffset(const LateralOffset::ConstSharedPtr msg);
 
   /**
    * @brief Modify the path points near the goal to smoothly connect the lanelet and the goal point.
@@ -180,6 +184,10 @@ private:
    */
   Path convertToPath(
     const std::shared_ptr<PathWithLaneId> & path_candidate_ptr, const bool is_ready);
+
+  bool isReadyForNextRequest(
+    const rclcpp::Time & latest_update_time, const double & min_request_time_sec,
+    bool override_requests = false) const;
 
 private:
   rclcpp::Publisher<OccupancyGrid>::SharedPtr debug_drivable_area_publisher_;

@@ -27,27 +27,28 @@
 #include <memory>
 #include <string>
 
-namespace
-{
-lanelet::ConstLanelets calcLaneAroundPose(
-  const std::shared_ptr<const behavior_path_planner::PlannerData> & planner_data,
-  const geometry_msgs::msg::Pose & pose, const double backward_length)
-{
-  const auto & p = planner_data->parameters;
-  const auto & route_handler = planner_data->route_handler;
+// namespace
+// {
+// lanelet::ConstLanelets calcLaneAroundPose(
+//   const std::shared_ptr<const behavior_path_planner::PlannerData> & planner_data,
+//   const geometry_msgs::msg::Pose & pose, const double backward_length)
+// {
+//   const auto & p = planner_data->parameters;
+//   const auto & route_handler = planner_data->route_handler;
 
-  lanelet::ConstLanelet current_lane;
-  if (!route_handler->getClosestLaneletWithinRoute(pose, &current_lane)) {
-    return {};  // TODO(Horibe)
-  }
+//   lanelet::ConstLanelet current_lane;
+//   if (!route_handler->getClosestLaneletWithinRoute(pose, &current_lane)) {
+//     return {};  // TODO(Horibe)
+//   }
 
-  // For current_lanes with desired length
-  lanelet::ConstLanelets current_lanes =
-    route_handler->getLaneletSequence(current_lane, pose, backward_length, p.forward_path_length);
+//   // For current_lanes with desired length
+//   lanelet::ConstLanelets current_lanes =
+//     route_handler->getLaneletSequence(current_lane, pose, backward_length,
+//     p.forward_path_length);
 
-  return current_lanes;
-}
-}  // namespace
+//   return current_lanes;
+// }
+// }  // namespace
 
 namespace behavior_path_planner
 {
@@ -58,10 +59,12 @@ SideShiftModule::SideShiftModule(
   const std::string & name, rclcpp::Node & node, const SideShiftParameters & parameters)
 : SceneModuleInterface{name, node}, parameters_{parameters}
 {
-  using std::placeholders::_1;
+  // using std::placeholders::_1;
 
-  lateral_offset_subscriber_ = node.create_subscription<LateralOffset>(
-    "~/input/lateral_offset", 1, std::bind(&SideShiftModule::onLateralOffset, this, _1));
+  // rtc_interface_ptr_ = rtc_interface;
+
+  // lateral_offset_subscriber_ = node.create_subscription<LateralOffset>(
+  //   "~/input/lateral_offset", 1, std::bind(&SideShiftModule::onLateralOffset, this, _1));
 
   // If lateral offset is subscribed, it approves side shift module automatically
   clearWaitingApproval();
@@ -71,7 +74,7 @@ void SideShiftModule::initVariables()
 {
   reference_path_ = std::make_shared<PathWithLaneId>();
   start_pose_reset_request_ = false;
-  lateral_offset_ = 0.0;
+  // lateral_offset_ = 0.0;
   prev_output_ = ShiftedPath{};
   prev_shiftpoint_ = ShiftPoint{};
   path_shifter_ = PathShifter{};
@@ -81,6 +84,8 @@ void SideShiftModule::onEntry()
 {
   // write me... (Don't initialize variables, otherwise lateral offset gets zero on entry.)
   start_pose_reset_request_ = false;
+  lateral_offset_change_request_ = true;
+  current_state_ = ModuleStatus::IDLE;
 }
 
 void SideShiftModule::onExit()
@@ -88,7 +93,7 @@ void SideShiftModule::onExit()
   // write me...
   initVariables();
 
-  current_state_ = BT::NodeStatus::IDLE;
+  current_state_ = ModuleStatus::IDLE;
 }
 
 void SideShiftModule::setParameters(const SideShiftParameters & parameters)
@@ -98,13 +103,20 @@ void SideShiftModule::setParameters(const SideShiftParameters & parameters)
 
 bool SideShiftModule::isExecutionRequested() const
 {
-  if (current_state_ == BT::NodeStatus::RUNNING) {
+  if (current_state_ == ModuleStatus::RUNNING) {
     return true;
+  }
+
+  const auto lateral_offset = planner_data_->lateral_offset;
+
+  if (!lateral_offset) {
+    return false;
   }
 
   // If the desired offset has a non-zero value, return true as we want to execute the plan.
 
-  const bool has_request = !isAlmostZero(lateral_offset_);
+  const bool has_request = !isAlmostZero(lateral_offset->lateral_offset);
+  // const bool has_request = !isAlmostZero(lateral_offset_);
   RCLCPP_DEBUG_STREAM(
     getLogger(), "ESS::isExecutionRequested() : " << std::boolalpha << has_request);
 
@@ -116,32 +128,20 @@ bool SideShiftModule::isExecutionReady() const
   return true;  // TODO(Horibe) is it ok to say "always safe"?
 }
 
-bool SideShiftModule::isReadyForNextRequest(
-  const double & min_request_time_sec, bool override_requests) const noexcept
-{
-  rclcpp::Time current_time = clock_->now();
-  const auto interval_from_last_request_sec = current_time - last_requested_shift_change_time_;
-
-  if (interval_from_last_request_sec.seconds() >= min_request_time_sec && !override_requests) {
-    last_requested_shift_change_time_ = current_time;
-    return true;
-  }
-
-  return false;
-}
-
-BT::NodeStatus SideShiftModule::updateState()
+ModuleStatus SideShiftModule::updateState()
 {
   // Never return the FAILURE. When the desired offset is zero and the vehicle is in the original
   // drivable area,this module can stop the computation and return SUCCESS.
 
-  const auto isOffsetDiffAlmostZero = [this]() noexcept {
+  const auto no_offset_diff = [this]() noexcept {
     const auto last_sp = path_shifter_.getLastShiftPoint();
     if (last_sp) {
       const auto length = std::fabs(last_sp.get().length);
-      const auto lateral_offset = std::fabs(lateral_offset_);
+      const auto lateral_offset = std::fabs(getClosestShiftLength());
+      // const auto lateral_offset = std::fabs(lateral_offset_);
       const auto offset_diff = lateral_offset - length;
-      if (!isAlmostZero(offset_diff)) {
+      if (std::abs(offset_diff) > 0.1) {
+        // if (!isAlmostZero(offset_diff)) {
         lateral_offset_change_request_ = true;
         return false;
       }
@@ -149,8 +149,8 @@ BT::NodeStatus SideShiftModule::updateState()
     return true;
   }();
 
-  const bool no_offset_diff = isOffsetDiffAlmostZero;
-  const bool no_request = isAlmostZero(lateral_offset_);
+  const bool no_request = isAlmostZero(planner_data_->lateral_offset->lateral_offset);
+  // const bool no_request = isAlmostZero(lateral_offset_);
 
   const auto no_shifted_plan = [&]() {
     if (prev_output_.shift_length.empty()) {
@@ -163,14 +163,14 @@ BT::NodeStatus SideShiftModule::updateState()
     }
   }();
 
-  RCLCPP_DEBUG(
-    getLogger(), "ESS::updateState() : no_request = %d, no_shifted_plan = %d", no_request,
-    no_shifted_plan);
+  // RCLCPP_DEBUG(
+  //   getLogger(), "ESS::updateState() : no_request = %d, no_shifted_plan = %d", no_request,
+  //   no_shifted_plan);
 
   if (no_request && no_shifted_plan && no_offset_diff) {
-    current_state_ = BT::NodeStatus::SUCCESS;
+    current_state_ = ModuleStatus::SUCCESS;
   } else {
-    current_state_ = BT::NodeStatus::RUNNING;
+    current_state_ = ModuleStatus::RUNNING;
   }
 
   return current_state_;
@@ -296,6 +296,9 @@ bool SideShiftModule::addShiftPoint()
 
 BehaviorModuleOutput SideShiftModule::plan()
 {
+  resetPathCandidate();
+  resetPathReference();
+
   // Update shift point
   if (lateral_offset_change_request_) {
     addShiftPoint();
@@ -314,6 +317,7 @@ BehaviorModuleOutput SideShiftModule::plan()
 
   BehaviorModuleOutput output;
   output.path = std::make_shared<PathWithLaneId>(shifted_path.path);
+  output.reference_path = previous_module_output_.reference_path;
 
   prev_output_ = shifted_path;
 
@@ -338,6 +342,9 @@ CandidateOutput SideShiftModule::planCandidate() const
 
 BehaviorModuleOutput SideShiftModule::planWaitingApproval()
 {
+  resetPathCandidate();
+  resetPathReference();
+
   // Refine path
   ShiftedPath shifted_path;
   path_shifter_.generate(&shifted_path);
@@ -349,38 +356,16 @@ BehaviorModuleOutput SideShiftModule::planWaitingApproval()
 
   BehaviorModuleOutput output;
   output.path = std::make_shared<PathWithLaneId>(shifted_path.path);
-  output.path_candidate = std::make_shared<PathWithLaneId>(planCandidate().path_candidate);
+  output.reference_path = previous_module_output_.reference_path;
+  // output.path_candidate = std::make_shared<PathWithLaneId>(planCandidate().path_candidate);
+  path_candidate_ = std::make_shared<PathWithLaneId>(planCandidate().path_candidate);
+  path_reference_ = previous_module_output_.reference_path;
 
   prev_output_ = shifted_path;
 
   waitApproval();
 
   return output;
-}
-
-void SideShiftModule::onLateralOffset(const LateralOffset::ConstSharedPtr lateral_offset_msg)
-{
-  const double new_lateral_offset = lateral_offset_msg->lateral_offset;
-
-  RCLCPP_DEBUG(
-    getLogger(), "onLateralOffset start : lateral offset current = %f, new = &%f", lateral_offset_,
-    new_lateral_offset);
-
-  // offset is not changed.
-  if (std::abs(lateral_offset_ - new_lateral_offset) < 1e-4) {
-    return;
-  }
-
-  if (parameters_.shift_request_time_limit < parameters_.time_to_start_shifting) {
-    RCLCPP_DEBUG(
-      getLogger(), "Shift request time might be too low. Generated trajectory might be wavy");
-  }
-  // new offset is requested.
-  if (isReadyForNextRequest(parameters_.shift_request_time_limit)) {
-    lateral_offset_change_request_ = true;
-
-    lateral_offset_ = new_lateral_offset;
-  }
 }
 
 ShiftPoint SideShiftModule::calcShiftPoint() const
@@ -393,7 +378,9 @@ ShiftPoint SideShiftModule::calcShiftPoint() const
     std::max(p.min_distance_to_start_shifting, ego_speed * p.time_to_start_shifting);
 
   const double dist_to_end = [&]() {
-    const double shift_length = lateral_offset_ - getClosestShiftLength();
+    const double shift_length =
+      planner_data_->lateral_offset->lateral_offset - getClosestShiftLength();
+    // const double shift_length = lateral_offset_ - getClosestShiftLength();
     const double jerk_shifting_distance = path_shifter_.calcLongitudinalDistFromJerk(
       shift_length, p.shifting_lateral_jerk, std::max(ego_speed, p.min_shifting_speed));
     const double shifting_distance = std::max(jerk_shifting_distance, p.min_shifting_distance);
@@ -405,7 +392,8 @@ ShiftPoint SideShiftModule::calcShiftPoint() const
   }();
 
   ShiftPoint shift_point;
-  shift_point.length = lateral_offset_;
+  shift_point.length = planner_data_->lateral_offset->lateral_offset;
+  // shift_point.length = lateral_offset_;
   shift_point.start_idx = util::getIdxByArclength(*reference_path_, ego_pose, dist_to_start);
   shift_point.start = reference_path_->points.at(shift_point.start_idx).point.pose;
   shift_point.end_idx = util::getIdxByArclength(*reference_path_, ego_pose, dist_to_end);
@@ -490,10 +478,29 @@ PathWithLaneId SideShiftModule::calcCenterLinePath(
     "p.backward_path_length = %f, longest_dist_to_shift_point = %f, backward_length = %f",
     p.backward_path_length, longest_dist_to_shift_point, backward_length);
 
-  const lanelet::ConstLanelets current_lanes =
-    calcLaneAroundPose(planner_data, pose.pose, backward_length);
+  const auto input_lanes = [this]() {
+    lanelet::ConstLanelets ret{};
+    for (const auto & p : previous_module_output_.path->points) {
+      ret.push_back(planner_data_->route_handler->getLaneletsFromId(p.lane_ids.front()));
+    }
+    return ret;
+  }();
+
+  lanelet::ConstLanelet current_lane;
+  if (!lanelet::utils::query::getClosestLanelet(input_lanes, getEgoPose().pose, &current_lane)) {
+    return centerline_path;
+  }
+
+  const auto current_lanes = route_handler->getLaneletSequence(
+    current_lane, pose.pose, backward_length, p.forward_path_length);
+
   centerline_path = util::getCenterLinePath(
     *route_handler, current_lanes, pose.pose, backward_length, p.forward_path_length, p);
+
+  // const lanelet::ConstLanelets current_lanes =
+  //   calcLaneAroundPose(planner_data, pose.pose, backward_length);
+  // centerline_path = util::getCenterLinePath(
+  //   *route_handler, current_lanes, pose.pose, backward_length, p.forward_path_length, p);
 
   centerline_path.header = route_handler->getRouteHeader();
 

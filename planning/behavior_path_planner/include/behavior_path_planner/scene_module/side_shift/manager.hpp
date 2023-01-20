@@ -1,0 +1,55 @@
+// Copyright 2022 TIER IV, Inc.
+//
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//
+//     http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+// limitations under the License.
+
+#ifndef BEHAVIOR_PATH_PLANNER__SCENE_MODULE__SIDE_SHIFT__MANAGER_HPP_
+#define BEHAVIOR_PATH_PLANNER__SCENE_MODULE__SIDE_SHIFT__MANAGER_HPP_
+
+#include "behavior_path_planner/scene_module/scene_module_manager_interface.hpp"
+#include "behavior_path_planner/scene_module/side_shift/side_shift_module.hpp"
+
+#include <rclcpp/rclcpp.hpp>
+
+#include <memory>
+#include <string>
+#include <unordered_map>
+#include <vector>
+
+namespace behavior_path_planner
+{
+
+class SideShiftModuleManager : public SceneModuleManagerInterface
+{
+public:
+  SideShiftModuleManager(
+    rclcpp::Node * node, const std::string & name, const size_t max_module_num,
+    const size_t priority);
+
+  std::shared_ptr<SceneModuleInterface> createNewSceneModuleInstance() override
+  {
+    return std::make_shared<SideShiftModule>(name_, *node_, module_params_);
+  }
+
+  void updateModuleParams(const std::vector<rclcpp::Parameter> & parameters) override;
+
+private:
+  void getModuleParams(rclcpp::Node * node) override;
+
+  SideShiftParameters module_params_;
+
+  std::unordered_map<std::string, std::shared_ptr<SideShiftModule>> registered_modules_;
+};
+
+}  // namespace behavior_path_planner
+
+#endif  // BEHAVIOR_PATH_PLANNER__SCENE_MODULE__SIDE_SHIFT__MANAGER_HPP_

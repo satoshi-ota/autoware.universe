@@ -27,6 +27,7 @@
 #include <geometry_msgs/msg/pose_stamped.hpp>
 #include <geometry_msgs/msg/twist_stamped.hpp>
 #include <nav_msgs/msg/odometry.hpp>
+#include <tier4_planning_msgs/msg/lateral_offset.hpp>
 #include <tier4_planning_msgs/msg/velocity_limit.hpp>
 
 #include <lanelet2_core/LaneletMap.h>
@@ -47,6 +48,7 @@ using motion_velocity_smoother::SmootherBase;
 using nav_msgs::msg::OccupancyGrid;
 using nav_msgs::msg::Odometry;
 using route_handler::RouteHandler;
+using tier4_planning_msgs::msg::LateralOffset;
 using tier4_planning_msgs::msg::VelocityLimit;
 struct BoolStamped
 {
@@ -74,6 +76,7 @@ struct PlannerData
   AccelWithCovarianceStamped::ConstSharedPtr self_acceleration{};
   PredictedObjects::ConstSharedPtr dynamic_object{};
   OccupancyGrid::ConstSharedPtr occupancy_grid{};
+  LateralOffset::ConstSharedPtr lateral_offset{};
   PathWithLaneId::SharedPtr reference_path{std::make_shared<PathWithLaneId>()};
   PathWithLaneId::SharedPtr prev_output_path{std::make_shared<PathWithLaneId>()};
   BehaviorPathPlannerParameters parameters{};
