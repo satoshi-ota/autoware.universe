@@ -111,15 +111,15 @@ void PullOverModuleManager::getModuleParams(rclcpp::Node * node)
   if (p.pull_over_sampling_num < 1) {
     RCLCPP_FATAL_STREAM(
       logger_, "pull_over_sampling_num must be positive integer. Given parameter: "
-                      << p.pull_over_sampling_num << std::endl
-                      << "Terminating the program...");
+                 << p.pull_over_sampling_num << std::endl
+                 << "Terminating the program...");
     exit(EXIT_FAILURE);
   }
   if (p.maximum_deceleration < 0.0) {
     RCLCPP_FATAL_STREAM(
       logger_, "maximum_deceleration cannot be negative value. Given parameter: "
-                      << p.maximum_deceleration << std::endl
-                      << "Terminating the program...");
+                 << p.maximum_deceleration << std::endl
+                 << "Terminating the program...");
     exit(EXIT_FAILURE);
   }
 }

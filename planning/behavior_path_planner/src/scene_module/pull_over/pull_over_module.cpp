@@ -51,7 +51,8 @@ using tier4_autoware_utils::transformPose;
 namespace behavior_path_planner
 {
 PullOverModule::PullOverModule(
-  const std::string & name, rclcpp::Node & node, const PullOverParameters & parameters, const std::shared_ptr<RTCInterface> & rtc_interface)
+  const std::string & name, rclcpp::Node & node, const PullOverParameters & parameters,
+  const std::shared_ptr<RTCInterface> & rtc_interface)
 : SceneModuleInterface{name, node}, parameters_{parameters}, clock_{node.get_clock()}
 {
   // rtc_interface_ptr_ = std::make_shared<RTCInterface>(&node, "pull_over");
@@ -102,7 +103,8 @@ BehaviorModuleOutput PullOverModule::run()
 void PullOverModule::onEntry()
 {
   RCLCPP_DEBUG(getLogger(), "PULL_OVER onEntry");
-  current_state_ = ModuleStatus::SUCCESS;
+  current_state_ = ModuleStatus::IDLE;
+  // current_state_ = ModuleStatus::SUCCESS;
 
   // Initialize occupancy grid map
   OccupancyGridMapParam occupancy_grid_map_param;
@@ -309,10 +311,10 @@ ModuleStatus PullOverModule::updateState()
 {
   // pull_out module will be run when setting new goal, so not need finishing pull_over module.
   // Finishing it causes wrong lane_following path generation.
-  // if (hasFinishedPullOver()) {
-  //   current_state_ = BT::NodeStatus::SUCCESS;
-  //   return current_state_;
-  // }
+  if (hasFinishedPullOver()) {
+    current_state_ = ModuleStatus::SUCCESS;
+    return current_state_;
+  }
 
   return current_state_;
 }
@@ -513,7 +515,7 @@ BehaviorModuleOutput PullOverModule::plan()
       waitApproval();
       removeRTCStatus();
       uuid_ = generateUUID();
-      current_state_ = ModuleStatus::SUCCESS;  // for breaking loop
+      // current_state_ = ModuleStatus::SUCCESS;  // for breaking loop
       status_.has_requested_approval_ = true;
     } else if (isActivated() && isWaitingApproval()) {
       clearWaitingApproval();
@@ -577,6 +579,9 @@ BehaviorModuleOutput PullOverModule::plan()
   BehaviorModuleOutput output;
   output.path = status_.is_safe ? std::make_shared<PathWithLaneId>(status_.path)
                                 : std::make_shared<PathWithLaneId>(getStopPath());
+  output.reference_path = previous_module_output_.reference_path;
+  path_candidate_ = std::make_shared<PathWithLaneId>(status_.path);
+  path_reference_ = output.reference_path;
 
   // set hazard and turn signal
   if (status_.has_decided_path) {
@@ -615,12 +620,16 @@ BehaviorModuleOutput PullOverModule::planWaitingApproval()
   updateOccupancyGrid();
   BehaviorModuleOutput out;
   const auto path = *(plan().path);
+  out.reference_path = previous_module_output_.reference_path;
+
   path_candidate_ = std::make_shared<PathWithLaneId>(path);
+  path_reference_ = out.reference_path;
   // out.path_candidate = std::make_shared<PathWithLaneId>(path);
   out.path = std::make_shared<PathWithLaneId>(getReferencePath());
   if (status_.is_safe && isArcPath()) {
     path_candidate_ = std::make_shared<PathWithLaneId>(parallel_parking_planner_.getFullPath());
-    // out.path_candidate = std::make_shared<PathWithLaneId>(parallel_parking_planner_.getFullPath());
+    // out.path_candidate =
+    // std::make_shared<PathWithLaneId>(parallel_parking_planner_.getFullPath());
   }
 
   const double distance_to_path_change = calcDistanceToPathChange();
