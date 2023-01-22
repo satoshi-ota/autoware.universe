@@ -145,13 +145,15 @@ class PullOverModule : public SceneModuleInterface
 {
 public:
   PullOverModule(
-    const std::string & name, rclcpp::Node & node, const PullOverParameters & parameters);
+    const std::string & name, rclcpp::Node & node, const PullOverParameters & parameters, const std::shared_ptr<RTCInterface> & rtc_interface);
+
+  void updateModuleParams(const PullOverParameters & parameters) { parameters_ = parameters; }
 
   BehaviorModuleOutput run() override;
 
   bool isExecutionRequested() const override;
   bool isExecutionReady() const override;
-  BT::NodeStatus updateState() override;
+  ModuleStatus updateState() override;
   void onTimer();
   bool planWithEfficientPath();
   bool planWithCloseGoal();

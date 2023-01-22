@@ -21,7 +21,7 @@
 #include "behavior_path_planner/scene_module/lane_change/manager.hpp"
 #include "behavior_path_planner/scene_module/side_shift/manager.hpp"
 // #include "behavior_path_planner/scene_module/pull_out/manager.hpp"
-// #include "behavior_path_planner/scene_module/pull_over/manager.hpp"
+#include "behavior_path_planner/scene_module/pull_over/manager.hpp"
 #include "behavior_path_planner/utilities.hpp"
 
 #include <motion_velocity_smoother/smoother/analytical_jerk_constrained_smoother/analytical_jerk_constrained_smoother.hpp>
@@ -137,15 +137,15 @@ BehaviorPathPlannerNode::BehaviorPathPlannerNode(const rclcpp::NodeOptions & nod
     planner_manager_ = std::make_shared<PlannerManager>(
       *this, p.enable_simultaneous_execution_of_multiple_modules, p.verbose);
 
-    // if (p.launch_pull_over) {
-    //   auto manager =
-    //     std::make_shared<PullOverModuleManager>(this, "pull_over", 1, p.priority_pull_over);
-    //   planner_manager_->registerSceneModuleManager(manager);
-    //   path_candidate_publishers_.emplace(
-    //     "pull_over", create_publisher<Path>(path_candidate_name_space + "pull_over", 1));
-    //   path_reference_publishers_.emplace(
-    //     "pull_over", create_publisher<Path>(path_reference_name_space + "pull_over", 1));
-    // }
+    if (p.launch_pull_over) {
+      auto manager =
+        std::make_shared<PullOverModuleManager>(this, "pull_over", 1, p.priority_pull_over);
+      planner_manager_->registerSceneModuleManager(manager);
+      path_candidate_publishers_.emplace(
+        "pull_over", create_publisher<Path>(path_candidate_name_space + "pull_over", 1));
+      path_reference_publishers_.emplace(
+        "pull_over", create_publisher<Path>(path_reference_name_space + "pull_over", 1));
+    }
 
     if (p.launch_avoidance_by_lc) {
       auto manager = std::make_shared<AvoidanceByLCModuleManager>(

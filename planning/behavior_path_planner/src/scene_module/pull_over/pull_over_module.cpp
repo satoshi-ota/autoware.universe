@@ -51,10 +51,11 @@ using tier4_autoware_utils::transformPose;
 namespace behavior_path_planner
 {
 PullOverModule::PullOverModule(
-  const std::string & name, rclcpp::Node & node, const PullOverParameters & parameters)
+  const std::string & name, rclcpp::Node & node, const PullOverParameters & parameters, const std::shared_ptr<RTCInterface> & rtc_interface)
 : SceneModuleInterface{name, node}, parameters_{parameters}, clock_{node.get_clock()}
 {
-  rtc_interface_ptr_ = std::make_shared<RTCInterface>(&node, "pull_over");
+  // rtc_interface_ptr_ = std::make_shared<RTCInterface>(&node, "pull_over");
+  rtc_interface_ptr_ = rtc_interface;
   goal_pose_pub_ =
     node.create_publisher<PoseStamped>("/planning/scenario_planning/modified_goal", 1);
   parking_area_pub_ = node.create_publisher<MarkerArray>("~/pull_over/debug/parking_area", 1);
@@ -87,15 +88,21 @@ void PullOverModule::updateOccupancyGrid()
 
 BehaviorModuleOutput PullOverModule::run()
 {
-  current_state_ = BT::NodeStatus::RUNNING;
+  current_state_ = ModuleStatus::RUNNING;
+
   updateOccupancyGrid();
+
+  if (!isActivated()) {
+    return planWaitingApproval();
+  }
+
   return plan();
 }
 
 void PullOverModule::onEntry()
 {
   RCLCPP_DEBUG(getLogger(), "PULL_OVER onEntry");
-  current_state_ = BT::NodeStatus::SUCCESS;
+  current_state_ = ModuleStatus::SUCCESS;
 
   // Initialize occupancy grid map
   OccupancyGridMapParam occupancy_grid_map_param;
@@ -149,12 +156,12 @@ void PullOverModule::onExit()
 
   // A child node must never return IDLE
   // https://github.com/BehaviorTree/BehaviorTree.CPP/blob/master/include/behaviortree_cpp_v3/basic_types.h#L34
-  current_state_ = BT::NodeStatus::SUCCESS;
+  current_state_ = ModuleStatus::SUCCESS;
 }
 
 bool PullOverModule::isExecutionRequested() const
 {
-  if (current_state_ == BT::NodeStatus::RUNNING) {
+  if (current_state_ == ModuleStatus::RUNNING) {
     return true;
   }
   const auto & current_lanes = util::getCurrentLanes(planner_data_);
@@ -298,7 +305,7 @@ void PullOverModule::researchGoal()
   std::sort(goal_candidates_.begin(), goal_candidates_.end());
 }
 
-BT::NodeStatus PullOverModule::updateState()
+ModuleStatus PullOverModule::updateState()
 {
   // pull_out module will be run when setting new goal, so not need finishing pull_over module.
   // Finishing it causes wrong lane_following path generation.
@@ -476,6 +483,9 @@ Pose PullOverModule::getParkingStartPose() const
 
 BehaviorModuleOutput PullOverModule::plan()
 {
+  resetPathCandidate();
+  resetPathReference();
+
   status_.current_lanes = util::getExtendedCurrentLanes(planner_data_);
   status_.pull_over_lanes = getPullOverLanes();
   status_.lanes = lanelet::ConstLanelets{};
@@ -503,7 +513,7 @@ BehaviorModuleOutput PullOverModule::plan()
       waitApproval();
       removeRTCStatus();
       uuid_ = generateUUID();
-      current_state_ = BT::NodeStatus::SUCCESS;  // for breaking loop
+      current_state_ = ModuleStatus::SUCCESS;  // for breaking loop
       status_.has_requested_approval_ = true;
     } else if (isActivated() && isWaitingApproval()) {
       clearWaitingApproval();
@@ -605,10 +615,12 @@ BehaviorModuleOutput PullOverModule::planWaitingApproval()
   updateOccupancyGrid();
   BehaviorModuleOutput out;
   const auto path = *(plan().path);
-  out.path_candidate = std::make_shared<PathWithLaneId>(path);
+  path_candidate_ = std::make_shared<PathWithLaneId>(path);
+  // out.path_candidate = std::make_shared<PathWithLaneId>(path);
   out.path = std::make_shared<PathWithLaneId>(getReferencePath());
   if (status_.is_safe && isArcPath()) {
-    out.path_candidate = std::make_shared<PathWithLaneId>(parallel_parking_planner_.getFullPath());
+    path_candidate_ = std::make_shared<PathWithLaneId>(parallel_parking_planner_.getFullPath());
+    // out.path_candidate = std::make_shared<PathWithLaneId>(parallel_parking_planner_.getFullPath());
   }
 
   const double distance_to_path_change = calcDistanceToPathChange();

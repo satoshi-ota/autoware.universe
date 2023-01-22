@@ -180,10 +180,11 @@ void SideShiftModule::updateData()
 {
   const auto reference_pose = prev_output_.shift_length.empty() ? *planner_data_->self_pose
                                                                 : getUnshiftedEgoPose(prev_output_);
-  const auto centerline_path = calcCenterLinePath(planner_data_, reference_pose);
+  // const auto centerline_path = calcCenterLinePath(planner_data_, reference_pose);
 
   constexpr double resample_interval = 1.0;
-  *reference_path_ = util::resamplePathWithSpline(centerline_path, resample_interval);
+  // *reference_path_ = util::resamplePathWithSpline(centerline_path, resample_interval);
+  *reference_path_ = util::resamplePathWithSpline(*previous_module_output_.path, resample_interval);
 
   path_shifter_.setPath(*reference_path_);
 
