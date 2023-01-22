@@ -37,23 +37,30 @@
 namespace behavior_path_planner
 {
 PullOutModule::PullOutModule(
-  const std::string & name, rclcpp::Node & node, const PullOutParameters & parameters)
+  const std::string & name, rclcpp::Node & node, const PullOutParameters & parameters,
+  const std::shared_ptr<RTCInterface> & rtc_interface)
 : SceneModuleInterface{name, node}, parameters_{parameters}
 {
-  rtc_interface_ptr_ = std::make_shared<RTCInterface>(&node, "pull_out");
+  rtc_interface_ptr_ = rtc_interface;
+  // rtc_interface_ptr_ = std::make_shared<RTCInterface>(&node, "pull_out");
 }
 
 BehaviorModuleOutput PullOutModule::run()
 {
   clearWaitingApproval();
-  current_state_ = BT::NodeStatus::RUNNING;
+  current_state_ = ModuleStatus::RUNNING;
+
+  if (!isActivated()) {
+    return planWaitingApproval();
+  }
+
   return plan();
 }
 
 void PullOutModule::onEntry()
 {
   RCLCPP_DEBUG(getLogger(), "PULL_OUT onEntry");
-  current_state_ = BT::NodeStatus::SUCCESS;
+  current_state_ = ModuleStatus::IDLE;
   updatePullOutStatus();
 
   // Get arclength to start lane change
@@ -68,13 +75,13 @@ void PullOutModule::onExit()
 {
   clearWaitingApproval();
   removeRTCStatus();
-  current_state_ = BT::NodeStatus::IDLE;
+  current_state_ = ModuleStatus::IDLE;
   RCLCPP_DEBUG(getLogger(), "PULL_OUT onExit");
 }
 
 bool PullOutModule::isExecutionRequested() const
 {
-  if (current_state_ == BT::NodeStatus::RUNNING) {
+  if (current_state_ == ModuleStatus::RUNNING) {
     return true;
   }
 
@@ -107,7 +114,7 @@ bool PullOutModule::isExecutionRequested() const
 
 bool PullOutModule::isExecutionReady() const
 {
-  if (current_state_ == BT::NodeStatus::RUNNING) {
+  if (current_state_ == ModuleStatus::RUNNING) {
     return true;
   }
 
@@ -130,13 +137,13 @@ bool PullOutModule::isExecutionReady() const
   return found_safe_path;
 }  // namespace behavior_path_planner
 
-BT::NodeStatus PullOutModule::updateState()
+ModuleStatus PullOutModule::updateState()
 {
   RCLCPP_DEBUG(getLogger(), "PULL_OUT updateState");
 
   // finish after lane change
   if (status_.back_finished && hasFinishedPullOut()) {
-    current_state_ = BT::NodeStatus::SUCCESS;
+    current_state_ = ModuleStatus::SUCCESS;
     return current_state_;
   }
   if (status_.is_retreat_path_valid) {
@@ -144,12 +151,15 @@ BT::NodeStatus PullOutModule::updateState()
       status_.back_finished = true;
     }
   }
-  current_state_ = BT::NodeStatus::RUNNING;
+  current_state_ = ModuleStatus::RUNNING;
   return current_state_;
 }
 
 BehaviorModuleOutput PullOutModule::plan()
 {
+  resetPathCandidate();
+  resetPathReference();
+
   constexpr double RESAMPLE_INTERVAL = 1.0;
 
   PathWithLaneId path;
@@ -160,15 +170,19 @@ BehaviorModuleOutput PullOutModule::plan()
     status_.back_finished = true;
   }
 
-  if (status_.is_retreat_path_valid && status_.back_finished) {
-    path = util::resamplePathWithSpline(status_.retreat_path.path, RESAMPLE_INTERVAL);
-  }
+  // if (status_.is_retreat_path_valid && status_.back_finished) {
+  //   path = util::resamplePathWithSpline(status_.retreat_path.path, RESAMPLE_INTERVAL);
+  // }
 
   path.drivable_area = status_.pull_out_path.path.drivable_area;
 
   BehaviorModuleOutput output;
   output.path = std::make_shared<PathWithLaneId>(path);
+  output.reference_path = previous_module_output_.reference_path;
   output.turn_signal_info = calcTurnSignalInfo(status_.pull_out_path.shift_point);
+
+  path_candidate_ = output.path;
+  path_reference_ = previous_module_output_.reference_path;
 
   return output;
 }
@@ -240,8 +254,11 @@ BehaviorModuleOutput PullOutModule::planWaitingApproval()
     candidate_path.points.at(i).point.longitudinal_velocity_mps = 0.0;
   }
   out.path = std::make_shared<PathWithLaneId>(candidate_path);
+  out.reference_path = previous_module_output_.reference_path;
 
-  out.path_candidate = std::make_shared<PathWithLaneId>(candidate_path);
+  path_candidate_ = std::make_shared<PathWithLaneId>(candidate_path);
+  path_reference_ = out.reference_path;
+  // out.path_candidate = std::make_shared<PathWithLaneId>(candidate_path);
 
   waitApproval();
 

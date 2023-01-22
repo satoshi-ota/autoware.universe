@@ -174,6 +174,7 @@ std::vector<PullOutPath> getPullOutPaths(
       double s_end = s_start + pull_out_distance + forward_path_length;
       target_lane_reference_path = route_handler.getCenterLinePath(road_lanelets, s_start, s_end);
     }
+    path_shifter.setPath(target_lane_reference_path);
 
     ShiftPoint shift_point;
     {
@@ -185,7 +186,7 @@ std::vector<PullOutPath> getPullOutPaths(
       shift_point.length = distance_to_road_center;
     }
     path_shifter.addShiftPoint(shift_point);
-    path_shifter.setPath(target_lane_reference_path);
+    // path_shifter.setPath(target_lane_reference_path);
 
     // offset front side
     bool offset_back = false;
