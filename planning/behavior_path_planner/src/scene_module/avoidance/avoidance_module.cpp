@@ -2438,20 +2438,31 @@ bool AvoidanceModule::isSafePath(
   const auto check_lanes =
     getAdjacentLane(path_shifter, forward_check_distance, backward_check_distance);
 
-  PathWithLaneId smoothed_path;
-  if (!util::applyVelocitySmoothing(
-        planner_data_, shifted_path.path, forward_check_distance, smoothed_path)) {
-    // TODO(Satoshi OTA)  Think later the process in the case of failed to velocity smoothing.
-    RCLCPP_WARN(
-      rclcpp::get_logger("behavior_path_planner").get_child("avoidance"),
-      "failed velocity smoothing.");
-    return true;
+  // PathWithLaneId smoothed_path;
+  // if (!util::applyVelocitySmoothing(
+  //       planner_data_, shifted_path.path, forward_check_distance, smoothed_path)) {
+  //   // TODO(Satoshi OTA)  Think later the process in the case of failed to velocity smoothing.
+  //   RCLCPP_WARN(
+  //     rclcpp::get_logger("behavior_path_planner").get_child("avoidance"),
+  //     "failed velocity smoothing.");
+  //   return true;
+  // }
+  // debug_data_.velocity_smoothed_path = smoothed_path;
+
+  // smoothed_path = util::resamplePathWithSpline(smoothed_path, 0.5);
+
+  // const auto is_safe = isSafePath(smoothed_path, check_lanes, debug);
+  auto path_with_current_velocity = shifted_path.path;
+  // path_with_current_velocity = util::resamplePathWithSpline(path_with_current_velocity, 0.5);
+
+  util::clipPathLength(path_with_current_velocity, getEgoPose().pose, forward_check_distance, 0.0);
+
+  constexpr double MIN_EGO_VEL_IN_PREDICTION = 1.38;  // 5km/h
+  for (auto & p : path_with_current_velocity.points) {
+    p.point.longitudinal_velocity_mps = std::max(getEgoSpeed(), MIN_EGO_VEL_IN_PREDICTION);
   }
-  debug_data_.velocity_smoothed_path = smoothed_path;
 
-  smoothed_path = util::resamplePathWithSpline(smoothed_path, 0.5);
-
-  const auto is_safe = isSafePath(smoothed_path, check_lanes, debug);
+  const auto is_safe = isSafePath(path_with_current_velocity, check_lanes, debug);
 
   RCLCPP_INFO_EXPRESSION(
     getLogger(), p->print_processing_time, "- %s: %f ms", __func__,
@@ -2969,10 +2980,10 @@ BehaviorModuleOutput AvoidanceModule::plan()
   BehaviorModuleOutput output;
   output.turn_signal_info = calcTurnSignalInfo(avoidance_path);
   // sparse resampling for computational cost
-  {
-    avoidance_path.path =
-      util::resamplePathWithSpline(avoidance_path.path, p->resample_interval_for_output);
-  }
+  // {
+  //   avoidance_path.path =
+  //     util::resamplePathWithSpline(avoidance_path.path, p->resample_interval_for_output);
+  // }
 
   avoidance_data_.state = updateEgoState(data);
   switch (avoidance_data_.state) {

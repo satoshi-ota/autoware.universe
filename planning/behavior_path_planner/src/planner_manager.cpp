@@ -219,6 +219,7 @@ boost::optional<ModuleID> PlannerManager::getCandidateModuleID(
       continue;
     }
 
+    processing_time_.at(m->getModuleName()) += stop_watch_.toc(m->getModuleName(), true);
     request_modules.emplace_back(m, uuid);
   }
 
