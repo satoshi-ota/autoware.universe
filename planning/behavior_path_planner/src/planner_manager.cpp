@@ -85,7 +85,10 @@ BehaviorModuleOutput PlannerManager::run(const std::shared_ptr<PlannerData> & da
     /**
      * STEP4: if there is module that should be launched, execute the module
      */
+    const auto name = candidate_module_id.get().first->getModuleName();
+    stop_watch_.tic(name);
     const auto result = run(candidate_module_id.get(), approved_path_data);
+    processing_time_.at(name) += stop_watch_.toc(name, true);
 
     /**
      * STEP5: if the candidate module's modification is NOT approved yet, return the result.
