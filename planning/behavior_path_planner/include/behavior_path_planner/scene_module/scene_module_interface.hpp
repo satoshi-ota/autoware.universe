@@ -177,7 +177,7 @@ public:
   {
     current_state_ = ModuleStatus::RUNNING;
 
-    updateData();
+    // updateData();
 
     if (!isWaitingApproval()) {
       return plan();
