@@ -200,7 +200,8 @@ bool GeometricParallelParking::planPullOver(
     constexpr double start_pose_offset = 0.0;
     constexpr double min_steer_rad = 0.05;
     constexpr double steer_interval = 0.1;
-    for (double steer = parameters_.max_steer_angle; steer > min_steer_rad; steer -= steer_interval) {
+    for (double steer = parameters_.max_steer_angle; steer > min_steer_rad;
+         steer -= steer_interval) {
       const double R_E_r = common_params.wheel_base / std::tan(steer);
       const auto start_pose = calcStartPose(arc_end_pose, start_pose_offset, R_E_r, is_forward);
       if (!start_pose) {

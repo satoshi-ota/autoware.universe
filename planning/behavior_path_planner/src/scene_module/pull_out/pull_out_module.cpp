@@ -41,7 +41,8 @@ namespace behavior_path_planner
 PullOutModule::PullOutModule(
   const std::string & name, rclcpp::Node & node, const PullOutParameters & parameters,
   const std::shared_ptr<RTCInterface> & rtc_interface)
-: SceneModuleInterface{name, node}, parameters_{parameters},
+: SceneModuleInterface{name, node},
+  parameters_{parameters},
   vehicle_info_{vehicle_info_util::VehicleInfoUtil(node).getVehicleInfo()}
 {
   rtc_interface_ptr_ = rtc_interface;
