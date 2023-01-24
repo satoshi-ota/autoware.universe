@@ -139,7 +139,8 @@ ModuleStatus AvoidanceModule::updateState()
 
 bool AvoidanceModule::isAvoidancePlanRunning() const
 {
-  const bool has_base_offset = std::abs(path_shifter_.getBaseOffset()) > 0.01;
+  constexpr double AVOIDING_SHIFT_THR = 0.1;
+  const bool has_base_offset = std::abs(path_shifter_.getBaseOffset()) > AVOIDING_SHIFT_THR;
   const bool has_shift_point = (path_shifter_.getShiftPointsSize() > 0);
   return has_base_offset || has_shift_point;
 }
@@ -3066,7 +3067,9 @@ BehaviorModuleOutput AvoidanceModule::planWaitingApproval()
 {
   // we can execute the plan() since it handles the approval appropriately.
   BehaviorModuleOutput out = plan();
-  out.turn_signal_info = previous_module_output_.turn_signal_info;
+  if (path_shifter_.getShiftPoints().empty()) {
+    out.turn_signal_info = previous_module_output_.turn_signal_info;
+  }
   const auto candidate = planCandidate();
   constexpr double threshold_to_update_status = -1.0e-03;
   if (candidate.distance_to_path_change > threshold_to_update_status) {
