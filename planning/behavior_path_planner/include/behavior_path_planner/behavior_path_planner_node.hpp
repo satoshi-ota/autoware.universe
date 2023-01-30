@@ -17,10 +17,6 @@
 
 #include "behavior_path_planner/data_manager.hpp"
 #include "behavior_path_planner/planner_manager.hpp"
-// #include "behavior_path_planner/scene_module/lane_following/lane_following_module.hpp"
-// #include "behavior_path_planner/scene_module/pull_out/pull_out_module.hpp"
-// #include "behavior_path_planner/scene_module/pull_over/pull_over_module.hpp"
-// #include "behavior_path_planner/scene_module/side_shift/side_shift_module.hpp"
 #include "behavior_path_planner/steering_factor_interface.hpp"
 #include "behavior_path_planner/turn_signal_decider.hpp"
 
@@ -130,7 +126,7 @@ private:
   BehaviorPathPlannerParameters getCommonParam();
 
   // callback
-  void onOdometry(const Odometry::SharedPtr msg);
+  void onOdometry(const Odometry::ConstSharedPtr msg);
   void onAcceleration(const AccelWithCovarianceStamped::ConstSharedPtr msg);
   void onPerception(const PredictedObjects::ConstSharedPtr msg);
   void onOccupancyGrid(const OccupancyGrid::ConstSharedPtr msg);

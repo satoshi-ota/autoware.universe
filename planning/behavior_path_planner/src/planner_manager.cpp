@@ -41,18 +41,18 @@ static UUID generateUUID()
 }
 }  // namespace
 
-PlannerManager::PlannerManager(
-  rclcpp::Node & node, const bool enable_simultaneous_execution, const bool verbose)
+PlannerManager::PlannerManager(rclcpp::Node & node, const bool verbose)
 : logger_(node.get_logger().get_child("planner_manager")),
   clock_(*node.get_clock()),
-  enable_simultaneous_execution_{enable_simultaneous_execution},
   verbose_{verbose}
 {
+  processing_time_.emplace("total_time", 0.0);
 }
 
 BehaviorModuleOutput PlannerManager::run(const std::shared_ptr<PlannerData> & data)
 {
-  stop_watch_.tic("processing_time");
+  resetProcessingTime();
+  stop_watch_.tic("total_time");
 
   if (!start_lanelet_) {
     updateStartLanelet(data);
@@ -78,14 +78,17 @@ BehaviorModuleOutput PlannerManager::run(const std::shared_ptr<PlannerData> & da
      */
     if (!candidate_module_id) {
       candidate_module_id_ = boost::none;
-      processing_time_ = stop_watch_.toc("processing_time", true);
+      processing_time_.at("total_time") = stop_watch_.toc("total_time", true);
       return approved_path_data;
     }
 
     /**
      * STEP4: if there is module that should be launched, execute the module
      */
+    const auto name = candidate_module_id.get().first->getModuleName();
+    stop_watch_.tic(name);
     const auto result = run(candidate_module_id.get(), approved_path_data);
+    processing_time_.at(name) += stop_watch_.toc(name, true);
 
     /**
      * STEP5: if the candidate module's modification is NOT approved yet, return the result.
@@ -95,7 +98,7 @@ BehaviorModuleOutput PlannerManager::run(const std::shared_ptr<PlannerData> & da
      */
     if (isWaitingApproval(candidate_module_id.get())) {
       candidate_module_id_ = candidate_module_id.get();
-      processing_time_ = stop_watch_.toc("processing_time", true);
+      processing_time_.at("total_time") = stop_watch_.toc("total_time", true);
       return result;
     }
 
@@ -106,7 +109,7 @@ BehaviorModuleOutput PlannerManager::run(const std::shared_ptr<PlannerData> & da
     addApprovedModule(candidate_module_id.get());
   }
 
-  processing_time_ = stop_watch_.toc("processing_time", true);
+  processing_time_.at("total_time") = stop_watch_.toc("total_time", true);
 
   return {};
 }
@@ -114,28 +117,51 @@ BehaviorModuleOutput PlannerManager::run(const std::shared_ptr<PlannerData> & da
 boost::optional<ModuleID> PlannerManager::getCandidateModuleID(
   const BehaviorModuleOutput & previous_module_output) const
 {
-  const auto module_running = !approved_modules_.empty();
-  if (!enable_simultaneous_execution_ && module_running) {
-    return {};
-  }
-
   std::vector<ModuleID> request_modules{};
 
   bool lc_running = false;
+  bool avoid_running = false;
   for (const auto & m : approved_modules_) {
     const auto & manager = m.first;
     if (manager->getModuleName() == "lane_change") {
-      lc_running = true;
-      break;
+      lc_running = isRunning(m);
+    }
+    if (manager->getModuleName() == "avoidance") {
+      avoid_running = isRunning(m);
     }
   }
 
+  const auto block_simlutaneous_execution = [this]() {
+    for (const auto & m : approved_modules_) {
+      const auto & manager = m.first;
+      if (!manager->isSimultaneousExecutable()) {
+        return true;
+      }
+    }
+    return false;
+  }();
+
   // pickup execution requested modules
   for (const auto & m : scene_manager_ptrs_) {
+    stop_watch_.tic(m->getModuleName());
+
     // generate temporary uuid
     const auto uuid = generateUUID();
 
-    if (lc_running && m->getModuleName() == "avoidance_by_lc") {
+    // already exist the modules that don't support simultaneous execution.
+    if (block_simlutaneous_execution) {
+      processing_time_.at(m->getModuleName()) += stop_watch_.toc(m->getModuleName(), true);
+      continue;
+    }
+
+    // the manager's module doesn't support simultaneous execution.
+    if (!approved_modules_.empty() && !m->isSimultaneousExecutable()) {
+      processing_time_.at(m->getModuleName()) += stop_watch_.toc(m->getModuleName(), true);
+      continue;
+    }
+
+    if ((lc_running || avoid_running) && m->getModuleName() == "avoidance_by_lc") {
+      processing_time_.at(m->getModuleName()) += stop_watch_.toc(m->getModuleName(), true);
       continue;
     }
 
@@ -143,11 +169,17 @@ boost::optional<ModuleID> PlannerManager::getCandidateModuleID(
      * CASE1: there is no candidate module
      */
     if (!candidate_module_id_) {
-      if (m->isExecutionRequested(previous_module_output) && m->canLaunchNewModule()) {
+      if (!m->canLaunchNewModule()) {
+        processing_time_.at(m->getModuleName()) += stop_watch_.toc(m->getModuleName(), true);
+        continue;
+      }
+
+      if (m->isExecutionRequested(previous_module_output)) {
         // launch new candidate module
         request_modules.emplace_back(m, uuid);
       }
 
+      processing_time_.at(m->getModuleName()) += stop_watch_.toc(m->getModuleName(), true);
       continue;
     }
 
@@ -159,14 +191,17 @@ boost::optional<ModuleID> PlannerManager::getCandidateModuleID(
      * CASE2: same name module already launched as candidate
      */
     if (name == m->getModuleName()) {
-      if (isExecutionRequested(candidate_module_id_.get())) {
+      // if (isExecutionRequested(candidate_module_id_.get())) {
+      if (isRunning(candidate_module_id_.get())) {
         // keep current candidate module
         request_modules.push_back(candidate_module_id_.get());
       } else {
         // candidate module is no longer needed
         deleteExpiredModules(candidate_module_id_.get());
-        continue;
       }
+
+      processing_time_.at(m->getModuleName()) += stop_watch_.toc(m->getModuleName(), true);
+      continue;
     }
 
     /**
@@ -174,10 +209,17 @@ boost::optional<ModuleID> PlannerManager::getCandidateModuleID(
      */
 
     // don't launch new module as candidate
-    if (!m->isExecutionRequested(previous_module_output) || !m->canLaunchNewModule()) {
+    if (!m->canLaunchNewModule()) {
+      processing_time_.at(m->getModuleName()) += stop_watch_.toc(m->getModuleName(), true);
       continue;
     }
 
+    if (!m->isExecutionRequested(previous_module_output)) {
+      processing_time_.at(m->getModuleName()) += stop_watch_.toc(m->getModuleName(), true);
+      continue;
+    }
+
+    processing_time_.at(m->getModuleName()) += stop_watch_.toc(m->getModuleName(), true);
     request_modules.emplace_back(m, uuid);
   }
 
@@ -231,22 +273,26 @@ BehaviorModuleOutput PlannerManager::update(const std::shared_ptr<PlannerData> &
   bool remove_after_module = false;
 
   for (auto itr = approved_modules_.begin(); itr != approved_modules_.end();) {
+    const auto & manager = itr->first;
+    const auto & name = manager->getModuleName();
+
+    stop_watch_.tic(name);
+
     // if one of the approved_modules_ is waiting approval, remove all approved module from the
     // waiting approval module.
     if (remove_after_module) {
       itr = approved_modules_.erase(itr);
+      processing_time_.at(name) += stop_watch_.toc(name, true);
       continue;
     }
 
     // execute approved module
     const auto result = run(*itr, output);
 
-    if (!isExecutionRequested(*itr)) {
+    // if (!isExecutionRequested(*itr)) {
+    if (!isRunning(*itr)) {
       // option: remove expired module in the order in which they are activated.
       if (itr == approved_modules_.begin()) {
-        const auto & manager = itr->first;
-        const auto & name = manager->getModuleName();
-
         // update date on which lane the vhicle is driving
         if (name == "lane_change" || name == "avoidance_by_lc") {
           updateStartLanelet(data);
@@ -256,6 +302,7 @@ BehaviorModuleOutput PlannerManager::update(const std::shared_ptr<PlannerData> &
         deleteExpiredModules(*itr);
         itr = approved_modules_.erase(itr);
         output = result;
+        processing_time_.at(name) += stop_watch_.toc(name, true);
         continue;
       }
     }
@@ -266,9 +313,11 @@ BehaviorModuleOutput PlannerManager::update(const std::shared_ptr<PlannerData> &
       candidate_module_id_ = *itr;
       itr = approved_modules_.erase(itr);
       remove_after_module = true;
+      processing_time_.at(name) += stop_watch_.toc(name, true);
       continue;
     }
 
+    processing_time_.at(name) += stop_watch_.toc(name, true);
     output = result;
     itr++;
   }
@@ -282,7 +331,7 @@ BehaviorModuleOutput PlannerManager::getReferencePath(
   PathWithLaneId reference_path{};
 
   const auto & route_handler = data->route_handler;
-  const auto & pose = data->self_pose->pose;
+  const auto & pose = data->self_odometry->pose.pose;
   const auto p = data->parameters;
 
   // Set header

@@ -125,9 +125,9 @@ public:
       p.prediction_time_resolution = parameters->prediction_time_resolution;
       p.maximum_deceleration = parameters->maximum_deceleration;
       p.lane_change_sampling_num = parameters->lane_change_sampling_num;
-      p.abort_lane_change_velocity_thresh = parameters->abort_lane_change_velocity_thresh;
-      p.abort_lane_change_angle_thresh = parameters->abort_lane_change_angle_thresh;
-      p.abort_lane_change_distance_thresh = parameters->abort_lane_change_distance_thresh;
+      // p.abort_lane_change_velocity_thresh = parameters->abort_lane_change_velocity_thresh;
+      // p.abort_lane_change_angle_thresh = parameters->abort_lane_change_angle_thresh;
+      // p.abort_lane_change_distance_thresh = parameters->abort_lane_change_distance_thresh;
       p.prepare_phase_ignore_target_speed_thresh =
         parameters->prepare_phase_ignore_target_speed_thresh;
       p.enable_abort_lane_change = parameters->enable_abort_lane_change;
@@ -282,14 +282,14 @@ private:
   bool isValidPath(const PathWithLaneId & path) const;
   bool isNearEndOfLane() const;
   bool isCurrentSpeedLow() const;
-  bool isAbortConditionSatisfied() const;
+  bool isAbortConditionSatisfied();
   bool hasFinishedLaneChange() const;
   void resetParameters();
 
   // getter
-  Point getEgoPosition() const { return planner_data_->self_pose->pose.position; }
+  Point getEgoPosition() const { return planner_data_->self_odometry->pose.pose.position; }
 
-  Pose getEgoPose() const { return planner_data_->self_pose->pose; }
+  Pose getEgoPose() const { return planner_data_->self_odometry->pose.pose; }
 
   Twist getEgoTwist() const;
   std_msgs::msg::Header getRouteHeader() const;

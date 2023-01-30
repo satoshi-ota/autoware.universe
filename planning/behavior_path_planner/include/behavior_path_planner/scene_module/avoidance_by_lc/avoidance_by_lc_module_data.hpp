@@ -19,6 +19,7 @@
 
 #include "autoware_auto_planning_msgs/msg/path_point_with_lane_id.hpp"
 
+#include <string>
 #include <vector>
 
 namespace behavior_path_planner
@@ -99,6 +100,7 @@ struct AvoidanceByLCParameters
   bool enable_bound_clipping{false};
 
   // lane change
+  // trajectory generation
   double lane_change_prepare_duration{2.0};
   double lane_changing_safety_check_duration{4.0};
   double lane_changing_lateral_jerk{0.5};
@@ -108,18 +110,27 @@ struct AvoidanceByLCParameters
   double prediction_time_resolution{0.5};
   double maximum_deceleration{1.0};
   int lane_change_sampling_num{10};
-  double abort_lane_change_velocity_thresh{0.5};
-  double abort_lane_change_angle_thresh{0.174533};
-  double abort_lane_change_distance_thresh{0.3};
-  double prepare_phase_ignore_target_speed_thresh{0.1};
-  bool enable_abort_lane_change{true};
+
+  // collision check
   bool enable_collision_check_at_prepare_phase{true};
+  double prepare_phase_ignore_target_speed_thresh{0.1};
   bool use_predicted_path_outside_lanelet{false};
   bool use_all_predicted_path{false};
-  bool publish_debug_marker{false};
+
+  // abort
+  bool enable_cancel_lane_change{true};
+  bool enable_abort_lane_change{false};
+
+  double abort_delta_time{3.0};
+  double abort_max_lateral_jerk{10.0};
+
   // drivable area expansion
   double drivable_area_right_bound_offset{0.0};
   double drivable_area_left_bound_offset{0.0};
+  std::vector<std::string> drivable_area_types_to_skip{};
+
+  // debug marker
+  bool publish_debug_marker{false};
 };
 
 }  // namespace behavior_path_planner

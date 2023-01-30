@@ -27,6 +27,7 @@
 #include <algorithm>
 #include <memory>
 #include <string>
+#include <unordered_map>
 #include <utility>
 #include <vector>
 
@@ -54,7 +55,7 @@ struct SceneModuleStatus
 class PlannerManager
 {
 public:
-  PlannerManager(rclcpp::Node & node, const bool enable_simultaneous_execution, const bool verbose);
+  PlannerManager(rclcpp::Node & node, const bool verbose);
 
   BehaviorModuleOutput run(const std::shared_ptr<PlannerData> & data);
 
@@ -63,6 +64,7 @@ public:
   {
     RCLCPP_INFO(logger_, "register %s module", scene_module_manager_ptr->getModuleName().c_str());
     scene_manager_ptrs_.push_back(scene_module_manager_ptr);
+    processing_time_.emplace(scene_module_manager_ptr->getModuleName(), 0.0);
   }
 
   void updateModuleParams(const std::vector<rclcpp::Parameter> & parameters)
@@ -79,6 +81,7 @@ public:
     start_lanelet_ = boost::none;
     std::for_each(
       scene_manager_ptrs_.begin(), scene_manager_ptrs_.end(), [](const auto & m) { m->reset(); });
+    resetProcessingTime();
   }
 
   void print()
@@ -112,7 +115,12 @@ public:
     }
 
     string_stream << "\n" << std::fixed << std::setprecision(1);
-    string_stream << "processing time   : " << std::setw(6) << processing_time_ << " [ms]";
+    string_stream << "processing time   : ";
+    for (const auto & t : processing_time_) {
+      string_stream << std::right << "[" << std::setw(16) << std::left << t.first << ":"
+                    << std::setw(4) << std::right << t.second << "ms]\n"
+                    << std::setw(21);
+    }
 
     RCLCPP_INFO_STREAM(logger_, string_stream.str());
   }
@@ -137,7 +145,7 @@ public:
       const auto & manager = m.first;
       const auto & uuid = m.second;
       auto s = std::make_shared<SceneModuleStatus>(manager->getModuleName());
-      s->is_requested = manager->isExecutionRequested(uuid);
+      // s->is_requested = manager->isExecutionRequested(uuid);
       s->is_waiting_approval = manager->isWaitingApproval(uuid);
       s->status = manager->getCurrentStatus(uuid);
       ret.push_back(s);
@@ -147,7 +155,7 @@ public:
       const auto & manager = candidate_module_id_.get().first;
       const auto & uuid = candidate_module_id_.get().second;
       auto s = std::make_shared<SceneModuleStatus>(manager->getModuleName());
-      s->is_requested = manager->isExecutionRequested(uuid);
+      // s->is_requested = manager->isExecutionRequested(uuid);
       s->is_waiting_approval = manager->isWaitingApproval(uuid);
       s->status = manager->getCurrentStatus(uuid);
       ret.push_back(s);
@@ -172,22 +180,6 @@ private:
     }
 
     return manager->run(uuid, previous_module_output);
-  }
-
-  bool isExecutionRequested(const ModuleID & id) const
-  {
-    const auto & manager = id.first;
-    const auto & uuid = id.second;
-
-    if (manager == nullptr) {
-      return false;
-    }
-
-    if (!manager->exist(uuid)) {
-      return false;
-    }
-
-    return manager->isExecutionRequested(uuid);
   }
 
   bool isExecutionReady(const ModuleID & id) const
@@ -260,8 +252,15 @@ private:
   {
     start_lanelet_ = lanelet::ConstLanelet();
     data->route_handler->getClosestLaneletWithinRoute(
-      data->self_pose->pose, start_lanelet_.get_ptr());
+      data->self_odometry->pose.pose, start_lanelet_.get_ptr());
     RCLCPP_WARN(logger_, "update start lanelet. id:%ld", start_lanelet_.get().id());
+  }
+
+  void resetProcessingTime()
+  {
+    for (auto & t : processing_time_) {
+      t.second = 0.0;
+    }
   }
 
   BehaviorModuleOutput update(const std::shared_ptr<PlannerData> & data);
@@ -286,11 +285,9 @@ private:
 
   rclcpp::Clock clock_;
 
-  StopWatch<std::chrono::milliseconds> stop_watch_;
+  mutable StopWatch<std::chrono::milliseconds> stop_watch_;
 
-  double processing_time_{0.0};
-
-  bool enable_simultaneous_execution_{false};
+  mutable std::unordered_map<std::string, double> processing_time_;
 
   bool verbose_{false};
 };

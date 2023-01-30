@@ -24,8 +24,8 @@ ament_auto_add_library(behavior_path_planner_node SHARED
   src/scene_module/avoidance/debug.cpp
   src/scene_module/avoidance/manager.cpp
   # src/scene_module/lane_change/external_request_lane_change_module.cpp
-  src/scene_module/avoidance_by_lc/avoidance_by_lc_module.cpp
-  src/scene_module/avoidance_by_lc/manager.cpp
+  # src/scene_module/avoidance_by_lc/avoidance_by_lc_module.cpp
+  # src/scene_module/avoidance_by_lc/manager.cpp
   # src/scene_module/lane_following/lane_following_module.cpp
   src/scene_module/lane_change/lane_change_module.cpp
   src/scene_module/lane_change/util.cpp

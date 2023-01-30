@@ -70,10 +70,10 @@ std::optional<LaneChangePath> constructCandidatePath(
   const BehaviorPathPlannerParameters & params, const LaneChangeParameters & lane_change_param);
 
 LaneChangePaths getLaneChangePaths(
-  const RouteHandler & route_handler, const lanelet::ConstLanelets & original_lanelets,
-  const lanelet::ConstLanelets & target_lanelets, const Pose & pose, const Twist & twist,
-  const BehaviorPathPlannerParameters & common_parameter,
-  const behavior_path_planner::LaneChangeParameters & parameter, const PathWithLaneId & input);
+  const PathWithLaneId & base_path, const RouteHandler & route_handler,
+  const lanelet::ConstLanelets & original_lanelets, const lanelet::ConstLanelets & target_lanelets,
+  const Pose & pose, const Twist & twist, const BehaviorPathPlannerParameters & common_parameter,
+  const behavior_path_planner::LaneChangeParameters & parameter);
 
 LaneChangePaths selectValidPaths(
   const LaneChangePaths & paths, const lanelet::ConstLanelets & current_lanes,
@@ -115,10 +115,15 @@ PathWithLaneId getReferencePathFromTargetLane(
   const LaneChangePhaseInfo dist_prepare_to_lc_end, const double min_total_lane_changing_distance,
   const double forward_path_length, const double resample_interval, const bool is_goal_in_route);
 
+// PathWithLaneId getLaneChangePathPrepareSegment(
+//   const RouteHandler & route_handler, const lanelet::ConstLanelets & original_lanelets,
+//   const double arc_length_from_current, const double backward_path_length,
+//   const double prepare_distance, const double prepare_speed);
+
 PathWithLaneId getLaneChangePathPrepareSegment(
-  const RouteHandler & route_handler, const lanelet::ConstLanelets & original_lanelets,
-  const double arc_length_from_current, const double backward_path_length,
-  const double prepare_distance, const double prepare_speed);
+  const PathWithLaneId & base_path, const lanelet::ConstLanelets & original_lanelets,
+  const Pose & current_pose, const double backward_path_length, const double prepare_distance,
+  const double prepare_speed);
 
 PathWithLaneId getLaneChangePathLaneChangingSegment(
   const RouteHandler & route_handler, const lanelet::ConstLanelets & target_lanelets,

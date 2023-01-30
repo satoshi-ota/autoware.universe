@@ -118,9 +118,9 @@ void AvoidanceByLCModuleManager::getModuleParams(rclcpp::Node * node)
     dp("prediction_time_resolution", p.prediction_time_resolution, 0.5);
     dp("maximum_deceleration", p.maximum_deceleration, 1.0);
     dp("lane_change_sampling_num", p.lane_change_sampling_num, 10);
-    dp("abort_lane_change_velocity_thresh", p.abort_lane_change_velocity_thresh, 0.5);
-    dp("abort_lane_change_angle_thresh", p.abort_lane_change_angle_thresh, deg2rad(10.0));
-    dp("abort_lane_change_distance_thresh", p.abort_lane_change_distance_thresh, 0.3);
+    // dp("abort_lane_change_velocity_thresh", p.abort_lane_change_velocity_thresh, 0.5);
+    // dp("abort_lane_change_angle_thresh", p.abort_lane_change_angle_thresh, deg2rad(10.0));
+    // dp("abort_lane_change_distance_thresh", p.abort_lane_change_distance_thresh, 0.3);
     dp("prepare_phase_ignore_target_speed_thresh", p.prepare_phase_ignore_target_speed_thresh, 0.1);
     dp("enable_abort_lane_change", p.enable_abort_lane_change, true);
     dp("enable_collision_check_at_prepare_phase", p.enable_collision_check_at_prepare_phase, true);

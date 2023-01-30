@@ -189,15 +189,15 @@ private:
 
   void removePreviousRTCStatusLeft()
   {
-    if (rtc_interface_left_.isRegistered(uuid_left_)) {
-      rtc_interface_left_.removeCooperateStatus(uuid_left_);
+    if (rtc_interface_left_->isRegistered(uuid_left_)) {
+      rtc_interface_left_->removeCooperateStatus(uuid_left_);
     }
   }
 
   void removePreviousRTCStatusRight()
   {
-    if (rtc_interface_right_.isRegistered(uuid_right_)) {
-      rtc_interface_right_.removeCooperateStatus(uuid_right_);
+    if (rtc_interface_right_->isRegistered(uuid_right_)) {
+      rtc_interface_right_->removeCooperateStatus(uuid_right_);
     }
   }
 
