@@ -34,12 +34,12 @@ class AvoidanceByLCModuleManager : public SceneModuleManagerInterface
 public:
   AvoidanceByLCModuleManager(
     rclcpp::Node * node, const std::string & name, const size_t max_module_num,
-    const size_t priority);
+    const size_t priority, const bool enable_simultaneous_execution);
 
   std::shared_ptr<SceneModuleInterface> createNewSceneModuleInstance() override
   {
     return std::make_shared<AvoidanceByLCModule>(
-      name_, *node_, module_params_, rtc_interface_left_, rtc_interface_right_);
+      name_, *node_, parameters_, rtc_interface_left_, rtc_interface_right_);
   }
 
   void updateModuleParams(const std::vector<rclcpp::Parameter> & parameters) override;
@@ -51,7 +51,7 @@ private:
 
   std::shared_ptr<RTCInterface> rtc_interface_right_;
 
-  std::shared_ptr<AvoidanceByLCParameters> module_params_;
+  std::shared_ptr<AvoidanceByLCParameters> parameters_;
 
   std::unordered_map<std::string, std::shared_ptr<AvoidanceByLCModule>> registered_modules_;
 };

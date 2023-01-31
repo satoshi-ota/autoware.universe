@@ -47,6 +47,10 @@ Module getModuleType(const std::string & module_name)
     module.type = Module::AVOIDANCE_LEFT;
   } else if (module_name == "avoidance_right") {
     module.type = Module::AVOIDANCE_RIGHT;
+  } else if (module_name == "avoidance_by_lc_left") {
+    module.type = Module::AVOIDANCE_BY_LC_LEFT;
+  } else if (module_name == "avoidance_by_lc_right") {
+    module.type = Module::AVOIDANCE_BY_LC_RIGHT;
   } else if (module_name == "pull_over") {
     module.type = Module::PULL_OVER;
   } else if (module_name == "pull_out") {

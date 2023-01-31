@@ -17,7 +17,7 @@
 #include "behavior_path_planner/debug_utilities.hpp"
 #include "behavior_path_planner/path_utilities.hpp"
 #include "behavior_path_planner/scene_module/avoidance/manager.hpp"
-// #include "behavior_path_planner/scene_module/avoidance_by_lc/manager.hpp"
+#include "behavior_path_planner/scene_module/avoidance_by_lc/manager.hpp"
 #include "behavior_path_planner/scene_module/lane_change/manager.hpp"
 #include "behavior_path_planner/scene_module/pull_out/manager.hpp"
 #include "behavior_path_planner/scene_module/pull_over/manager.hpp"
@@ -129,18 +129,18 @@ BehaviorPathPlannerNode::BehaviorPathPlannerNode(const rclcpp::NodeOptions & nod
         "pull_over", create_publisher<Path>(path_reference_name_space + "pull_over", 1));
     }
 
-    // if (p.launch_avoidance_by_lc) {
-    //   auto manager = std::make_shared<AvoidanceByLCModuleManager>(
-    //     this, "avoidance_by_lc", 1, p.priority_avoidance_by_lc,
-    //     p.enable_simultaneous_execution_avoidance_by_lc);
-    //   planner_manager_->registerSceneModuleManager(manager);
-    //   path_candidate_publishers_.emplace(
-    //     "avoidance_by_lc",
-    //     create_publisher<Path>(path_candidate_name_space + "avoidance_by_lc", 1));
-    //   path_reference_publishers_.emplace(
-    //     "avoidance_by_lc",
-    //     create_publisher<Path>(path_reference_name_space + "avoidance_by_lc", 1));
-    // }
+    if (p.launch_avoidance_by_lc) {
+      auto manager = std::make_shared<AvoidanceByLCModuleManager>(
+        this, "avoidance_by_lc", 1, p.priority_avoidance_by_lc,
+        p.enable_simultaneous_execution_avoidance_by_lc);
+      planner_manager_->registerSceneModuleManager(manager);
+      path_candidate_publishers_.emplace(
+        "avoidance_by_lc",
+        create_publisher<Path>(path_candidate_name_space + "avoidance_by_lc", 1));
+      path_reference_publishers_.emplace(
+        "avoidance_by_lc",
+        create_publisher<Path>(path_reference_name_space + "avoidance_by_lc", 1));
+    }
 
     if (p.launch_avoidance) {
       auto manager = std::make_shared<AvoidanceModuleManager>(
@@ -729,6 +729,8 @@ void BehaviorPathPlannerNode::onRoute(const LaneletRoute::ConstSharedPtr msg)
 SetParametersResult BehaviorPathPlannerNode::onSetParam(
   const std::vector<rclcpp::Parameter> & parameters)
 {
+  const std::lock_guard<std::mutex> lock(mutex_bt_);
+
   rcl_interfaces::msg::SetParametersResult result;
 
   if (planner_manager_->getSceneModuleManagers().empty()) {

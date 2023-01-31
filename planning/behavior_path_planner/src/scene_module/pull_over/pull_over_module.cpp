@@ -222,7 +222,6 @@ ParallelParkingParameters PullOverModule::getGeometricPullOverParameters() const
 void PullOverModule::onEntry()
 {
   RCLCPP_DEBUG(getLogger(), "PULL_OVER onEntry");
-  current_state_ = ModuleStatus::SUCCESS;
 
   // Initialize occupancy grid map
   if (parameters_.use_occupancy_grid) {
@@ -270,6 +269,7 @@ void PullOverModule::onExit()
   clearWaitingApproval();
   removeRTCStatus();
   resetPathCandidate();
+  resetPathReference();
   steering_factor_interface_ptr_->clearSteeringFactors();
   debug_marker_.markers.clear();
 
@@ -395,6 +395,7 @@ BehaviorModuleOutput PullOverModule::plan()
   const auto & current_pose = planner_data_->self_odometry->pose.pose;
 
   resetPathCandidate();
+  resetPathReference();
 
   status_.current_lanes = util::getExtendedCurrentLanes(planner_data_);
   status_.pull_over_lanes = pull_over_utils::getPullOverLanes(*(planner_data_->route_handler));
@@ -420,7 +421,6 @@ BehaviorModuleOutput PullOverModule::plan()
       removeRTCStatus();
       steering_factor_interface_ptr_->clearSteeringFactors();
       uuid_ = generateUUID();
-      current_state_ = ModuleStatus::SUCCESS;  // for breaking loop
       status_.has_requested_approval = true;
     } else if (isActivated() && isWaitingApproval()) {
       // When it is approved again after path is decided
@@ -510,6 +510,8 @@ BehaviorModuleOutput PullOverModule::plan()
   }
 
   BehaviorModuleOutput output;
+  output.reference_path = previous_module_output_.reference_path;
+  path_reference_ = output.reference_path;
   if (status_.is_safe) {
     // safe: use pull over path
     status_.stop_pose.reset();
@@ -593,9 +595,11 @@ BehaviorModuleOutput PullOverModule::planWaitingApproval()
   BehaviorModuleOutput out;
   out.modified_goal = plan().modified_goal;  // update status_
   out.path = std::make_shared<PathWithLaneId>(generateStopPath());
+  out.reference_path = previous_module_output_.reference_path;
   path_candidate_ = status_.is_safe
                       ? std::make_shared<PathWithLaneId>(status_.pull_over_path.getFullPath())
                       : out.path;
+  path_reference_ = out.reference_path;
   const auto distance_to_path_change = calcDistanceToPathChange();
   updateRTCStatus(distance_to_path_change.first, distance_to_path_change.second);
 

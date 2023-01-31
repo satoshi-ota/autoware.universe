@@ -53,105 +53,21 @@ AvoidanceByLCModule::AvoidanceByLCModule(
   std::shared_ptr<RTCInterface> & rtc_interface_left,
   std::shared_ptr<RTCInterface> & rtc_interface_right)
 : SceneModuleInterface{name, node},
+  parameters_{parameters},
   rtc_interface_left_{rtc_interface_left},
   rtc_interface_right_{rtc_interface_right},
   uuid_left_{generateUUID()},
   uuid_right_{generateUUID()}
 {
-  // avoidance parameters
-  {
-    AvoidanceParameters p{};
-
-    p.resample_interval_for_planning = parameters->resample_interval_for_planning;
-    p.resample_interval_for_output = parameters->resample_interval_for_output;
-    p.detection_area_right_expand_dist = parameters->detection_area_right_expand_dist;
-    p.detection_area_left_expand_dist = parameters->detection_area_left_expand_dist;
-    p.enable_avoidance_over_same_direction = parameters->enable_avoidance_over_same_direction;
-    p.enable_avoidance_over_opposite_direction =
-      parameters->enable_avoidance_over_opposite_direction;
-    p.enable_update_path_when_object_is_gone = parameters->enable_update_path_when_object_is_gone;
-    p.enable_safety_check = parameters->enable_safety_check;
-
-    p.threshold_distance_object_is_on_center = parameters->threshold_distance_object_is_on_center;
-    p.threshold_speed_object_is_stopped = parameters->threshold_speed_object_is_stopped;
-    p.threshold_time_object_is_moving = parameters->threshold_time_object_is_moving;
-    p.object_check_forward_distance = parameters->object_check_forward_distance;
-    p.object_check_backward_distance = parameters->object_check_backward_distance;
-    p.object_check_shiftable_ratio = parameters->object_check_shiftable_ratio;
-    p.object_check_min_road_shoulder_width = parameters->object_check_min_road_shoulder_width;
-    p.object_envelope_buffer = parameters->object_envelope_buffer;
-    p.object_last_seen_threshold = parameters->object_last_seen_threshold;
-
-    p.avoid_car = parameters->avoid_car;
-    p.avoid_truck = parameters->avoid_truck;
-    p.avoid_bus = parameters->avoid_bus;
-    p.avoid_trailer = parameters->avoid_trailer;
-    p.avoid_unknown = parameters->avoid_unknown;
-    p.avoid_bicycle = parameters->avoid_bicycle;
-    p.avoid_motorcycle = parameters->avoid_motorcycle;
-    p.avoid_pedestrian = parameters->avoid_pedestrian;
-
-    parameters_avoidance_ = std::make_shared<AvoidanceParameters>(p);
-  }
-
-  // lane change parameters
-  {
-    LaneChangeParameters p{};
-
-    p.lane_change_prepare_duration = parameters->lane_change_prepare_duration;
-    p.lane_changing_safety_check_duration = parameters->lane_changing_safety_check_duration;
-    p.lane_changing_lateral_jerk = parameters->lane_changing_lateral_jerk;
-    p.lane_changing_lateral_acc = parameters->lane_changing_lateral_acc;
-    p.lane_change_finish_judge_buffer = parameters->lane_change_finish_judge_buffer;
-    p.minimum_lane_change_velocity = parameters->minimum_lane_change_velocity;
-    p.prediction_time_resolution = parameters->prediction_time_resolution;
-    p.maximum_deceleration = parameters->maximum_deceleration;
-    p.lane_change_sampling_num = parameters->lane_change_sampling_num;
-    // p.abort_lane_change_velocity_thresh = parameters->abort_lane_change_velocity_thresh;
-    // p.abort_lane_change_angle_thresh = parameters->abort_lane_change_angle_thresh;
-    // p.abort_lane_change_distance_thresh = parameters->abort_lane_change_distance_thresh;
-    p.prepare_phase_ignore_target_speed_thresh =
-      parameters->prepare_phase_ignore_target_speed_thresh;
-    p.enable_abort_lane_change = parameters->enable_abort_lane_change;
-    p.enable_collision_check_at_prepare_phase = parameters->enable_collision_check_at_prepare_phase;
-    p.use_predicted_path_outside_lanelet = parameters->use_predicted_path_outside_lanelet;
-    p.use_all_predicted_path = parameters->use_all_predicted_path;
-    p.publish_debug_marker = parameters->publish_debug_marker;
-    p.drivable_area_right_bound_offset = parameters->drivable_area_right_bound_offset;
-    p.drivable_area_left_bound_offset = parameters->drivable_area_left_bound_offset;
-
-    parameters_lane_change_ = std::make_shared<LaneChangeParameters>(p);
-  }
-}
-
-BehaviorModuleOutput AvoidanceByLCModule::run()
-{
-  RCLCPP_DEBUG(getLogger(), "Was waiting approval, and now approved. Do plan().");
-  current_state_ = ModuleStatus::RUNNING;
-  is_activated_ = isActivated();
-
-  if (!isActivated()) {
-    return planWaitingApproval();
-  }
-
-  auto output = plan();
-
-  if (!isSafe()) {
-    current_state_ = ModuleStatus::SUCCESS;  // for breaking loop
-    return output;
-  }
-
-  // updateSteeringFactorPtr(output);
-
-  clearWaitingApproval();
-
-  return output;
+  steering_factor_interface_ptr_ =
+    std::make_unique<SteeringFactorInterface>(&node, "avoidance_by_lc");
 }
 
 void AvoidanceByLCModule::onEntry()
 {
   RCLCPP_DEBUG(getLogger(), "LANE_CHANGE onEntry");
-  current_state_ = ModuleStatus::IDLE;
+  current_lane_change_state_ = LaneChangeStates::Normal;
+  avoidance_data_ = calcAvoidancePlanningData(debug_data_);
   updateLaneChangeStatus();
 }
 
@@ -164,7 +80,6 @@ void AvoidanceByLCModule::onExit()
 
 bool AvoidanceByLCModule::isExecutionRequested() const
 {
-  const auto avoid_data_ = calcAvoidancePlanningData(debug_data_);
   const auto current_lanes = getCurrentLanes(*previous_module_output_.reference_path);
   const auto lane_change_lanes = getLaneChangeLanes(current_lanes, lane_change_lane_length_);
 
@@ -173,25 +88,16 @@ bool AvoidanceByLCModule::isExecutionRequested() const
     getSafePath(lane_change_lanes, check_distance_, selected_path);
 
   if (current_state_ == ModuleStatus::IDLE) {
-    // return !avoid_data_.target_objects.empty();
     return !lane_change_lanes.empty() && found_valid_path;
   }
 
-  if (avoid_data_.target_objects.empty()) {
+  if (avoidance_data_.target_objects.empty()) {
     return !hasFinishedLaneChange();
   }
 
   if (current_state_ == ModuleStatus::RUNNING) {
     return true;
   }
-
-  // const auto current_lanes = util::getCurrentLanes(planner_data_);
-  // const auto current_lanes = getCurrentLanes(*previous_module_output_.path);
-  // const auto lane_change_lanes = getLaneChangeLanes(current_lanes, lane_change_lane_length_);
-
-  // LaneChangePath selected_path;
-  // const auto [found_valid_path, found_safe_path] =
-  //   getSafePath(lane_change_lanes, check_distance_, selected_path);
 
   return found_valid_path;
 }
@@ -202,7 +108,6 @@ bool AvoidanceByLCModule::isExecutionReady() const
     return true;
   }
 
-  // const auto current_lanes = util::getCurrentLanes(planner_data_);
   const auto current_lanes = getCurrentLanes(*previous_module_output_.reference_path);
   const auto lane_change_lanes = getLaneChangeLanes(current_lanes, lane_change_lane_length_);
 
@@ -236,7 +141,7 @@ AvoidancePlanningData AvoidanceByLCModule::calcAvoidancePlanningData(DebugData &
   data.reference_pose = reference_pose;
 
   data.reference_path = util::resamplePathWithSpline(
-    *previous_module_output_.path, parameters_avoidance_->resample_interval_for_planning);
+    *previous_module_output_.path, parameters_->avoidance->resample_interval_for_planning);
 
   const size_t nearest_segment_index =
     findNearestSegmentIndex(data.reference_path.points, data.reference_pose.position);
@@ -278,8 +183,8 @@ void AvoidanceByLCModule::fillAvoidanceTargetObjects(
   // when expanding lanelets, right_offset must be minus.
   // This is because y axis is positive on the left.
   const auto expanded_lanelets = lanelet::utils::getExpandedLanelets(
-    data.current_lanelets, parameters_avoidance_->detection_area_left_expand_dist,
-    parameters_avoidance_->detection_area_right_expand_dist * (-1.0));
+    data.current_lanelets, parameters_->avoidance->detection_area_left_expand_dist,
+    parameters_->avoidance->detection_area_right_expand_dist * (-1.0));
 
   const auto [object_within_target_lane, object_outside_target_lane] =
     util::separateObjectsByLanelets(*planner_data_->dynamic_object, expanded_lanelets);
@@ -343,7 +248,7 @@ void AvoidanceByLCModule::fillAvoidanceTargetObjects(
     // Calc moving time.
     fillObjectMovingTime(object_data);
 
-    if (object_data.move_time > parameters_avoidance_->threshold_time_object_is_moving) {
+    if (object_data.move_time > parameters_->avoidance->threshold_time_object_is_moving) {
       // avoidance_debug_array_false_and_push_back(AvoidanceDebugFactor::MOVING_OBJECT);
       // object_data.reason = AvoidanceDebugFactor::MOVING_OBJECT;
       data.other_objects.push_back(object_data);
@@ -351,13 +256,13 @@ void AvoidanceByLCModule::fillAvoidanceTargetObjects(
     }
 
     // object is behind ego or too far.
-    if (object_data.longitudinal < -parameters_avoidance_->object_check_backward_distance) {
+    if (object_data.longitudinal < -parameters_->avoidance->object_check_backward_distance) {
       // avoidance_debug_array_false_and_push_back(AvoidanceDebugFactor::OBJECT_IS_BEHIND_THRESHOLD);
       // object_data.reason = AvoidanceDebugFactor::OBJECT_BEHIND_PATH_GOAL;
       data.other_objects.push_back(object_data);
       continue;
     }
-    if (object_data.longitudinal > parameters_avoidance_->object_check_forward_distance) {
+    if (object_data.longitudinal > parameters_->avoidance->object_check_forward_distance) {
       // avoidance_debug_array_false_and_push_back(AvoidanceDebugFactor::OBJECT_IS_IN_FRONT_THRESHOLD);
       // object_data.reason = AvoidanceDebugFactor::OBJECT_IS_IN_FRONT_THRESHOLD;
       data.other_objects.push_back(object_data);
@@ -391,13 +296,13 @@ void AvoidanceByLCModule::fillAvoidanceTargetObjects(
         object_data.overhang_pose.position.x, object_data.overhang_pose.position.y,
         object_data.overhang_pose.position.z);
       const bool get_left =
-        isOnRight(object_data) && parameters_avoidance_->enable_avoidance_over_same_direction;
+        isOnRight(object_data) && parameters_->avoidance->enable_avoidance_over_same_direction;
       const bool get_right =
-        !isOnRight(object_data) && parameters_avoidance_->enable_avoidance_over_same_direction;
+        !isOnRight(object_data) && parameters_->avoidance->enable_avoidance_over_same_direction;
 
       const auto target_lines = rh->getFurthestLinestring(
         overhang_lanelet, get_right, get_left,
-        parameters_avoidance_->enable_avoidance_over_opposite_direction);
+        parameters_->avoidance->enable_avoidance_over_opposite_direction);
 
       if (isOnRight(object_data)) {
         object_data.to_road_shoulder_distance =
@@ -420,7 +325,7 @@ void AvoidanceByLCModule::fillAvoidanceTargetObjects(
     // avoidance_debug_msg.lateral_distance_from_centerline = object_data.lateral;
     if (
       std::abs(object_data.lateral) <
-      parameters_avoidance_->threshold_distance_object_is_on_center) {
+      parameters_->avoidance->threshold_distance_object_is_on_center) {
       // avoidance_debug_array_false_and_push_back(AvoidanceDebugFactor::TOO_NEAR_TO_CENTERLINE);
       // object_data.reason = AvoidanceDebugFactor::TOO_NEAR_TO_CENTERLINE;
       data.other_objects.push_back(object_data);
@@ -494,7 +399,7 @@ void AvoidanceByLCModule::fillAvoidanceTargetObjects(
       const lanelet::Attribute sub_type =
         most_left_lanelet.attribute(lanelet::AttributeName::Subtype);
       if (sub_type.value() != "road_shoulder") {
-        object_shiftable_distance += parameters_avoidance_->object_check_min_road_shoulder_width;
+        object_shiftable_distance += parameters_->avoidance->object_check_min_road_shoulder_width;
       }
 
       const auto arc_coordinates = toArcCoordinates(
@@ -502,7 +407,7 @@ void AvoidanceByLCModule::fillAvoidanceTargetObjects(
       object_data.shiftable_ratio = arc_coordinates.distance / object_shiftable_distance;
 
       const auto is_parking_object =
-        object_data.shiftable_ratio > parameters_avoidance_->object_check_shiftable_ratio;
+        object_data.shiftable_ratio > parameters_->avoidance->object_check_shiftable_ratio;
 
       if (!is_parking_object) {
         // avoidance_debug_array_false_and_push_back(AvoidanceDebugFactor::NOT_PARKING_OBJECT);
@@ -540,7 +445,7 @@ void AvoidanceByLCModule::fillObjectEnvelopePolygon(
 
   if (same_id_obj == registered_objects_.end()) {
     object_data.envelope_poly = createEnvelopePolygon(
-      object_data, closest_pose, parameters_avoidance_->object_envelope_buffer);
+      object_data, closest_pose, parameters_->avoidance->object_envelope_buffer);
     return;
   }
 
@@ -549,7 +454,7 @@ void AvoidanceByLCModule::fillObjectEnvelopePolygon(
 
   if (!within(object_polygon, same_id_obj->envelope_poly)) {
     object_data.envelope_poly = createEnvelopePolygon(
-      object_data, closest_pose, parameters_avoidance_->object_envelope_buffer);
+      object_data, closest_pose, parameters_->avoidance->object_envelope_buffer);
     return;
   }
 
@@ -561,7 +466,7 @@ void AvoidanceByLCModule::fillObjectMovingTime(ObjectData & object_data) const
   const auto & object_vel =
     object_data.object.kinematics.initial_twist_with_covariance.twist.linear.x;
   const auto is_faster_than_threshold =
-    object_vel > parameters_avoidance_->threshold_speed_object_is_stopped;
+    object_vel > parameters_->avoidance->threshold_speed_object_is_stopped;
 
   const auto id = object_data.object.object_id;
   const auto same_id_obj = std::find_if(
@@ -590,7 +495,7 @@ void AvoidanceByLCModule::fillObjectMovingTime(ObjectData & object_data) const
   object_data.last_stop = same_id_obj->last_stop;
   object_data.move_time = (clock_->now() - same_id_obj->last_stop).seconds();
 
-  if (object_data.move_time > parameters_avoidance_->threshold_time_object_is_moving) {
+  if (object_data.move_time > parameters_->avoidance->threshold_time_object_is_moving) {
     stopped_objects_.erase(same_id_obj);
   }
 }
@@ -639,7 +544,7 @@ void AvoidanceByLCModule::updateRegisteredObject(const ObjectDataArray & now_obj
     }
 
     // lost count exceeds threshold. remove object from register.
-    if (r.lost_time > parameters_avoidance_->object_last_seen_threshold) {
+    if (r.lost_time > parameters_->avoidance->object_last_seen_threshold) {
       registered_objects_.erase(registered_objects_.begin() + i);
     }
   }
@@ -687,21 +592,30 @@ void AvoidanceByLCModule::compensateDetectionLost(
 ModuleStatus AvoidanceByLCModule::updateState()
 {
   RCLCPP_DEBUG(getLogger(), "LANE_CHANGE updateState");
-  if (current_state_ == ModuleStatus::IDLE) {
-    return current_state_;
-  }
 
-  if (!isSafe()) {
+  if (status_.lane_change_lanes.empty()) {
     current_state_ = ModuleStatus::SUCCESS;
     return current_state_;
   }
 
+  if (!isValidPath()) {
+    current_state_ = ModuleStatus::SUCCESS;
+    return current_state_;
+  }
+
+  const auto is_within_current_lane = lane_change_utils::isEgoWithinOriginalLane(
+    status_.current_lanes, getEgoPose(), planner_data_->parameters);
+  if (isAbortState() && !is_within_current_lane) {
+    current_state_ = ModuleStatus::RUNNING;
+    return current_state_;
+  }
+
   if (isAbortConditionSatisfied()) {
-    if (isNearEndOfLane() && isCurrentSpeedLow()) {
+    if ((isNearEndOfLane() && isCurrentSpeedLow()) || !is_within_current_lane) {
       current_state_ = ModuleStatus::RUNNING;
       return current_state_;
     }
-    // cancel lane change path
+
     current_state_ = ModuleStatus::FAILURE;
     return current_state_;
   }
@@ -718,23 +632,36 @@ BehaviorModuleOutput AvoidanceByLCModule::plan()
 {
   resetPathCandidate();
   resetPathReference();
+  is_activated_ = isActivated();
 
-  auto path = status_.lane_change_path.path;
-
+  PathWithLaneId path = status_.lane_change_path.path;
   if (!isValidPath(path)) {
-    status_.is_safe = false;
+    status_.is_valid_path = false;
     return BehaviorModuleOutput{};
+  } else {
+    status_.is_valid_path = true;
   }
-  generateExtendedDrivableArea(path);
 
-  if (isAbortConditionSatisfied()) {
-    if (isNearEndOfLane() && isCurrentSpeedLow()) {
-      const auto stop_point = util::insertStopPoint(0.1, &path);
+  if ((is_abort_condition_satisfied_ && isNearEndOfLane() && isCurrentSpeedLow())) {
+    const auto stop_point = util::insertStopPoint(0.1, &path);
+  }
+
+  if (isAbortState()) {
+    resetPathIfAbort();
+    if (is_activated_) {
+      path = abort_path_->path;
     }
   }
 
+  generateExtendedDrivableArea(path);
+
+  prev_approved_path_ = path;
+
   BehaviorModuleOutput output;
   output.path = std::make_shared<PathWithLaneId>(path);
+  updateOutputTurnSignal(output);
+
+  updateSteeringFactorPtr(output);
 
   const auto & route_handler = planner_data_->route_handler;
   const auto p = planner_data_->parameters;
@@ -747,11 +674,37 @@ BehaviorModuleOutput AvoidanceByLCModule::plan()
     p);
 
   output.reference_path = std::make_shared<PathWithLaneId>(reference_path);
-  updateOutputTurnSignal(output);
-
   path_reference_ = output.reference_path;
 
   return output;
+}
+
+void AvoidanceByLCModule::resetPathIfAbort()
+{
+  if (!is_abort_approval_requested_) {
+    const auto lateral_shift = lane_change_utils::getLateralShift(*abort_path_);
+    if (lateral_shift > 0.0) {
+      removePreviousRTCStatusRight();
+      uuid_right_ = generateUUID();
+    } else if (lateral_shift < 0.0) {
+      removePreviousRTCStatusLeft();
+      uuid_left_ = generateUUID();
+    }
+    RCLCPP_DEBUG(getLogger(), "[abort] uuid is reset to request abort approval.");
+    is_abort_approval_requested_ = true;
+    is_abort_path_approved_ = false;
+    return;
+  }
+
+  if (isActivated()) {
+    RCLCPP_DEBUG(getLogger(), "[abort] isActivated() is true. set is_abort_path_approved to true.");
+    is_abort_path_approved_ = true;
+    clearWaitingApproval();
+  } else {
+    RCLCPP_DEBUG(getLogger(), "[abort] isActivated() is False.");
+    is_abort_path_approved_ = false;
+    waitApproval();
+  }
 }
 
 CandidateOutput AvoidanceByLCModule::planCandidate() const
@@ -759,7 +712,6 @@ CandidateOutput AvoidanceByLCModule::planCandidate() const
   CandidateOutput output;
 
   // Get lane change lanes
-  // const auto current_lanes = util::getCurrentLanes(planner_data_);
   const auto current_lanes = getCurrentLanes(*previous_module_output_.reference_path);
   const auto lane_change_lanes = getLaneChangeLanes(current_lanes, lane_change_lane_length_);
 
@@ -783,38 +735,48 @@ CandidateOutput AvoidanceByLCModule::planCandidate() const
   output.finish_distance_to_path_change = motion_utils::calcSignedArcLength(
     selected_path.path.points, getEgoPose().position, selected_path.shift_line.end.position);
 
-  // updateSteeringFactorPtr(output, selected_path);
+  updateSteeringFactorPtr(output, selected_path);
 
   return output;
 }
 
 BehaviorModuleOutput AvoidanceByLCModule::planWaitingApproval()
 {
+  const auto is_within_current_lane = lane_change_utils::isEgoWithinOriginalLane(
+    status_.current_lanes, getEgoPose(), planner_data_->parameters);
+
+  if (is_within_current_lane) {
+    prev_approved_path_ = *previous_module_output_.reference_path;
+  }
+
   BehaviorModuleOutput out;
-  updateLaneChangeStatus();
-  out.path = previous_module_output_.path;
+  out.path = std::make_shared<PathWithLaneId>(prev_approved_path_);
   out.reference_path = previous_module_output_.reference_path;
-  path_reference_ = out.reference_path;
-  // out.path = std::make_shared<PathWithLaneId>(getReferencePath());
+
+  updateLaneChangeStatus();
+
   const auto candidate = planCandidate();
   path_candidate_ = std::make_shared<PathWithLaneId>(candidate.path_candidate);
-  // updateRTCStatus(candidate);
-  // waitApproval();
-  constexpr double threshold_to_update_status = -1.0e-03;
-  if (candidate.start_distance_to_path_change > threshold_to_update_status) {
-    updateRTCStatus(candidate);
-    waitApproval();
-  } else {
-    clearWaitingApproval();
-    removeRTCStatus();
-    current_state_ = ModuleStatus::IDLE;
-  }
+  path_reference_ = previous_module_output_.reference_path;
+  updateRTCStatus(candidate);
+  waitApproval();
+  is_abort_path_approved_ = false;
+
+  // constexpr double threshold_to_update_status = -1.0e-03;
+  // if (candidate.start_distance_to_path_change > threshold_to_update_status) {
+  //   updateRTCStatus(candidate);
+  //   waitApproval();
+  // } else {
+  //   clearWaitingApproval();
+  //   removeRTCStatus();
+  //   current_state_ = ModuleStatus::IDLE;
+  // }
+
   return out;
 }
 
 void AvoidanceByLCModule::updateLaneChangeStatus()
 {
-  // status_.current_lanes = util::getCurrentLanes(planner_data_);
   status_.current_lanes = getCurrentLanes(*previous_module_output_.reference_path);
   status_.lane_change_lanes = getLaneChangeLanes(status_.current_lanes, lane_change_lane_length_);
 
@@ -846,7 +808,6 @@ PathWithLaneId AvoidanceByLCModule::getReferencePath() const
   // Set header
   reference_path.header = getRouteHeader();
 
-  // const auto current_lanes = util::getCurrentLanes(planner_data_);
   const auto current_lanes = getCurrentLanes(*previous_module_output_.reference_path);
 
   if (current_lanes.empty()) {
@@ -876,13 +837,13 @@ PathWithLaneId AvoidanceByLCModule::getReferencePath() const
 
   reference_path = util::setDecelerationVelocity(
     *route_handler, reference_path, current_lanes,
-    parameters_lane_change_->lane_change_prepare_duration, lane_change_buffer);
+    parameters_->lane_change->lane_change_prepare_duration, lane_change_buffer);
 
   const auto drivable_lanes = util::generateDrivableLanes(current_lanes);
   const auto shorten_lanes = util::cutOverlappedLanes(reference_path, drivable_lanes);
   const auto expanded_lanes = util::expandLanelets(
-    shorten_lanes, parameters_lane_change_->drivable_area_left_bound_offset,
-    parameters_lane_change_->drivable_area_right_bound_offset);
+    shorten_lanes, parameters_->lane_change->drivable_area_left_bound_offset,
+    parameters_->lane_change->drivable_area_right_bound_offset);
   util::generateDrivableArea(
     reference_path, expanded_lanes, common_parameters.vehicle_length, planner_data_);
 
@@ -895,15 +856,17 @@ lanelet::ConstLanelets AvoidanceByLCModule::getLaneChangeLanes(
   lanelet::ConstLanelets lane_change_lanes;
   const auto & route_handler = planner_data_->route_handler;
   const auto minimum_lane_change_length = planner_data_->parameters.minimum_lane_change_length;
-  const auto lane_change_prepare_duration = parameters_lane_change_->lane_change_prepare_duration;
+  const auto lane_change_prepare_duration = parameters_->lane_change->lane_change_prepare_duration;
   const auto current_pose = getEgoPose();
   const auto current_twist = getEgoTwist();
 
   if (current_lanes.empty()) {
+    std::cout << __func__ << ":" << __LINE__ << std::endl;
     return lane_change_lanes;
   }
 
   if (avoidance_data_.target_objects.empty()) {
+    std::cout << __func__ << ":" << __LINE__ << std::endl;
     return lane_change_lanes;
   }
 
@@ -918,7 +881,6 @@ lanelet::ConstLanelets AvoidanceByLCModule::getLaneChangeLanes(
     route_handler->getLaneletSequence(current_lane, current_pose, 0.0, lane_change_prepare_length);
   lanelet::ConstLanelet lane_change_lane;
 
-  // if (route_handler->getLaneChangeTarget(current_check_lanes, &lane_change_lane)) {
   if (isOnRight(o_front)) {
     for (const auto & lanelet : current_check_lanes) {
       const auto & left_lane = route_handler->getRoutingGraphPtr()->left(lanelet);
@@ -939,13 +901,7 @@ lanelet::ConstLanelets AvoidanceByLCModule::getLaneChangeLanes(
     }
   }
 
-  // if (route_handler->getRightLaneletWithinRoute(current_check_lanes, &lane_change_lane)) {
-  //   lane_change_lanes = route_handler->getLaneletSequence(
-  //     lane_change_lane, current_pose, lane_change_lane_length, lane_change_lane_length);
-  // } else {
-  //   lane_change_lanes.clear();
-  // }
-
+  std::cout << __func__ << ":" << __LINE__ << std::endl;
   return lane_change_lanes;
 }
 
@@ -958,13 +914,13 @@ std::pair<bool, bool> AvoidanceByLCModule::getSafePath(
   const auto current_twist = getEgoTwist();
   const auto & common_parameters = planner_data_->parameters;
 
-  const auto current_lanes = util::getCurrentLanes(planner_data_);
+  const auto current_lanes = getCurrentLanes(*previous_module_output_.reference_path);
 
   if (!lane_change_lanes.empty()) {
     // find candidate paths
     const auto lane_change_paths = lane_change_utils::getLaneChangePaths(
-      *route_handler, current_lanes, lane_change_lanes, current_pose, current_twist,
-      common_parameters, *parameters_lane_change_, *previous_module_output_.path);
+      *previous_module_output_.path, *route_handler, current_lanes, lane_change_lanes, current_pose,
+      current_twist, common_parameters, *parameters_->lane_change);
 
     // get lanes used for detection
     lanelet::ConstLanelets check_lanes;
@@ -982,7 +938,7 @@ std::pair<bool, bool> AvoidanceByLCModule::getSafePath(
       route_handler->getGoalPose(),
       common_parameters.minimum_lane_change_length +
         common_parameters.backward_length_buffer_for_end_of_lane +
-        parameters_->lane_change_finish_judge_buffer);
+        parameters_->lane_change->lane_change_finish_judge_buffer);
 
     if (valid_paths.empty()) {
       return std::make_pair(false, false);
@@ -992,9 +948,9 @@ std::pair<bool, bool> AvoidanceByLCModule::getSafePath(
     // select safe path
     const bool found_safe_path = lane_change_utils::selectSafePath(
       valid_paths, current_lanes, check_lanes, planner_data_->dynamic_object, current_pose,
-      current_twist, common_parameters, *parameters_lane_change_, &safe_path, object_debug_);
+      current_twist, common_parameters, *parameters_->lane_change, &safe_path, object_debug_);
 
-    if (parameters_->publish_debug_marker) {
+    if (parameters_->lane_change->publish_debug_marker) {
       setObjectDebugVisualization();
     } else {
       debug_marker_.markers.clear();
@@ -1008,6 +964,8 @@ std::pair<bool, bool> AvoidanceByLCModule::getSafePath(
 
 bool AvoidanceByLCModule::isSafe() const { return status_.is_safe; }
 
+bool AvoidanceByLCModule::isValidPath() const { return status_.is_valid_path; }
+
 bool AvoidanceByLCModule::isValidPath(const PathWithLaneId & path) const
 {
   const auto & route_handler = planner_data_->route_handler;
@@ -1017,8 +975,8 @@ bool AvoidanceByLCModule::isValidPath(const PathWithLaneId & path) const
     *route_handler, util::extendLanes(route_handler, status_.current_lanes),
     util::extendLanes(route_handler, status_.lane_change_lanes));
   const auto expanded_lanes = util::expandLanelets(
-    drivable_lanes, parameters_lane_change_->drivable_area_left_bound_offset,
-    parameters_lane_change_->drivable_area_right_bound_offset);
+    drivable_lanes, parameters_->lane_change->drivable_area_left_bound_offset,
+    parameters_->lane_change->drivable_area_right_bound_offset);
   const auto lanelets = util::transformToLanelets(expanded_lanes);
 
   // check path points are in any lanelets
@@ -1065,7 +1023,7 @@ bool AvoidanceByLCModule::isAbortConditionSatisfied()
   is_abort_condition_satisfied_ = false;
   current_lane_change_state_ = LaneChangeStates::Normal;
 
-  if (!parameters_lane_change_->enable_cancel_lane_change) {
+  if (!parameters_->lane_change->enable_cancel_lane_change) {
     return false;
   }
 
@@ -1091,14 +1049,14 @@ bool AvoidanceByLCModule::isAbortConditionSatisfied()
       getLogger(), *clock_, 1000,
       "DANGER!!! Path is not safe anymore, but it is too late to CANCEL! Please be cautious");
 
-    if (!parameters_->enable_abort_lane_change) {
+    if (!parameters_->lane_change->enable_abort_lane_change) {
       current_lane_change_state_ = LaneChangeStates::Stop;
       return false;
     }
 
     const auto found_abort_path = lane_change_utils::getAbortPaths(
       planner_data_, status_.lane_change_path, ego_pose_before_collision, common_parameters,
-      *parameters_);
+      *parameters_->lane_change);
 
     if (!found_abort_path && !is_abort_path_approved_) {
       current_lane_change_state_ = LaneChangeStates::Stop;
@@ -1117,6 +1075,37 @@ bool AvoidanceByLCModule::isAbortConditionSatisfied()
   return false;
 }
 
+bool AvoidanceByLCModule::isAbortState() const
+{
+  if (!parameters_->lane_change->enable_abort_lane_change) {
+    return false;
+  }
+
+  if (current_lane_change_state_ != LaneChangeStates::Abort) {
+    return false;
+  }
+
+  if (!abort_path_) {
+    return false;
+  }
+
+  RCLCPP_WARN_STREAM_THROTTLE(
+    getLogger(), *clock_, 1000,
+    "DANGER!!! Lane change transition to ABORT state, return path will be computed!");
+  return true;
+}
+
+bool AvoidanceByLCModule::isAvoidancePlanRunning() const
+{
+  constexpr double AVOIDING_SHIFT_THR = 0.1;
+
+  const auto & current_pose = getEgoPose();
+  const auto arclength_current =
+    lanelet::utils::getArcCoordinates(status_.current_lanes, current_pose);
+
+  return std::abs(arclength_current.distance) > AVOIDING_SHIFT_THR;
+}
+
 bool AvoidanceByLCModule::hasFinishedLaneChange() const
 {
   const auto & current_pose = getEgoPose();
@@ -1124,7 +1113,7 @@ bool AvoidanceByLCModule::hasFinishedLaneChange() const
     lanelet::utils::getArcCoordinates(status_.lane_change_lanes, current_pose);
   const double travel_distance = arclength_current.length - status_.start_distance;
   const double finish_distance = status_.lane_change_path.length.sum() +
-                                 parameters_lane_change_->lane_change_finish_judge_buffer;
+                                 parameters_->lane_change->lane_change_finish_judge_buffer;
   return travel_distance > finish_distance;
 }
 
@@ -1228,9 +1217,38 @@ void AvoidanceByLCModule::generateExtendedDrivableArea(PathWithLaneId & path)
     *route_handler, status_.current_lanes, status_.lane_change_lanes);
   const auto shorten_lanes = util::cutOverlappedLanes(path, drivable_lanes);
   const auto expanded_lanes = util::expandLanelets(
-    shorten_lanes, parameters_lane_change_->drivable_area_left_bound_offset,
-    parameters_lane_change_->drivable_area_right_bound_offset);
+    shorten_lanes, parameters_->lane_change->drivable_area_left_bound_offset,
+    parameters_->lane_change->drivable_area_right_bound_offset);
   util::generateDrivableArea(path, expanded_lanes, common_parameters.vehicle_length, planner_data_);
+}
+
+bool AvoidanceByLCModule::isApprovedPathSafe(Pose & ego_pose_before_collision) const
+{
+  const auto current_pose = getEgoPose();
+  const auto current_twist = getEgoTwist();
+  const auto & dynamic_objects = planner_data_->dynamic_object;
+  const auto & current_lanes = status_.current_lanes;
+  const auto & common_parameters = planner_data_->parameters;
+  const auto & route_handler = planner_data_->route_handler;
+  const auto & path = status_.lane_change_path;
+
+  constexpr double check_distance = 100.0;
+  // get lanes used for detection
+  const double check_distance_with_path = check_distance + path.length.sum();
+  const auto check_lanes = route_handler->getCheckTargetLanesFromPath(
+    path.path, status_.lane_change_lanes, check_distance_with_path);
+
+  std::unordered_map<std::string, CollisionCheckDebug> debug_data;
+
+  const size_t current_seg_idx = motion_utils::findFirstNearestSegmentIndexWithSoftConstraints(
+    path.path.points, current_pose, common_parameters.ego_nearest_dist_threshold,
+    common_parameters.ego_nearest_yaw_threshold);
+  return lane_change_utils::isLaneChangePathSafe(
+    path, current_lanes, check_lanes, dynamic_objects, current_pose, current_seg_idx, current_twist,
+    common_parameters, *parameters_->lane_change,
+    common_parameters.expected_front_deceleration_for_abort,
+    common_parameters.expected_rear_deceleration_for_abort, ego_pose_before_collision, debug_data,
+    false, status_.lane_change_path.acceleration);
 }
 
 void AvoidanceByLCModule::updateOutputTurnSignal(BehaviorModuleOutput & output)
@@ -1244,31 +1262,36 @@ void AvoidanceByLCModule::updateOutputTurnSignal(BehaviorModuleOutput & output)
   lane_change_utils::get_turn_signal_info(status_.lane_change_path, &output.turn_signal_info);
 }
 
-void AvoidanceByLCModule::resetParameters()
-{
-  clearWaitingApproval();
-  removeRTCStatus();
-  // steering_factor_interface_ptr_->clearSteeringFactors();
-  object_debug_.clear();
-  debug_marker_.markers.clear();
-  resetPathCandidate();
-  resetPathReference();
-}
-
 bool AvoidanceByLCModule::isTargetObjectType(const PredictedObject & object) const
 {
   using autoware_auto_perception_msgs::msg::ObjectClassification;
   const auto t = util::getHighestProbLabel(object.classification);
   const auto is_object_type =
-    ((t == ObjectClassification::CAR && parameters_avoidance_->avoid_car) ||
-     (t == ObjectClassification::TRUCK && parameters_avoidance_->avoid_truck) ||
-     (t == ObjectClassification::BUS && parameters_avoidance_->avoid_bus) ||
-     (t == ObjectClassification::TRAILER && parameters_avoidance_->avoid_trailer) ||
-     (t == ObjectClassification::UNKNOWN && parameters_avoidance_->avoid_unknown) ||
-     (t == ObjectClassification::BICYCLE && parameters_avoidance_->avoid_bicycle) ||
-     (t == ObjectClassification::MOTORCYCLE && parameters_avoidance_->avoid_motorcycle) ||
-     (t == ObjectClassification::PEDESTRIAN && parameters_avoidance_->avoid_pedestrian));
+    ((t == ObjectClassification::CAR && parameters_->avoidance->avoid_car) ||
+     (t == ObjectClassification::TRUCK && parameters_->avoidance->avoid_truck) ||
+     (t == ObjectClassification::BUS && parameters_->avoidance->avoid_bus) ||
+     (t == ObjectClassification::TRAILER && parameters_->avoidance->avoid_trailer) ||
+     (t == ObjectClassification::UNKNOWN && parameters_->avoidance->avoid_unknown) ||
+     (t == ObjectClassification::BICYCLE && parameters_->avoidance->avoid_bicycle) ||
+     (t == ObjectClassification::MOTORCYCLE && parameters_->avoidance->avoid_motorcycle) ||
+     (t == ObjectClassification::PEDESTRIAN && parameters_->avoidance->avoid_pedestrian));
   return is_object_type;
+}
+
+void AvoidanceByLCModule::resetParameters()
+{
+  is_abort_path_approved_ = false;
+  is_abort_approval_requested_ = false;
+  current_lane_change_state_ = LaneChangeStates::Normal;
+  abort_path_ = nullptr;
+
+  clearWaitingApproval();
+  removeRTCStatus();
+  steering_factor_interface_ptr_->clearSteeringFactors();
+  object_debug_.clear();
+  debug_marker_.markers.clear();
+  resetPathCandidate();
+  resetPathReference();
 }
 
 void AvoidanceByLCModule::acceptVisitor(const std::shared_ptr<SceneModuleVisitor> & visitor) const

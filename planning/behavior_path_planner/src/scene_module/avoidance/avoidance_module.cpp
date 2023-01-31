@@ -91,9 +91,6 @@ bool AvoidanceModule::isExecutionRequested() const
 {
   DEBUG_PRINT("AVOIDANCE isExecutionRequested");
 
-  // if (current_state_ == ModuleStatus::RUNNING) {
-  //   return true;
-  // }
   auto avoid_data = calcAvoidancePlanningData(debug_data_);
 
   fillShiftLine(avoid_data, debug_data_);
@@ -3170,26 +3167,6 @@ void AvoidanceModule::updateData()
   debug_data_ = DebugData();
   avoidance_data_ = calcAvoidancePlanningData(debug_data_);
 
-  // const auto has_same_lane = [this]() {
-  //   const auto ids = path_data_.path->points.front().lane_ids;
-  //   for (const auto & p : prev_reference_.points) {
-  //     for (const auto & prev_id : p.lane_ids) {
-  //       for (const auto & id : ids) {
-  //         if (id == prev_id) {
-  //           return true;
-  //         }
-  //       }
-  //     }
-  //   }
-
-  //   return false;
-  // }();
-
-  // if (!has_same_lane) {
-  //   std::cout << "avoidance UPDATE" << std::endl;
-  //   initVariables();
-  // }
-
   // TODO(Horibe): this is not tested yet, disable now.
   updateRegisteredObject(avoidance_data_.target_objects);
   compensateDetectionLost(avoidance_data_.target_objects, avoidance_data_.other_objects);
@@ -3328,7 +3305,6 @@ void AvoidanceModule::onEntry()
 {
   DEBUG_PRINT("AVOIDANCE onEntry. wait approval!");
   initVariables();
-  current_state_ = ModuleStatus::IDLE;
 }
 
 void AvoidanceModule::onExit()

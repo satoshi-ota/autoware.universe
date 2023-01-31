@@ -38,7 +38,7 @@ public:
 
   std::shared_ptr<SceneModuleInterface> createNewSceneModuleInstance() override
   {
-    return std::make_shared<PullOverModule>(name_, *node_, module_params_, rtc_interface_);
+    return std::make_shared<PullOverModule>(name_, *node_, parameters_, rtc_interface_);
   }
 
   void updateModuleParams(const std::vector<rclcpp::Parameter> & parameters) override;
@@ -48,7 +48,7 @@ private:
 
   std::shared_ptr<RTCInterface> rtc_interface_;
 
-  PullOverParameters module_params_;
+  PullOverParameters parameters_;
 
   std::unordered_map<std::string, std::shared_ptr<PullOverModule>> registered_modules_;
 };

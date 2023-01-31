@@ -100,7 +100,7 @@ public:
     clock_{node.get_clock()},
     uuid_(generateUUID()),
     is_waiting_approval_{false},
-    current_state_{ModuleStatus::SUCCESS}
+    current_state_{ModuleStatus::IDLE}
   {
   }
 
@@ -168,7 +168,9 @@ public:
   {
     current_state_ = ModuleStatus::RUNNING;
 
-    updateData();
+    if (!isActivated()) {
+      return planWaitingApproval();
+    }
 
     if (!isWaitingApproval()) {
       return plan();

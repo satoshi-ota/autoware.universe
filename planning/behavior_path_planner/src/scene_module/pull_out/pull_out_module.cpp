@@ -109,6 +109,7 @@ void PullOutModule::onExit()
   removeRTCStatus();
   steering_factor_interface_ptr_->clearSteeringFactors();
   resetPathCandidate();
+  resetPathReference();
   current_state_ = ModuleStatus::SUCCESS;
   RCLCPP_DEBUG(getLogger(), "PULL_OUT onExit");
 }
@@ -175,6 +176,7 @@ BehaviorModuleOutput PullOutModule::plan()
   if (isWaitingApproval()) {
     clearWaitingApproval();
     resetPathCandidate();
+    resetPathReference();
     // save current_pose when approved for start_point of turn_signal for backward driving
     last_approved_pose_ = std::make_unique<Pose>(planner_data_->self_odometry->pose.pose);
   }
@@ -209,8 +211,10 @@ BehaviorModuleOutput PullOutModule::plan()
     path, expanded_lanes, planner_data_->parameters.vehicle_length, planner_data_);
 
   output.path = std::make_shared<PathWithLaneId>(path);
+  output.reference_path = previous_module_output_.reference_path;
   output.turn_signal_info = calcTurnSignalInfo();
   path_candidate_ = std::make_shared<PathWithLaneId>(getFullPath());
+  path_reference_ = previous_module_output_.reference_path;
 
   const uint16_t steering_factor_direction = std::invoke([&output]() {
     if (output.turn_signal_info.turn_signal.command == TurnIndicatorsCommand::ENABLE_LEFT) {
@@ -319,8 +323,10 @@ BehaviorModuleOutput PullOutModule::planWaitingApproval()
   }
 
   output.path = std::make_shared<PathWithLaneId>(stop_path);
+  output.reference_path = previous_module_output_.reference_path;
   output.turn_signal_info = calcTurnSignalInfo();
   path_candidate_ = std::make_shared<PathWithLaneId>(getFullPath());
+  path_reference_ = output.reference_path;
 
   const uint16_t steering_factor_direction = std::invoke([&output]() {
     if (output.turn_signal_info.turn_signal.command == TurnIndicatorsCommand::ENABLE_LEFT) {

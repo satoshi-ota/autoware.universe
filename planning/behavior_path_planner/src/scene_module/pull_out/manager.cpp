@@ -36,7 +36,7 @@ void PullOutModuleManager::updateModuleParams(const std::vector<rclcpp::Paramete
 {
   using tier4_autoware_utils::updateParam;
 
-  auto p = module_params_;
+  auto p = parameters_;
 
   std::string ns = name_ + ".";
   updateParam<double>(parameters, ns + "th_arrived_distance", p.th_arrived_distance);
@@ -53,7 +53,7 @@ void PullOutModuleManager::getModuleParams(rclcpp::Node * node)
     return node->declare_parameter(name, def_val);
   };
 
-  auto & p = module_params_;
+  auto & p = parameters_;
 
   p.th_arrived_distance = dp("th_arrived_distance", 1.0);
   p.th_stopped_velocity = dp("th_stopped_velocity", 0.01);
@@ -70,6 +70,7 @@ void PullOutModuleManager::getModuleParams(rclcpp::Node * node)
   p.deceleration_interval = dp("deceleration_interval", 10.0);
   // geometric pull out
   p.enable_geometric_pull_out = dp("enable_geometric_pull_out", true);
+  p.divide_pull_out_path = dp("divide_pull_out_path", false);
   p.geometric_pull_out_velocity = dp("geometric_pull_out_velocity", 1.0);
   p.arc_path_interval = dp("arc_path_interval", 1.0);
   p.lane_departure_margin = dp("lane_departure_margin", 0.2);
@@ -79,12 +80,15 @@ void PullOutModuleManager::getModuleParams(rclcpp::Node * node)
   p.search_priority =
     dp("search_priority", "efficient_path");  // "efficient_path" or "short_back_distance"
   p.enable_back = dp("enable_back", true);
-  p.max_back_distance = dp("max_back_distance", 15.0);
+  p.max_back_distance = dp("max_back_distance", 30.0);
   p.backward_search_resolution = dp("backward_search_resolution", 2.0);
   p.backward_path_update_duration = dp("backward_path_update_duration", 3.0);
+  p.ignore_distance_from_lane_end = dp("ignore_distance_from_lane_end", 15.0);
   // drivable area
   p.drivable_area_right_bound_offset = dp("drivable_area_right_bound_offset", 0.0);
   p.drivable_area_left_bound_offset = dp("drivable_area_left_bound_offset", 0.0);
+  p.drivable_area_types_to_skip =
+    dp("drivable_area_types_to_skip", std::vector<std::string>({"road_border"}));
 
   // validation of parameters
   if (p.pull_out_sampling_num < 1) {

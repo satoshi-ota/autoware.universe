@@ -37,7 +37,7 @@ void AvoidanceModuleManager::updateModuleParams(const std::vector<rclcpp::Parame
 {
   using tier4_autoware_utils::updateParam;
 
-  auto p = module_params_;
+  auto p = parameters_;
 
   std::string ns = "avoidance.";
   updateParam<bool>(parameters, ns + "enable_safety_check", p->enable_safety_check);
@@ -51,82 +51,154 @@ void AvoidanceModuleManager::updateModuleParams(const std::vector<rclcpp::Parame
 
 void AvoidanceModuleManager::getModuleParams(rclcpp::Node * node)
 {
-  const auto dp = [this, &node](const std::string & str, auto & value, auto def_val) {
-    std::string name = "avoidance." + str;
-
-    if (node->has_parameter(name)) {
-      node->get_parameter<decltype(def_val)>(name, value);
-    } else {
-      value = node->declare_parameter(name, def_val);
-    }
-  };
-
   AvoidanceParameters p{};
-  dp("resample_interval_for_planning", p.resample_interval_for_planning, 0.3);
-  dp("resample_interval_for_output", p.resample_interval_for_output, 3.0);
-  dp("detection_area_right_expand_dist", p.detection_area_right_expand_dist, 0.0);
-  dp("detection_area_left_expand_dist", p.detection_area_left_expand_dist, 1.0);
-  dp("enable_avoidance_over_same_direction", p.enable_avoidance_over_same_direction, true);
-  dp("enable_avoidance_over_opposite_direction", p.enable_avoidance_over_opposite_direction, true);
-  dp("enable_update_path_when_object_is_gone", p.enable_update_path_when_object_is_gone, false);
-  dp("enable_safety_check", p.enable_safety_check, false);
+  // general params
+  {
+    std::string ns = "avoidance.";
+    p.resample_interval_for_planning =
+      node->declare_parameter<double>(ns + "resample_interval_for_planning");
+    p.resample_interval_for_output =
+      node->declare_parameter<double>(ns + "resample_interval_for_output");
+    p.detection_area_right_expand_dist =
+      node->declare_parameter<double>(ns + "detection_area_right_expand_dist");
+    p.detection_area_left_expand_dist =
+      node->declare_parameter<double>(ns + "detection_area_left_expand_dist");
+    p.drivable_area_right_bound_offset =
+      node->declare_parameter<double>(ns + "drivable_area_right_bound_offset");
+    p.drivable_area_left_bound_offset =
+      node->declare_parameter<double>(ns + "drivable_area_left_bound_offset");
+    p.drivable_area_types_to_skip =
+      node->declare_parameter<std::vector<std::string>>(ns + "drivable_area_types_to_skip");
+    p.object_envelope_buffer = node->declare_parameter<double>(ns + "object_envelope_buffer");
+    p.enable_bound_clipping = node->declare_parameter<bool>(ns + "enable_bound_clipping");
+    p.enable_avoidance_over_same_direction =
+      node->declare_parameter<bool>(ns + "enable_avoidance_over_same_direction");
+    p.enable_avoidance_over_opposite_direction =
+      node->declare_parameter<bool>(ns + "enable_avoidance_over_opposite_direction");
+    p.enable_update_path_when_object_is_gone =
+      node->declare_parameter<bool>(ns + "enable_update_path_when_object_is_gone");
+    p.enable_safety_check = node->declare_parameter<bool>(ns + "enable_safety_check");
+    p.enable_yield_maneuver = node->declare_parameter<bool>(ns + "enable_yield_maneuver");
+    p.publish_debug_marker = node->declare_parameter<bool>(ns + "publish_debug_marker");
+    p.print_debug_info = node->declare_parameter<bool>(ns + "print_debug_info");
+  }
 
-  dp("threshold_distance_object_is_on_center", p.threshold_distance_object_is_on_center, 1.0);
-  dp("threshold_speed_object_is_stopped", p.threshold_speed_object_is_stopped, 1.0);
-  dp("threshold_time_object_is_moving", p.threshold_time_object_is_moving, 1.0);
-  dp("object_check_forward_distance", p.object_check_forward_distance, 150.0);
-  dp("object_check_backward_distance", p.object_check_backward_distance, 2.0);
-  dp("object_check_shiftable_ratio", p.object_check_shiftable_ratio, 1.0);
-  dp("object_check_min_road_shoulder_width", p.object_check_min_road_shoulder_width, 0.5);
-  dp("object_envelope_buffer", p.object_envelope_buffer, 0.1);
-  dp("object_last_seen_threshold", p.object_last_seen_threshold, 2.0);
+  // target object
+  {
+    std::string ns = "avoidance.target_object.";
+    p.avoid_car = node->declare_parameter<bool>(ns + "car");
+    p.avoid_truck = node->declare_parameter<bool>(ns + "truck");
+    p.avoid_bus = node->declare_parameter<bool>(ns + "bus");
+    p.avoid_trailer = node->declare_parameter<bool>(ns + "trailer");
+    p.avoid_unknown = node->declare_parameter<bool>(ns + "unknown");
+    p.avoid_bicycle = node->declare_parameter<bool>(ns + "bicycle");
+    p.avoid_motorcycle = node->declare_parameter<bool>(ns + "motorcycle");
+    p.avoid_pedestrian = node->declare_parameter<bool>(ns + "pedestrian");
+  }
 
-  dp("target_object.car", p.avoid_car, true);
-  dp("target_object.truck", p.avoid_truck, true);
-  dp("target_object.bus", p.avoid_bus, true);
-  dp("target_object.trailer", p.avoid_trailer, true);
-  dp("target_object.unknown", p.avoid_unknown, false);
-  dp("target_object.bicycle", p.avoid_bicycle, false);
-  dp("target_object.motorcycle", p.avoid_motorcycle, false);
-  dp("target_object.pedestrian", p.avoid_pedestrian, false);
+  // target filtering
+  {
+    std::string ns = "avoidance.target_filtering.";
+    p.threshold_speed_object_is_stopped =
+      node->declare_parameter<double>(ns + "threshold_speed_object_is_stopped");
+    p.threshold_time_object_is_moving =
+      node->declare_parameter<double>(ns + "threshold_time_object_is_moving");
+    p.object_check_forward_distance =
+      node->declare_parameter<double>(ns + "object_check_forward_distance");
+    p.object_check_backward_distance =
+      node->declare_parameter<double>(ns + "object_check_backward_distance");
+    p.object_check_goal_distance =
+      node->declare_parameter<double>(ns + "object_check_goal_distance");
+    p.threshold_distance_object_is_on_center =
+      node->declare_parameter<double>(ns + "threshold_distance_object_is_on_center");
+    p.object_check_shiftable_ratio =
+      node->declare_parameter<double>(ns + "object_check_shiftable_ratio");
+    p.object_check_min_road_shoulder_width =
+      node->declare_parameter<double>(ns + "object_check_min_road_shoulder_width");
+    p.object_last_seen_threshold =
+      node->declare_parameter<double>(ns + "object_last_seen_threshold");
+  }
 
-  dp("enable_bound_clipping", p.enable_bound_clipping, false);
+  // safety check
+  {
+    std::string ns = "avoidance.safety_check.";
+    p.safety_check_backward_distance =
+      node->declare_parameter<double>(ns + "safety_check_backward_distance");
+    p.safety_check_time_horizon = node->declare_parameter<double>(ns + "safety_check_time_horizon");
+    p.safety_check_idling_time = node->declare_parameter<double>(ns + "safety_check_idling_time");
+    p.safety_check_accel_for_rss =
+      node->declare_parameter<double>(ns + "safety_check_accel_for_rss");
+    p.safety_check_hysteresis_factor =
+      node->declare_parameter<double>(ns + "safety_check_hysteresis_factor");
+  }
 
-  dp("lateral_collision_margin", p.lateral_collision_margin, 2.0);
-  dp("lateral_collision_safety_buffer", p.lateral_collision_safety_buffer, 0.5);
-  dp("longitudinal_collision_safety_buffer", p.longitudinal_collision_safety_buffer, 0.0);
+  // avoidance maneuver (lateral)
+  {
+    std::string ns = "avoidance.avoidance.lateral.";
+    p.lateral_collision_margin = node->declare_parameter<double>(ns + "lateral_collision_margin");
+    p.lateral_collision_safety_buffer =
+      node->declare_parameter<double>(ns + "lateral_collision_safety_buffer");
+    p.lateral_passable_safety_buffer =
+      node->declare_parameter<double>(ns + "lateral_passable_safety_buffer");
+    p.road_shoulder_safety_margin =
+      node->declare_parameter<double>(ns + "road_shoulder_safety_margin");
+    p.avoidance_execution_lateral_threshold =
+      node->declare_parameter<double>(ns + "avoidance_execution_lateral_threshold");
+    p.max_right_shift_length = node->declare_parameter<double>(ns + "max_right_shift_length");
+    p.max_left_shift_length = node->declare_parameter<double>(ns + "max_left_shift_length");
+  }
 
-  dp("safety_check_min_longitudinal_margin", p.safety_check_min_longitudinal_margin, 0.0);
-  dp("safety_check_backward_distance", p.safety_check_backward_distance, 0.0);
-  dp("safety_check_time_horizon", p.safety_check_time_horizon, 10.0);
-  dp("safety_check_idling_time", p.safety_check_idling_time, 1.5);
-  dp("safety_check_accel_for_rss", p.safety_check_accel_for_rss, 2.5);
+  // avoidance maneuver (longitudinal)
+  {
+    std::string ns = "avoidance.avoidance.longitudinal.";
+    p.prepare_time = node->declare_parameter<double>(ns + "prepare_time");
+    p.longitudinal_collision_safety_buffer =
+      node->declare_parameter<double>(ns + "longitudinal_collision_safety_buffer");
+    p.min_prepare_distance = node->declare_parameter<double>(ns + "min_prepare_distance");
+    p.min_avoidance_distance = node->declare_parameter<double>(ns + "min_avoidance_distance");
+    p.min_nominal_avoidance_speed =
+      node->declare_parameter<double>(ns + "min_nominal_avoidance_speed");
+    p.min_sharp_avoidance_speed = node->declare_parameter<double>(ns + "min_sharp_avoidance_speed");
+  }
 
-  dp("prepare_time", p.prepare_time, 3.0);
-  dp("min_prepare_distance", p.min_prepare_distance, 10.0);
-  dp("min_avoidance_distance", p.min_avoidance_distance, 10.0);
+  // yield
+  {
+    std::string ns = "avoidance.yield.";
+    p.yield_velocity = node->declare_parameter<double>(ns + "yield_velocity");
+  }
 
-  dp("min_nominal_avoidance_speed", p.min_nominal_avoidance_speed, 5.0);
-  dp("min_sharp_avoidance_speed", p.min_sharp_avoidance_speed, 1.0);
+  // stop
+  {
+    std::string ns = "avoidance.stop.";
+    p.stop_min_distance = node->declare_parameter<double>(ns + "min_distance");
+    p.stop_max_distance = node->declare_parameter<double>(ns + "max_distance");
+  }
 
-  dp("road_shoulder_safety_margin", p.road_shoulder_safety_margin, 0.0);
+  // constraints
+  {
+    std::string ns = "avoidance.constraints.";
+    p.use_constraints_for_decel = node->declare_parameter<bool>(ns + "use_constraints_for_decel");
+  }
 
-  dp("max_right_shift_length", p.max_right_shift_length, 1.5);
-  dp("max_left_shift_length", p.max_left_shift_length, 1.5);
+  // constraints (longitudinal)
+  {
+    std::string ns = "avoidance.constraints.longitudinal.";
+    p.nominal_deceleration = node->declare_parameter<double>(ns + "nominal_deceleration");
+    p.nominal_jerk = node->declare_parameter<double>(ns + "nominal_jerk");
+    p.max_deceleration = node->declare_parameter<double>(ns + "max_deceleration");
+    p.max_jerk = node->declare_parameter<double>(ns + "max_jerk");
+    p.min_avoidance_speed_for_acc_prevention =
+      node->declare_parameter<double>(ns + "min_avoidance_speed_for_acc_prevention");
+    p.max_avoidance_acceleration =
+      node->declare_parameter<double>(ns + "max_avoidance_acceleration");
+  }
 
-  dp("nominal_lateral_jerk", p.nominal_lateral_jerk, 0.3);
-  dp("max_lateral_jerk", p.max_lateral_jerk, 2.0);
-
-  dp(
-    "longitudinal_collision_margin_min_distance", p.longitudinal_collision_margin_min_distance,
-    0.0);
-  dp("longitudinal_collision_margin_time", p.longitudinal_collision_margin_time, 0.0);
-
-  dp("min_avoidance_speed_for_acc_prevention", p.min_avoidance_speed_for_acc_prevention, 3.0);
-  dp("max_avoidance_acceleration", p.max_avoidance_acceleration, 0.5);
-
-  dp("publish_debug_marker", p.publish_debug_marker, false);
-  dp("print_debug_info", p.print_debug_info, false);
+  // constraints (lateral)
+  {
+    std::string ns = "avoidance.constraints.lateral.";
+    p.nominal_lateral_jerk = node->declare_parameter<double>(ns + "nominal_lateral_jerk");
+    p.max_lateral_jerk = node->declare_parameter<double>(ns + "max_lateral_jerk");
+  }
 
   // velocity matrix
   {
@@ -135,13 +207,6 @@ void AvoidanceModuleManager::getModuleParams(rclcpp::Node * node)
     p.target_velocity_matrix = node->declare_parameter<std::vector<double>>(ns + "matrix");
   }
 
-  dp("drivable_area_right_bound_offset", p.drivable_area_right_bound_offset, 0.0);
-  dp("drivable_area_left_bound_offset", p.drivable_area_left_bound_offset, 0.0);
-
-  dp("enable_bound_clipping", p.enable_bound_clipping, false);
-
-  dp("avoidance_execution_lateral_threshold", p.avoidance_execution_lateral_threshold, 0.499);
-
-  module_params_ = std::make_shared<AvoidanceParameters>(p);
+  parameters_ = std::make_shared<AvoidanceParameters>(p);
 }
 }  // namespace behavior_path_planner

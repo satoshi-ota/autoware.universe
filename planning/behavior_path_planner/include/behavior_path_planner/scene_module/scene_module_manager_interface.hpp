@@ -158,9 +158,9 @@ public:
       appendMarkerArray(m.second->getDebugMarkers(), &markers);
     }
 
-    if (idling_module_ != nullptr) {
-      appendMarkerArray(idling_module_->getDebugMarkers(), &markers);
-    }
+    // if (idling_module_ != nullptr) {
+    //   appendMarkerArray(idling_module_->getDebugMarkers(), &markers);
+    // }
 
     pub_debug_marker_->publish(markers);
   }
@@ -186,8 +186,10 @@ public:
   {
     std::for_each(registered_modules_.begin(), registered_modules_.end(), [](const auto & m) {
       m.second->onExit();
+      m.second->publishRTCStatus();
     });
     registered_modules_.clear();
+    idling_module_ = nullptr;
   }
 
   size_t getPriority() const { return priority_; }

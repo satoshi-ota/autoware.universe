@@ -36,7 +36,7 @@ void PullOverModuleManager::updateModuleParams(const std::vector<rclcpp::Paramet
 {
   using tier4_autoware_utils::updateParam;
 
-  auto p = module_params_;
+  auto p = parameters_;
 
   std::string ns = name_ + ".";
   updateParam<bool>(parameters, ns + "print_debug_info", p.print_debug_info);
@@ -53,7 +53,7 @@ void PullOverModuleManager::getModuleParams(rclcpp::Node * node)
     return node->declare_parameter(name, def_val);
   };
 
-  auto & p = module_params_;
+  auto & p = parameters_;
 
   p.request_length = dp("request_length", 200.0);
   p.th_stopped_velocity = dp("th_stopped_velocity", 0.01);
@@ -71,6 +71,7 @@ void PullOverModuleManager::getModuleParams(rclcpp::Node * node)
   p.longitudinal_margin = dp("longitudinal_margin", 3.0);
   p.max_lateral_offset = dp("max_lateral_offset", 1.0);
   p.lateral_offset_interval = dp("lateral_offset_interval", 0.25);
+  p.ignore_distance_from_lane_start = dp("ignore_distance_from_lane_start", 15.0);
   // occupancy grid map
   p.use_occupancy_grid = dp("use_occupancy_grid", true);
   p.use_occupancy_grid_for_longitudinal_margin =
@@ -118,6 +119,8 @@ void PullOverModuleManager::getModuleParams(rclcpp::Node * node)
   // drivable area
   p.drivable_area_right_bound_offset = dp("drivable_area_right_bound_offset", 0.0);
   p.drivable_area_left_bound_offset = dp("drivable_area_left_bound_offset", 0.0);
+  p.drivable_area_types_to_skip =
+    dp("drivable_area_types_to_skip", std::vector<std::string>({"road_border"}));
   // debug
   p.print_debug_info = dp("print_debug_info", false);
 
