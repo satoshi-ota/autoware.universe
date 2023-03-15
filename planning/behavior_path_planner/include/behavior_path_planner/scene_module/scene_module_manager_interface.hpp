@@ -91,7 +91,9 @@ public:
 
     const auto itr = std::find(registered_modules_.begin(), registered_modules_.end(), module_ptr);
 
-    registered_modules_.erase(itr);
+    if (itr != registered_modules_.end()) {
+      registered_modules_.erase(itr);
+    }
 
     pub_debug_marker_->publish(MarkerArray{});
   }

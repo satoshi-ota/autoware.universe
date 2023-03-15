@@ -78,7 +78,8 @@ public:
   void reset()
   {
     approved_module_ptrs_.clear();
-    candidate_module_opt_ = boost::none;
+    candidate_module_ptrs_.clear();
+    // candidate_module_opt_ = boost::none;
     root_lanelet_ = boost::none;
     std::for_each(manager_ptrs_.begin(), manager_ptrs_.end(), [](const auto & m) { m->reset(); });
     resetProcessingTime();
@@ -96,7 +97,7 @@ public:
   {
     std::vector<std::shared_ptr<SceneModuleStatus>> ret;
 
-    const auto size = approved_module_ptrs_.size() + 1;
+    const auto size = approved_module_ptrs_.size() + candidate_module_ptrs_.size();
 
     ret.reserve(size);
 
@@ -107,15 +108,22 @@ public:
       ret.push_back(s);
     }
 
-    if (!!candidate_module_opt_) {
-      const auto m = candidate_module_opt_.get();
+    for (const auto & m : candidate_module_ptrs_) {
       auto s = std::make_shared<SceneModuleStatus>(m->name());
       s->is_waiting_approval = m->isWaitingApproval();
       s->status = m->getCurrentStatus();
       ret.push_back(s);
     }
 
-    ret.shrink_to_fit();
+    // if (!!candidate_module_opt_) {
+    //   const auto m = candidate_module_opt_.get();
+    //   auto s = std::make_shared<SceneModuleStatus>(m->name());
+    //   s->is_waiting_approval = m->isWaitingApproval();
+    //   s->status = m->getCurrentStatus();
+    //   ret.push_back(s);
+    // }
+
+    // ret.shrink_to_fit();
 
     return ret;
   }
@@ -175,17 +183,35 @@ private:
     return ret;
   }
 
+  SceneModuleManagerPtr getManager(const SceneModulePtr & module_ptr) const
+  {
+    const auto itr = std::find_if(
+      manager_ptrs_.begin(), manager_ptrs_.end(),
+      [&module_ptr](const auto & m) { return m->getModuleName() == module_ptr->name(); });
+
+    if (itr == manager_ptrs_.end()) {
+      throw std::domain_error("unknown manager name.");
+    }
+
+    return *itr;
+  }
+
   BehaviorModuleOutput update(const std::shared_ptr<PlannerData> & data);
 
   BehaviorModuleOutput getReferencePath(const std::shared_ptr<PlannerData> & data) const;
 
-  boost::optional<SceneModulePtr> getCandidateModule(
+  std::vector<SceneModulePtr> getCandidateModules(
     const BehaviorModuleOutput & previous_module_output) const;
 
-  boost::optional<std::pair<SceneModuleManagerPtr, SceneModulePtr>> selectHighestPriorityModule(
-    std::vector<std::pair<SceneModuleManagerPtr, SceneModulePtr>> & request_modules) const;
+  SceneModulePtr selectHighestPriorityModule(std::vector<SceneModulePtr> & request_modules) const;
 
-  boost::optional<SceneModulePtr> candidate_module_opt_{boost::none};
+  std::pair<SceneModulePtr, BehaviorModuleOutput> getHighestPriorityModule(
+    const std::vector<SceneModulePtr> & request_modules, const std::shared_ptr<PlannerData> & data,
+    const BehaviorModuleOutput & previous_module_output);
+
+  void updateCandidateModules(
+    const std::vector<SceneModulePtr> & candidate_modules,
+    const SceneModulePtr & highest_priority_module);
 
   boost::optional<lanelet::ConstLanelet> root_lanelet_{boost::none};
 
@@ -194,6 +220,8 @@ private:
   std::vector<SceneModuleManagerPtr> manager_ptrs_;
 
   std::vector<SceneModulePtr> approved_module_ptrs_;
+
+  std::vector<SceneModulePtr> candidate_module_ptrs_;
 
   rclcpp::Logger logger_;
 
