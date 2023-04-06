@@ -12044,6 +12044,35 @@
     
   
   
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#features" class="md-nav__link">
+    Features
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#web-server-script" class="md-nav__link">
+    Web server script
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#guide-message-script" class="md-nav__link">
+    Guide message script
+  </a>
+  
+</li>
+      
+    </ul>
+  
 </nav>
                   </div>
                 </div>
@@ -12061,6 +12090,7 @@
 
 
 <h1 id="default_ad_api">default_ad_api<a class="headerlink" href="#default_ad_api" title="Permanent link">#</a></h1>
+<h2 id="features">Features<a class="headerlink" href="#features" title="Permanent link">#</a></h2>
 <p>This package is a default implementation AD API.</p>
 <ul>
 <li><a href="document/autoware-state/">autoware state (backward compatibility)</a></li>
@@ -12071,6 +12101,19 @@
 <li><a href="document/operation-mode/">operation mode</a></li>
 <li><a href="document/routing/">routing</a></li>
 </ul>
+<h2 id="web-server-script">Web server script<a class="headerlink" href="#web-server-script" title="Permanent link">#</a></h2>
+<p>This is a sample to call API using HTTP.</p>
+<h2 id="guide-message-script">Guide message script<a class="headerlink" href="#guide-message-script" title="Permanent link">#</a></h2>
+<p>This is a debug script to check the conditions for transition to autonomous mode.</p>
+<div class="highlight"><pre><span></span><code>$<span class="w"> </span>ros2<span class="w"> </span>run<span class="w"> </span>default_ad_api<span class="w"> </span>guide.py
+
+The<span class="w"> </span>vehicle<span class="w"> </span>pose<span class="w"> </span>is<span class="w"> </span>not<span class="w"> </span>estimated.<span class="w"> </span>Please<span class="w"> </span><span class="nb">set</span><span class="w"> </span>an<span class="w"> </span>initial<span class="w"> </span>pose<span class="w"> </span>or<span class="w"> </span>check<span class="w"> </span>GNSS.
+The<span class="w"> </span>route<span class="w"> </span>is<span class="w"> </span>not<span class="w"> </span>set.<span class="w"> </span>Please<span class="w"> </span><span class="nb">set</span><span class="w"> </span>a<span class="w"> </span>goal<span class="w"> </span>pose.
+The<span class="w"> </span>topic<span class="w"> </span>rate<span class="w"> </span>error<span class="w"> </span>is<span class="w"> </span>detected.<span class="w"> </span>Please<span class="w"> </span>check<span class="w"> </span><span class="o">[</span>control,planning<span class="o">]</span><span class="w"> </span>components.
+The<span class="w"> </span>vehicle<span class="w"> </span>is<span class="w"> </span>ready.<span class="w"> </span>Please<span class="w"> </span>change<span class="w"> </span>the<span class="w"> </span>operation<span class="w"> </span>mode<span class="w"> </span>to<span class="w"> </span>autonomous.
+The<span class="w"> </span>vehicle<span class="w"> </span>is<span class="w"> </span>driving<span class="w"> </span>autonomously.
+The<span class="w"> </span>vehicle<span class="w"> </span>has<span class="w"> </span>reached<span class="w"> </span>the<span class="w"> </span>goal<span class="w"> </span>of<span class="w"> </span>the<span class="w"> </span>route.<span class="w"> </span>Please<span class="w"> </span>reset<span class="w"> </span>a<span class="w"> </span>route.
+</code></pre></div>
 
 
 

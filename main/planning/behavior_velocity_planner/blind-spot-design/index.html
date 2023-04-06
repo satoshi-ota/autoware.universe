@@ -12196,8 +12196,8 @@
 
 <h2 id="blind-spot">Blind Spot<a class="headerlink" href="#blind-spot" title="Permanent link">#</a></h2>
 <h3 id="role">Role<a class="headerlink" href="#role" title="Permanent link">#</a></h3>
-<p>Blind spot check while turning right/left by a dynamic object information and planning a velocity of the start/stop.</p>
-<p><img alt="brief" src="../docs/blind_spot/blind_spot.svg" /></p>
+<p>Blind spot module checks possible collisions with bicycles and pedestrians running on its left/right side while turing left/right before junctions.</p>
+<p><img alt="brief" src="./docs/blind_spot/blind-spot.drawio.svg" /></p>
 <h3 id="activation-timing">Activation Timing<a class="headerlink" href="#activation-timing" title="Permanent link">#</a></h3>
 <p>This function is activated when the lane id of the target path has an intersection label (i.e. the <code>turn_direction</code> attribute is <code>left</code> or <code>right</code>).</p>
 <h3 id="inner-workings-algorithms">Inner-workings / Algorithms<a class="headerlink" href="#inner-workings-algorithms" title="Permanent link">#</a></h3>
@@ -12250,6 +12250,11 @@
 <td><code>max_future_movement_time</code></td>
 <td>double</td>
 <td>[s] maximum time for considering future movement of object</td>
+</tr>
+<tr>
+<td><code>adjacent_extend_width</code></td>
+<td>double</td>
+<td>[m] if adjacent lane e.g. bicycle only lane exists, blind_spot area is expanded by this length</td>
 </tr>
 </tbody>
 </table>
