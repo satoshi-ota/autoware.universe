@@ -6205,18 +6205,12 @@
             
           
         
-          
-        
       
       
         
         
         <div class="md-nav__link md-nav__link--index ">
           <a href="../lidar_apollo_instance_segmentation/">Lidar apollo instance segmentation</a>
-          
-            <label for="__nav_11_13">
-              <span class="md-nav__icon md-icon"></span>
-            </label>
           
         </div>
       
@@ -6227,52 +6221,6 @@
         </label>
         <ul class="md-nav__list" data-md-scrollfix>
           
-            
-          
-            
-              
-  
-  
-  
-    
-    <li class="md-nav__item md-nav__item--nested">
-      
-      
-      
-      
-        
-      
-      <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_11_13_2" >
-      
-      
-        
-          
-            
-          
-        
-      
-      
-        
-        
-        <div class="md-nav__link md-nav__link--index ">
-          <a href="../lidar_apollo_instance_segmentation/lib/">Lib</a>
-          
-        </div>
-      
-      <nav class="md-nav" data-md-level="3" aria-labelledby="__nav_11_13_2_label" aria-expanded="false">
-        <label class="md-nav__title" for="__nav_11_13_2">
-          <span class="md-nav__icon md-icon"></span>
-          Lib
-        </label>
-        <ul class="md-nav__list" data-md-scrollfix>
-          
-            
-          
-        </ul>
-      </nav>
-    </li>
-  
-
             
           
         </ul>
@@ -8556,12 +8504,18 @@
             
           
         
+          
+        
       
       
         
         
         <div class="md-nav__link md-nav__link--index ">
           <a href="../../planning/obstacle_cruise_planner/">Obstacle cruise planner</a>
+          
+            <label for="__nav_12_10">
+              <span class="md-nav__icon md-icon"></span>
+            </label>
           
         </div>
       
@@ -8572,6 +8526,60 @@
         </label>
         <ul class="md-nav__list" data-md-scrollfix>
           
+            
+          
+            
+              
+  
+  
+  
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+      
+      
+      
+        
+      
+      <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_12_10_2" >
+      
+      
+        
+          
+        
+      
+      
+        <label class="md-nav__link" for="__nav_12_10_2" id="__nav_12_10_2_label" tabindex="0">
+          Docs
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <nav class="md-nav" data-md-level="3" aria-labelledby="__nav_12_10_2_label" aria-expanded="false">
+        <label class="md-nav__title" for="__nav_12_10_2">
+          <span class="md-nav__icon md-icon"></span>
+          Docs
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../planning/obstacle_cruise_planner/docs/debug/" class="md-nav__link">
+        Debug
+      </a>
+    </li>
+  
+
+            
+          
+        </ul>
+      </nav>
+    </li>
+  
+
             
           
         </ul>
@@ -12102,6 +12110,13 @@
   
 </li>
         
+          <li class="md-nav__item">
+  <a href="#service" class="md-nav__link">
+    Service
+  </a>
+  
+</li>
+        
       </ul>
     </nav>
   
@@ -12246,6 +12261,11 @@ Cells with No elevation value can be inpainted using the values of neighboring c
 <td><code>autoware_auto_mapping_msgs::msg::HADMapBin</code></td>
 <td>(Optional) The binary data of lanelet2 map</td>
 </tr>
+<tr>
+<td><code>input/pointcloud_map_metadata</code></td>
+<td><code>autoware_map_msgs::msg::PointCloudMapMetaData</code></td>
+<td>(Optional) The metadata of point cloud map</td>
+</tr>
 </tbody>
 </table>
 <h3 id="output">Output<a class="headerlink" href="#output" title="Permanent link">#</a></h3>
@@ -12267,6 +12287,23 @@ Cells with No elevation value can be inpainted using the values of neighboring c
 <td><code>output/elevation_map_cloud</code></td>
 <td><code>sensor_msgs::msg::PointCloud2</code></td>
 <td>(Optional) The point cloud generated from the value of elevation map</td>
+</tr>
+</tbody>
+</table>
+<h3 id="service">Service<a class="headerlink" href="#service" title="Permanent link">#</a></h3>
+<table>
+<thead>
+<tr>
+<th>Name</th>
+<th>Type</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>service/get_selected_pcd_map</code></td>
+<td><code>autoware_map_msgs::srv::GetSelectedPointCloudMap</code></td>
+<td>(Optional) service to request point cloud map. If pointcloud_map_loader uses selected pointcloud map loading via ROS 2 service, use this.</td>
 </tr>
 </tbody>
 </table>
@@ -12335,6 +12372,18 @@ Cells with No elevation value can be inpainted using the values of neighboring c
 <td align="left">float</td>
 <td align="left">Margin distance from the lane polygon of the area to be included in the inpainting mask [m]. Used only when use_lane_filter=True.</td>
 <td align="left">0.0</td>
+</tr>
+<tr>
+<td align="left">use_sequential_load</td>
+<td align="left">bool</td>
+<td align="left">Whether to get point cloud map by service</td>
+<td align="left">false</td>
+</tr>
+<tr>
+<td align="left">sequential_map_load_num</td>
+<td align="left">int</td>
+<td align="left">The number of point cloud maps to load at once (only used when use_sequential_load is set true). This should not be larger than number of all point cloud map cells.</td>
+<td align="left">1</td>
 </tr>
 </tbody>
 </table>

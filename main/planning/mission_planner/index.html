@@ -6205,18 +6205,12 @@
             
           
         
-          
-        
       
       
         
         
         <div class="md-nav__link md-nav__link--index ">
           <a href="../../perception/lidar_apollo_instance_segmentation/">Lidar apollo instance segmentation</a>
-          
-            <label for="__nav_11_13">
-              <span class="md-nav__icon md-icon"></span>
-            </label>
           
         </div>
       
@@ -6227,52 +6221,6 @@
         </label>
         <ul class="md-nav__list" data-md-scrollfix>
           
-            
-          
-            
-              
-  
-  
-  
-    
-    <li class="md-nav__item md-nav__item--nested">
-      
-      
-      
-      
-        
-      
-      <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_11_13_2" >
-      
-      
-        
-          
-            
-          
-        
-      
-      
-        
-        
-        <div class="md-nav__link md-nav__link--index ">
-          <a href="../../perception/lidar_apollo_instance_segmentation/lib/">Lib</a>
-          
-        </div>
-      
-      <nav class="md-nav" data-md-level="3" aria-labelledby="__nav_11_13_2_label" aria-expanded="false">
-        <label class="md-nav__title" for="__nav_11_13_2">
-          <span class="md-nav__icon md-icon"></span>
-          Lib
-        </label>
-        <ul class="md-nav__list" data-md-scrollfix>
-          
-            
-          
-        </ul>
-      </nav>
-    </li>
-  
-
             
           
         </ul>
@@ -8556,12 +8504,18 @@
             
           
         
+          
+        
       
       
         
         
         <div class="md-nav__link md-nav__link--index ">
           <a href="../obstacle_cruise_planner/">Obstacle cruise planner</a>
+          
+            <label for="__nav_12_10">
+              <span class="md-nav__icon md-icon"></span>
+            </label>
           
         </div>
       
@@ -8572,6 +8526,60 @@
         </label>
         <ul class="md-nav__list" data-md-scrollfix>
           
+            
+          
+            
+              
+  
+  
+  
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+      
+      
+      
+        
+      
+      <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_12_10_2" >
+      
+      
+        
+          
+        
+      
+      
+        <label class="md-nav__link" for="__nav_12_10_2" id="__nav_12_10_2_label" tabindex="0">
+          Docs
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <nav class="md-nav" data-md-level="3" aria-labelledby="__nav_12_10_2_label" aria-expanded="false">
+        <label class="md-nav__title" for="__nav_12_10_2">
+          <span class="md-nav__icon md-icon"></span>
+          Docs
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../obstacle_cruise_planner/docs/debug/" class="md-nav__link">
+        Debug
+      </a>
+    </li>
+  
+
+            
+          
+        </ul>
+      </nav>
+    </li>
+  
+
             
           
         </ul>
@@ -12242,19 +12250,29 @@ In current Autoware.universe, only Lanelet2 map format is supported.</p>
 </thead>
 <tbody>
 <tr>
-<td><code>/planning/routing/clear_route</code></td>
-<td>autoware_adapi_v1_msgs::srv::ClearRoute</td>
+<td><code>/planning/mission_planning/clear_route</code></td>
+<td>autoware_adapi_v1_msgs/srv/ClearRoute</td>
 <td>route clear request</td>
 </tr>
 <tr>
-<td><code>/planning/routing/set_route_points</code></td>
-<td>autoware_adapi_v1_msgs::srv::SetRoutePoints</td>
+<td><code>/planning/mission_planning/set_route_points</code></td>
+<td>autoware_adapi_v1_msgs/srv/SetRoutePoints</td>
 <td>route request with pose waypoints</td>
 </tr>
 <tr>
-<td><code>/planning/routing/set_route</code></td>
-<td>autoware_planning_msgs::srv::SetRoute</td>
-<td>route request with HAD map format</td>
+<td><code>/planning/mission_planning/set_route</code></td>
+<td>autoware_planning_msgs/srv/SetRoute</td>
+<td>route request with lanelet waypoints</td>
+</tr>
+<tr>
+<td><code>/planning/mission_planning/change_route_points</code></td>
+<td>autoware_adapi_v1_msgs/srv/SetRoutePoints</td>
+<td>route change request with pose waypoints</td>
+</tr>
+<tr>
+<td><code>/planning/mission_planning/change_route</code></td>
+<td>autoware_planning_msgs/srv/SetRoute</td>
+<td>route change request with lanelet waypoints</td>
 </tr>
 </tbody>
 </table>
@@ -12292,7 +12310,7 @@ In current Autoware.universe, only Lanelet2 map format is supported.</p>
 <tbody>
 <tr>
 <td><code>/planning/routing/route_state</code></td>
-<td>autoware_adapi_v1_msgs::msg::RouteState</td>
+<td>autoware_adapi_v1_msgs/msg/RouteState</td>
 <td>route state</td>
 </tr>
 <tr>
@@ -12302,12 +12320,12 @@ In current Autoware.universe, only Lanelet2 map format is supported.</p>
 </tr>
 <tr>
 <td><code>debug/route_marker</code></td>
-<td>visualization_msgs::msg::MarkerArray</td>
+<td>visualization_msgs/msg/MarkerArray</td>
 <td>route marker for debug</td>
 </tr>
 <tr>
 <td><code>debug/goal_footprint</code></td>
-<td>visualization_msgs::msg::MarkerArray</td>
+<td>visualization_msgs/msg/MarkerArray</td>
 <td>goal footprint for debug</td>
 </tr>
 </tbody>

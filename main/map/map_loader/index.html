@@ -6205,18 +6205,12 @@
             
           
         
-          
-        
       
       
         
         
         <div class="md-nav__link md-nav__link--index ">
           <a href="../../perception/lidar_apollo_instance_segmentation/">Lidar apollo instance segmentation</a>
-          
-            <label for="__nav_11_13">
-              <span class="md-nav__icon md-icon"></span>
-            </label>
           
         </div>
       
@@ -6227,52 +6221,6 @@
         </label>
         <ul class="md-nav__list" data-md-scrollfix>
           
-            
-          
-            
-              
-  
-  
-  
-    
-    <li class="md-nav__item md-nav__item--nested">
-      
-      
-      
-      
-        
-      
-      <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_11_13_2" >
-      
-      
-        
-          
-            
-          
-        
-      
-      
-        
-        
-        <div class="md-nav__link md-nav__link--index ">
-          <a href="../../perception/lidar_apollo_instance_segmentation/lib/">Lib</a>
-          
-        </div>
-      
-      <nav class="md-nav" data-md-level="3" aria-labelledby="__nav_11_13_2_label" aria-expanded="false">
-        <label class="md-nav__title" for="__nav_11_13_2">
-          <span class="md-nav__icon md-icon"></span>
-          Lib
-        </label>
-        <ul class="md-nav__list" data-md-scrollfix>
-          
-            
-          
-        </ul>
-      </nav>
-    </li>
-  
-
             
           
         </ul>
@@ -8556,12 +8504,18 @@
             
           
         
+          
+        
       
       
         
         
         <div class="md-nav__link md-nav__link--index ">
           <a href="../../planning/obstacle_cruise_planner/">Obstacle cruise planner</a>
+          
+            <label for="__nav_12_10">
+              <span class="md-nav__icon md-icon"></span>
+            </label>
           
         </div>
       
@@ -8572,6 +8526,60 @@
         </label>
         <ul class="md-nav__list" data-md-scrollfix>
           
+            
+          
+            
+              
+  
+  
+  
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+      
+      
+      
+        
+      
+      <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_12_10_2" >
+      
+      
+        
+          
+        
+      
+      
+        <label class="md-nav__link" for="__nav_12_10_2" id="__nav_12_10_2_label" tabindex="0">
+          Docs
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <nav class="md-nav" data-md-level="3" aria-labelledby="__nav_12_10_2_label" aria-expanded="false">
+        <label class="md-nav__title" for="__nav_12_10_2">
+          <span class="md-nav__icon md-icon"></span>
+          Docs
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../planning/obstacle_cruise_planner/docs/debug/" class="md-nav__link">
+        Debug
+      </a>
+    </li>
+  
+
+            
+          
+        </ul>
+      </nav>
+    </li>
+  
+
             
           
         </ul>
@@ -12097,6 +12105,13 @@
 </li>
         
           <li class="md-nav__item">
+  <a href="#publish-metadata-of-pointcloud-map-ros-2-topic" class="md-nav__link">
+    Publish metadata of pointcloud map (ROS 2 topic)
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
   <a href="#send-partial-pointcloud-map-ros-2-service" class="md-nav__link">
     Send partial pointcloud map (ROS 2 service)
   </a>
@@ -12106,6 +12121,13 @@
           <li class="md-nav__item">
   <a href="#send-differential-pointcloud-map-ros-2-service" class="md-nav__link">
     Send differential pointcloud map (ROS 2 service)
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#send-selected-pointcloud-map-ros-2-service" class="md-nav__link">
+    Send selected pointcloud map (ROS 2 service)
   </a>
   
 </li>
@@ -12257,6 +12279,8 @@ Currently, it supports the following two types:</p>
 <p>The node publishes the raw pointcloud map loaded from the <code>.pcd</code> file(s).</p>
 <h4 id="publish-downsampled-pointcloud-map-ros-2-topic">Publish downsampled pointcloud map (ROS 2 topic)<a class="headerlink" href="#publish-downsampled-pointcloud-map-ros-2-topic" title="Permanent link">#</a></h4>
 <p>The node publishes the downsampled pointcloud map loaded from the <code>.pcd</code> file(s). You can specify the downsample resolution by changing the <code>leaf_size</code> parameter.</p>
+<h4 id="publish-metadata-of-pointcloud-map-ros-2-topic">Publish metadata of pointcloud map (ROS 2 topic)<a class="headerlink" href="#publish-metadata-of-pointcloud-map-ros-2-topic" title="Permanent link">#</a></h4>
+<p>The node publishes the pointcloud metadata attached with an ID. Metadata is loaded from the <code>.yaml</code> file. Please see <a href="https://github.com/autowarefoundation/autoware_msgs/tree/main/autoware_map_msgs#pointcloudmapmetadatamsg">the description of <code>PointCloudMapMetaData.msg</code></a> for details.</p>
 <h4 id="send-partial-pointcloud-map-ros-2-service">Send partial pointcloud map (ROS 2 service)<a class="headerlink" href="#send-partial-pointcloud-map-ros-2-service" title="Permanent link">#</a></h4>
 <p>Here, we assume that the pointcloud maps are divided into grids.</p>
 <p>Given a query from a client node, the node sends a set of pointcloud maps that overlaps with the queried area.
@@ -12265,6 +12289,10 @@ Please see <a href="https://github.com/autowarefoundation/autoware_msgs/tree/mai
 <p>Here, we assume that the pointcloud maps are divided into grids.</p>
 <p>Given a query and set of map IDs, the node sends a set of pointcloud maps that overlap with the queried area and are not included in the set of map IDs.
 Please see <a href="https://github.com/autowarefoundation/autoware_msgs/tree/main/autoware_map_msgs#getdifferentialpointcloudmapsrv">the description of <code>GetDifferentialPointCloudMap.srv</code></a> for details.</p>
+<h4 id="send-selected-pointcloud-map-ros-2-service">Send selected pointcloud map (ROS 2 service)<a class="headerlink" href="#send-selected-pointcloud-map-ros-2-service" title="Permanent link">#</a></h4>
+<p>Here, we assume that the pointcloud maps are divided into grids.</p>
+<p>Given IDs query from a client node, the node sends a set of pointcloud maps (each of which attached with unique ID) specified by query.
+Please see <a href="https://github.com/autowarefoundation/autoware_msgs/tree/main/autoware_map_msgs#getselectedpointcloudmapsrv">the description of <code>GetSelectedPointCloudMap.srv</code></a> for details.</p>
 <h3 id="parameters">Parameters<a class="headerlink" href="#parameters" title="Permanent link">#</a></h3>
 <table>
 <thead>
@@ -12301,6 +12329,12 @@ Please see <a href="https://github.com/autowarefoundation/autoware_msgs/tree/mai
 <td align="left">false</td>
 </tr>
 <tr>
+<td align="left">enable_selected_load</td>
+<td align="left">bool</td>
+<td align="left">A flag to enable selected pointcloud map server</td>
+<td align="left">false</td>
+</tr>
+<tr>
 <td align="left">leaf_size</td>
 <td align="left">float</td>
 <td align="left">Downsampling leaf size (only used when enable_downsampled_whole_load is set true)</td>
@@ -12323,9 +12357,11 @@ Please see <a href="https://github.com/autowarefoundation/autoware_msgs/tree/mai
 <h3 id="interfaces">Interfaces<a class="headerlink" href="#interfaces" title="Permanent link">#</a></h3>
 <ul>
 <li><code>output/pointcloud_map</code> (sensor_msgs/msg/PointCloud2) : Raw pointcloud map</li>
+<li><code>output/pointcloud_map_metadata</code> (autoware_map_msgs/msg/PointCloudMapMetaData) : Metadata of pointcloud map</li>
 <li><code>output/debug/downsampled_pointcloud_map</code> (sensor_msgs/msg/PointCloud2) : Downsampled pointcloud map</li>
 <li><code>service/get_partial_pcd_map</code> (autoware_map_msgs/srv/GetPartialPointCloudMap) : Partial pointcloud map</li>
 <li><code>service/get_differential_pcd_map</code> (autoware_map_msgs/srv/GetDifferentialPointCloudMap) : Differential pointcloud map</li>
+<li><code>service/get_selected_pcd_map</code> (autoware_map_msgs/srv/GetSelectedPointCloudMap) : Selected pointcloud map</li>
 <li>pointcloud map file(s) (.pcd)</li>
 <li>metadata of pointcloud map(s) (.yaml)</li>
 </ul>
