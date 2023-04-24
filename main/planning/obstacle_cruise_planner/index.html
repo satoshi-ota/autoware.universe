@@ -17,7 +17,7 @@
         <link rel="next" href="docs/debug/">
       
       <link rel="icon" href="../../docs/assets/images/autoware-foundation.png">
-      <meta name="generator" content="mkdocs-1.4.2, mkdocs-material-9.1.6">
+      <meta name="generator" content="mkdocs-1.4.2, mkdocs-material-9.1.7">
     
     
       
@@ -65,7 +65,7 @@
     
     
     
-    <body dir="ltr" data-md-color-scheme="default" data-md-color-primary="white" data-md-color-accent="">
+    <body dir="ltr" data-md-color-scheme="default" data-md-color-primary="white" data-md-color-accent="indigo">
   
     
     
@@ -126,7 +126,9 @@
       <form class="md-header__option" data-md-component="palette">
         
           
-          <input class="md-option" data-md-color-media="" data-md-color-scheme="default" data-md-color-primary="white" data-md-color-accent=""  aria-label="Switch to dark mode"  type="radio" name="__palette" id="__palette_1">
+          
+          
+          <input class="md-option" data-md-color-media="" data-md-color-scheme="default" data-md-color-primary="white" data-md-color-accent="indigo"  aria-label="Switch to dark mode"  type="radio" name="__palette" id="__palette_1">
           
             <label class="md-header__button md-icon" title="Switch to dark mode" for="__palette_2" hidden>
               <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 7a5 5 0 0 1 5 5 5 5 0 0 1-5 5 5 5 0 0 1-5-5 5 5 0 0 1 5-5m0 2a3 3 0 0 0-3 3 3 3 0 0 0 3 3 3 3 0 0 0 3-3 3 3 0 0 0-3-3m0-7 2.39 3.42C13.65 5.15 12.84 5 12 5c-.84 0-1.65.15-2.39.42L12 2M3.34 7l4.16-.35A7.2 7.2 0 0 0 5.94 8.5c-.44.74-.69 1.5-.83 2.29L3.34 7m.02 10 1.76-3.77a7.131 7.131 0 0 0 2.38 4.14L3.36 17M20.65 7l-1.77 3.79a7.023 7.023 0 0 0-2.38-4.15l4.15.36m-.01 10-4.14.36c.59-.51 1.12-1.14 1.54-1.86.42-.73.69-1.5.83-2.29L20.64 17M12 22l-2.41-3.44c.74.27 1.55.44 2.41.44.82 0 1.63-.17 2.37-.44L12 22Z"/></svg>
@@ -134,7 +136,9 @@
           
         
           
-          <input class="md-option" data-md-color-media="" data-md-color-scheme="slate" data-md-color-primary="grey" data-md-color-accent=""  aria-label="Switch to light mode"  type="radio" name="__palette" id="__palette_2">
+          
+          
+          <input class="md-option" data-md-color-media="" data-md-color-scheme="slate" data-md-color-primary="grey" data-md-color-accent="indigo"  aria-label="Switch to light mode"  type="radio" name="__palette" id="__palette_2">
           
             <label class="md-header__button md-icon" title="Switch to light mode" for="__palette_1" hidden>
               <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="m17.75 4.09-2.53 1.94.91 3.06-2.63-1.81-2.63 1.81.91-3.06-2.53-1.94L12.44 4l1.06-3 1.06 3 3.19.09m3.5 6.91-1.64 1.25.59 1.98-1.7-1.17-1.7 1.17.59-1.98L15.75 11l2.06-.05L18.5 9l.69 1.95 2.06.05m-2.28 4.95c.83-.08 1.72 1.1 1.19 1.85-.32.45-.66.87-1.08 1.27C15.17 23 8.84 23 4.94 19.07c-3.91-3.9-3.91-10.24 0-14.14.4-.4.82-.76 1.27-1.08.75-.53 1.93.36 1.85 1.19-.27 2.86.69 5.83 2.89 8.02a9.96 9.96 0 0 0 8.02 2.89m-1.64 2.02a12.08 12.08 0 0 1-7.8-3.47c-2.17-2.19-3.33-5-3.49-7.82-2.81 3.14-2.7 7.96.31 10.98 3.02 3.01 7.84 3.12 10.98.31Z"/></svg>
@@ -12017,31 +12021,58 @@
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
-  <a href="#obstacle-candidates-selection" class="md-nav__link">
-    Obstacle candidates selection
+  <a href="#behavior-determination-against-obstacles" class="md-nav__link">
+    Behavior determination against obstacles
   </a>
   
-    <nav class="md-nav" aria-label="Obstacle candidates selection">
+    <nav class="md-nav" aria-label="Behavior determination against obstacles">
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
-  <a href="#inside-the-detection-area" class="md-nav__link">
-    Inside the detection area
+  <a href="#determine-cruise-vehicles" class="md-nav__link">
+    Determine cruise vehicles
   </a>
   
 </li>
         
           <li class="md-nav__item">
-  <a href="#far-crossing-vehicles" class="md-nav__link">
-    Far crossing vehicles
+  <a href="#determine-stop-vehicles" class="md-nav__link">
+    Determine stop vehicles
   </a>
   
 </li>
         
           <li class="md-nav__item">
-  <a href="#near-cut-in-vehicles" class="md-nav__link">
-    Near Cut-in vehicles
+  <a href="#determine-slow-down-vehicles" class="md-nav__link">
+    Determine slow down vehicles
   </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#note" class="md-nav__link">
+    NOTE
+  </a>
+  
+    <nav class="md-nav" aria-label="NOTE">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#1-crossing-obstacles" class="md-nav__link">
+    *1: Crossing obstacles
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#2-enough-collision-time-margin" class="md-nav__link">
+    *2: Enough collision time margin
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
   
 </li>
         
@@ -12058,8 +12089,15 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#adaptive-cruise-planning" class="md-nav__link">
-    Adaptive cruise planning
+  <a href="#cruise-planning" class="md-nav__link">
+    Cruise planning
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#slow-down-planning" class="md-nav__link">
+    Slow down planning
   </a>
   
 </li>
@@ -12085,8 +12123,8 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#algorithm-selection" class="md-nav__link">
-    Algorithm selection
+  <a href="#algorithm-selection-for-cruise-planner" class="md-nav__link">
+    Algorithm selection for cruise planner
   </a>
   
 </li>
@@ -12107,8 +12145,8 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#adaptive-cruise-planning_1" class="md-nav__link">
-    Adaptive cruise planning
+  <a href="#cruise-planning_1" class="md-nav__link">
+    Cruise planning
   </a>
   
 </li>
@@ -12198,7 +12236,11 @@
 </ul>
 </li>
 <li>Cruise planning<ul>
-<li>slow down when there is a dynamic obstacle to cruise near the trajectory</li>
+<li>cruise a dynamic obstacle in front of the ego.</li>
+</ul>
+</li>
+<li>Slow down planning<ul>
+<li>slow down when there is a static/dynamic obstacle near the trajectory.</li>
 </ul>
 </li>
 </ul>
@@ -12265,9 +12307,10 @@
 <h2 id="design">Design<a class="headerlink" href="#design" title="Permanent link">#</a></h2>
 <p>Design for the following functions is defined here.</p>
 <ul>
-<li>Obstacle candidates selection</li>
-<li>Obstacle stop planning</li>
-<li>Adaptive cruise planning</li>
+<li>Behavior determination against obstacles</li>
+<li>Stop planning</li>
+<li>Cruise planning</li>
+<li>Slow down planning</li>
 </ul>
 <p>A data structure for cruise and stop planning is as follows.
 This planner data is created first, and then sent to the planning algorithm.</p>
@@ -12294,18 +12337,31 @@ This planner data is created first, and then sent to the planning algorithm.</p>
 <span class="w">  </span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="n">PredictedPath</span><span class="o">&gt;</span><span class="w"> </span><span class="n">predicted_paths</span><span class="p">;</span>
 <span class="p">};</span>
 </code></pre></div>
-<h3 id="obstacle-candidates-selection">Obstacle candidates selection<a class="headerlink" href="#obstacle-candidates-selection" title="Permanent link">#</a></h3>
-<p>In this function, target obstacles for stopping or cruising are selected based on their pose and velocity.</p>
-<p>By default, objects that realize one of the following conditions are considered to be the target obstacle candidates.
-Some terms will be defined in the following subsections.</p>
+<h3 id="behavior-determination-against-obstacles">Behavior determination against obstacles<a class="headerlink" href="#behavior-determination-against-obstacles" title="Permanent link">#</a></h3>
+<p>Obstacles for cruising, stopping and slowing down are selected in this order based on their pose and velocity.
+The obstacles not in front of the ego will be ignored.</p>
+<p><img alt="determine_cruise_stop_slow_down" src="media/determine_cruise_stop_slow_down.drawio.svg" /></p>
+<h4 id="determine-cruise-vehicles">Determine cruise vehicles<a class="headerlink" href="#determine-cruise-vehicles" title="Permanent link">#</a></h4>
+<p>The obstacles meeting the following condition are determined as obstacles for cruising.</p>
 <ul>
-<li>Vehicle objects "inside the detection area" other than "far crossing vehicles".</li>
-<li>non vehicle objects "inside the detection area"</li>
-<li>"Near cut-in vehicles" outside the detection area</li>
+<li>The lateral distance from the object to the ego's trajectory is smaller than <code>behavior_determination.cruise.max_lat_margin</code>.</li>
 </ul>
-<p>Note that currently the obstacle candidates selection algorithm is for autonomous driving.
-However, we have following parameters as well for stop and cruise respectively so that we can extend the obstacles candidates selection algorithm for non vehicle robots.
-By default, unknown and vehicles are obstacles to cruise and stop, and non vehicles are obstacles just to stop.</p>
+<ul>
+<li>The object type is for cruising according to <code>common.cruise_obstacle_type.*</code>.</li>
+<li>The object is not crossing the ego's trajectory (*1).</li>
+<li>If the object is inside the trajectory.<ul>
+<li>The object type is for inside cruising according to <code>common.cruise_obstacle_type.inside.*</code>.</li>
+<li>The object velocity is larger than <code>behavior_determination.obstacle_velocity_threshold_from_cruise_to_stop</code>.</li>
+</ul>
+</li>
+<li>If the object is outside the trajectory.<ul>
+<li>The object type is for outside cruising according to <code>common.cruise_obstacle_type.outside.*</code>.</li>
+<li>The object velocity is larger than <code>behavior_determination.cruise.outside_obstacle.obstacle_velocity_threshold</code>.</li>
+<li>The highest confident predicted path collides with the ego's trajectory.</li>
+<li>Its collision's period is larger than <code>behavior_determination.cruise.outside_obstacle.ego_obstacle_overlap_time_threshold</code>.</li>
+</ul>
+</li>
+</ul>
 <table>
 <thead>
 <tr>
@@ -12316,19 +12372,39 @@ By default, unknown and vehicles are obstacles to cruise and stop, and non vehic
 </thead>
 <tbody>
 <tr>
-<td><code>cruise_obstacle_type.unknown</code></td>
+<td><code>common.cruise_obstacle_type.inside.unknown</code></td>
 <td>bool</td>
-<td>flag to consider unknown objects as being cruised</td>
+<td>flag to consider unknown objects for cruising</td>
 </tr>
 <tr>
-<td><code>cruise_obstacle_type.car</code></td>
+<td><code>common.cruise_obstacle_type.inside.car</code></td>
 <td>bool</td>
-<td>flag to consider unknown objects as being cruised</td>
+<td>flag to consider unknown objects for cruising</td>
 </tr>
 <tr>
-<td><code>cruise_obstacle_type.truck</code></td>
+<td><code>common.cruise_obstacle_type.inside.truck</code></td>
 <td>bool</td>
-<td>flag to consider unknown objects as being cruised</td>
+<td>flag to consider unknown objects for cruising</td>
+</tr>
+<tr>
+<td>...</td>
+<td>bool</td>
+<td>...</td>
+</tr>
+<tr>
+<td><code>common.cruise_obstacle_type.outside.unknown</code></td>
+<td>bool</td>
+<td>flag to consider unknown objects for cruising</td>
+</tr>
+<tr>
+<td><code>common.cruise_obstacle_type.outside.car</code></td>
+<td>bool</td>
+<td>flag to consider unknown objects for cruising</td>
+</tr>
+<tr>
+<td><code>common.cruise_obstacle_type.outside.truck</code></td>
+<td>bool</td>
+<td>flag to consider unknown objects for cruising</td>
 </tr>
 <tr>
 <td>...</td>
@@ -12336,26 +12412,40 @@ By default, unknown and vehicles are obstacles to cruise and stop, and non vehic
 <td>...</td>
 </tr>
 <tr>
-<td><code>stop_obstacle_type.unknown</code></td>
-<td>bool</td>
-<td>flag to consider unknown objects as being stopped</td>
+<td><code>behavior_determination.cruise.max_lat_margin</code></td>
+<td>double</td>
+<td>maximum lateral margin for cruise obstacles</td>
 </tr>
 <tr>
-<td>...</td>
-<td>bool</td>
-<td>...</td>
+<td><code>behavior_determination.obstacle_velocity_threshold_from_cruise_to_stop</code></td>
+<td>double</td>
+<td>maximum obstacle velocity for cruise obstacle inside the trajectory</td>
+</tr>
+<tr>
+<td><code>behavior_determination.cruise.outside_obstacle.obstacle_velocity_threshold</code></td>
+<td>double</td>
+<td>maximum obstacle velocity for cruise obstacle outside the trajectory</td>
+</tr>
+<tr>
+<td><code>behavior_determination.cruise.outside_obstacle.ego_obstacle_overlap_time_threshold</code></td>
+<td>double</td>
+<td>maximum overlap time of the collision between the ego and obstacle</td>
 </tr>
 </tbody>
 </table>
-<h4 id="inside-the-detection-area">Inside the detection area<a class="headerlink" href="#inside-the-detection-area" title="Permanent link">#</a></h4>
-<p>To calculate obstacles inside the detection area, firstly, obstacles whose distance to the trajectory is less than <code>rough_max_lat_margin</code> are selected.
-Then, the detection area, which is a trajectory with some lateral margin, is calculated as shown in the figure.
-The detection area width is a vehicle's width + <code>max_lat_margin</code>, and it is represented as a polygon resampled with <code>decimate_trajectory_step_length</code> longitudinally.
-The roughly selected obstacles inside the detection area are considered as inside the detection area.</p>
-<p><img alt="detection_area" src="image/detection_area.png" /></p>
-<p>This two-step detection is used for calculation efficiency since collision checking of polygons is heavy.
-Boost.Geometry is used as a library to check collision among polygons.</p>
-<p>In the <code>behavior_determination</code> namespace,</p>
+<h4 id="determine-stop-vehicles">Determine stop vehicles<a class="headerlink" href="#determine-stop-vehicles" title="Permanent link">#</a></h4>
+<p>Among obstacles which are not for cruising, the obstacles meeting the following condition are determined as obstacles for stopping.</p>
+<ul>
+<li>The object type is for stopping according to <code>common.stop_obstacle_type.*</code>.</li>
+<li>The lateral distance from the object to the ego's trajectory is smaller than <code>behavior_determination.stop.max_lat_margin</code>.</li>
+<li>The object velocity along the ego's trajectory is smaller than <code>behavior_determination.obstacle_velocity_threshold_from_stop_to_cruise</code>.</li>
+<li>The object<ul>
+<li>does not cross the ego's trajectory (*1)</li>
+<li>with the velocity smaller than <code>behavior_determination.crossing_obstacle.obstacle_velocity_threshold</code></li>
+<li>and its collision time margin is large enough (*2).</li>
+</ul>
+</li>
+</ul>
 <table>
 <thead>
 <tr>
@@ -12366,38 +12456,48 @@ Boost.Geometry is used as a library to check collision among polygons.</p>
 </thead>
 <tbody>
 <tr>
-<td><code>rough_max_lat_margin</code></td>
-<td>double</td>
-<td>rough lateral margin for rough detection area expansion [m]</td>
+<td><code>common.stop_obstacle_type.unknown</code></td>
+<td>bool</td>
+<td>flag to consider unknown objects for stopping</td>
 </tr>
 <tr>
-<td><code>max_lat_margin</code></td>
-<td>double</td>
-<td>lateral margin for precise detection area expansion [m]</td>
+<td><code>common.stop_obstacle_type.car</code></td>
+<td>bool</td>
+<td>flag to consider unknown objects for stopping</td>
 </tr>
 <tr>
-<td><code>decimate_trajectory_step_length</code></td>
+<td><code>common.stop_obstacle_type.truck</code></td>
+<td>bool</td>
+<td>flag to consider unknown objects for stopping</td>
+</tr>
+<tr>
+<td>...</td>
+<td>bool</td>
+<td>...</td>
+</tr>
+<tr>
+<td><code>behavior_determination.stop.max_lat_margin</code></td>
 <td>double</td>
-<td>longitudinal step length to calculate trajectory polygon for collision checking [m]</td>
+<td>maximum lateral margin for stop obstacles</td>
+</tr>
+<tr>
+<td><code>behavior_determination.crossing_obstacle.obstacle_velocity_threshold</code></td>
+<td>double</td>
+<td>maximum crossing obstacle velocity to ignore</td>
+</tr>
+<tr>
+<td><code>behavior_determination.obstacle_velocity_threshold_from_stop_to_cruise</code></td>
+<td>double</td>
+<td>maximum obstacle velocity for stop</td>
 </tr>
 </tbody>
 </table>
-<h4 id="far-crossing-vehicles">Far crossing vehicles<a class="headerlink" href="#far-crossing-vehicles" title="Permanent link">#</a></h4>
-<p>Near crossing vehicles (= not far crossing vehicles) are defined as vehicle objects realizing either of following conditions.</p>
+<h4 id="determine-slow-down-vehicles">Determine slow down vehicles<a class="headerlink" href="#determine-slow-down-vehicles" title="Permanent link">#</a></h4>
+<p>Among obstacles which are not for cruising and stopping, the obstacles meeting the following condition are determined as obstacles for slowing down.</p>
 <ul>
-<li>whose yaw angle against the nearest trajectory point is greater than <code>crossing_obstacle_traj_angle_threshold</code></li>
-<li>whose velocity is less than <code>crossing_obstacle_velocity_threshold</code>.</li>
+<li>The object type is for slowing down according to <code>common.slow_down_obstacle_type.*</code>.</li>
+<li>The lateral distance from the object to the ego's trajectory is smaller than <code>behavior_determination.slow_down.max_lat_margin</code>.</li>
 </ul>
-<p>Assuming <code>t_1</code> to be the time for the ego to reach the current crossing obstacle position with the constant velocity motion, and <code>t_2</code> to be the time for the crossing obstacle to go outside the detection area, if the following condition is realized, the crossing vehicle will be ignored.</p>
-<div class="arithmatex">
-<div class="MathJax_Preview">
-t_1 - t_2 &gt; \mathrm{margin\_for\_collision\_time}
-</div>
-<script type="math/tex; mode=display">
-t_1 - t_2 > \mathrm{margin\_for\_collision\_time}
-</script>
-</div>
-<p>In the <code>behavior_determination</code> namespace,</p>
 <table>
 <thead>
 <tr>
@@ -12408,28 +12508,35 @@ t_1 - t_2 > \mathrm{margin\_for\_collision\_time}
 </thead>
 <tbody>
 <tr>
-<td><code>crossing_obstacle_velocity_threshold</code></td>
-<td>double</td>
-<td>velocity threshold to decide crossing obstacle [m/s]</td>
+<td><code>common.slow_down_obstacle_type.unknown</code></td>
+<td>bool</td>
+<td>flag to consider unknown objects for slowing down</td>
 </tr>
 <tr>
-<td><code>crossing_obstacle_traj_angle_threshold</code></td>
-<td>double</td>
-<td>yaw threshold of crossing obstacle against the nearest trajectory point [rad]</td>
+<td><code>common.slow_down_obstacle_type.car</code></td>
+<td>bool</td>
+<td>flag to consider unknown objects for slowing down</td>
 </tr>
 <tr>
-<td><code>collision_time_margin</code></td>
+<td><code>common.slow_down_obstacle_type.truck</code></td>
+<td>bool</td>
+<td>flag to consider unknown objects for slowing down</td>
+</tr>
+<tr>
+<td>...</td>
+<td>bool</td>
+<td>...</td>
+</tr>
+<tr>
+<td><code>behavior_determination.slow_down.max_lat_margin</code></td>
 <td>double</td>
-<td>time threshold of collision between obstacle and ego [s]</td>
+<td>maximum lateral margin for slow down obstacles</td>
 </tr>
 </tbody>
 </table>
-<h4 id="near-cut-in-vehicles">Near Cut-in vehicles<a class="headerlink" href="#near-cut-in-vehicles" title="Permanent link">#</a></h4>
-<p>Near Cut-in vehicles are defined as vehicle objects</p>
-<ul>
-<li>whose predicted path's footprints from the current time to <code>max_prediction_time_for_collision_check</code> overlap with the detection area longer than <code>ego_obstacle_overlap_time_threshold</code>.</li>
-</ul>
-<p>In the <code>behavior_determination</code> namespace,</p>
+<h4 id="note">NOTE<a class="headerlink" href="#note" title="Permanent link">#</a></h4>
+<h5 id="1-crossing-obstacles">*1: Crossing obstacles<a class="headerlink" href="#1-crossing-obstacles" title="Permanent link">#</a></h5>
+<p>Crossing obstacle is the object whose orientation's yaw angle against the ego's trajectory is smaller than <code>behavior_determination.crossing_obstacle.obstacle_traj_angle_threshold</code>.</p>
 <table>
 <thead>
 <tr>
@@ -12440,19 +12547,29 @@ t_1 - t_2 > \mathrm{margin\_for\_collision\_time}
 </thead>
 <tbody>
 <tr>
-<td><code>ego_obstacle_overlap_time_threshold</code></td>
+<td><code>behavior_determination.crossing_obstacle.obstacle_traj_angle_threshold</code></td>
 <td>double</td>
-<td>time threshold to decide cut-in obstacle for cruise or stop [s]</td>
+<td>maximum angle against the ego's trajectory to judge the obstacle is crossing the trajectory [rad]</td>
 </tr>
+</tbody>
+</table>
+<h5 id="2-enough-collision-time-margin">*2: Enough collision time margin<a class="headerlink" href="#2-enough-collision-time-margin" title="Permanent link">#</a></h5>
+<p>We predict the collision area and its time by the ego with a constant velocity motion and the obstacle with its predicted path.
+Then, we calculate a collision time margin which is the difference of the time when the ego will be inside the collision area and the obstacle will be inside the collision area.
+When this time margin is smaller than <code>behavior_determination.stop.crossing_obstacle.collision_time_margin</code>, the margin is not enough.</p>
+<table>
+<thead>
 <tr>
-<td><code>max_prediction_time_for_collision_check</code></td>
-<td>double</td>
-<td>prediction time to check collision between obstacle and ego [s]</td>
+<th>Parameter</th>
+<th>Type</th>
+<th>Description</th>
 </tr>
+</thead>
+<tbody>
 <tr>
-<td><code>outside_obstacle_min_velocity_threshold</code></td>
+<td><code>behavior_determination.stop.crossing_obstacle.collision_time_margin</code></td>
 <td>double</td>
-<td>minimum velocity threshold of target obstacle for cut-in detection [m/s]</td>
+<td>maximum collision time margin of the ego and obstacle</td>
 </tr>
 </tbody>
 </table>
@@ -12484,12 +12601,12 @@ t_1 - t_2 > \mathrm{margin\_for\_collision\_time}
 </tbody>
 </table>
 <p>The role of the stop planning is keeping a safe distance with static vehicle objects or dynamic/static non vehicle objects.</p>
-<p>The stop planning just inserts the stop point in the trajectory to keep a distance with obstacles inside the detection area.
+<p>The stop planning just inserts the stop point in the trajectory to keep a distance with obstacles.
 The safe distance is parameterized as <code>common.safe_distance_margin</code>.
 When it stops at the end of the trajectory, and obstacle is on the same point, the safe distance becomes <code>terminal_safe_distance_margin</code>.</p>
 <p>When inserting the stop point, the required acceleration for the ego to stop in front of the stop point is calculated.
 If the acceleration is less than <code>common.min_strong_accel</code>, the stop planning will be cancelled since this package does not assume a strong sudden brake for emergency.</p>
-<h3 id="adaptive-cruise-planning">Adaptive cruise planning<a class="headerlink" href="#adaptive-cruise-planning" title="Permanent link">#</a></h3>
+<h3 id="cruise-planning">Cruise planning<a class="headerlink" href="#cruise-planning" title="Permanent link">#</a></h3>
 <table>
 <thead>
 <tr>
@@ -12506,7 +12623,7 @@ If the acceleration is less than <code>common.min_strong_accel</code>, the stop 
 </tr>
 </tbody>
 </table>
-<p>The role of the adaptive cruise planning is keeping a safe distance with dynamic vehicle objects with smoothed velocity transition.
+<p>The role of the cruise planning is keeping a safe distance with dynamic vehicle objects with smoothed velocity transition.
 This includes not only cruising a front vehicle, but also reacting a cut-in and cut-out vehicle.</p>
 <p>The safe distance is calculated dynamically based on the Responsibility-Sensitive Safety (RSS) by the following equation.</p>
 <div class="arithmatex">
@@ -12548,20 +12665,24 @@ These values are parameterized as follows. Other common values such as ego's min
 <p>The detailed formulation is as follows.</p>
 <div class="arithmatex">
 <div class="MathJax_Preview">
-d_{error} = d - d_{rss} \\
-d_{normalized} = lpf(d_{error} / d_{obstacle}) \\
-d_{quad, normalized} = sign(d_{normalized}) *d_{normalized}*d_{normalized} \\
-v_{pid} = pid(d_{quad, normalized}) \\
-v_{add} = v_{pid} &gt; 0 ? v_{pid}* w_{acc} : v_{pid} \\
-v_{target} = max(v_{ego} + v_{add}, v_{min, cruise})
+\begin{align}
+d_{error} &amp; = d - d_{rss} \\
+d_{normalized} &amp; = lpf(d_{error} / d_{obstacle}) \\
+d_{quad, normalized} &amp; = sign(d_{normalized}) *d_{normalized}*d_{normalized} \\
+v_{pid} &amp; = pid(d_{quad, normalized}) \\
+v_{add} &amp; = v_{pid} &gt; 0 ? v_{pid}* w_{acc} : v_{pid} \\
+v_{target} &amp; = max(v_{ego} + v_{add}, v_{min, cruise})
+\end{align}
 </div>
 <script type="math/tex; mode=display">
-d_{error} = d - d_{rss} \\
-d_{normalized} = lpf(d_{error} / d_{obstacle}) \\
-d_{quad, normalized} = sign(d_{normalized}) *d_{normalized}*d_{normalized} \\
-v_{pid} = pid(d_{quad, normalized}) \\
-v_{add} = v_{pid} > 0 ? v_{pid}* w_{acc} : v_{pid} \\
-v_{target} = max(v_{ego} + v_{add}, v_{min, cruise})
+\begin{align}
+d_{error} & = d - d_{rss} \\
+d_{normalized} & = lpf(d_{error} / d_{obstacle}) \\
+d_{quad, normalized} & = sign(d_{normalized}) *d_{normalized}*d_{normalized} \\
+v_{pid} & = pid(d_{quad, normalized}) \\
+v_{add} & = v_{pid} > 0 ? v_{pid}* w_{acc} : v_{pid} \\
+v_{target} & = max(v_{ego} + v_{add}, v_{min, cruise})
+\end{align}
 </script>
 </div>
 <table>
@@ -12598,13 +12719,85 @@ v_{target} = max(v_{ego} + v_{add}, v_{min, cruise})
 </tr>
 </tbody>
 </table>
+<h3 id="slow-down-planning">Slow down planning<a class="headerlink" href="#slow-down-planning" title="Permanent link">#</a></h3>
+<table>
+<thead>
+<tr>
+<th>Parameter</th>
+<th>Type</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>slow_down.min_lat_velocity</code></td>
+<td>double</td>
+<td>minimum velocity to linearly calculate slow down velocity [m]</td>
+</tr>
+<tr>
+<td><code>slow_down.max_lat_velocity</code></td>
+<td>double</td>
+<td>maximum velocity to linearly calculate slow down velocity [m]</td>
+</tr>
+<tr>
+<td><code>slow_down.min_lat_margin</code></td>
+<td>double</td>
+<td>minimum lateral margin to linearly calculate slow down velocity [m]</td>
+</tr>
+<tr>
+<td><code>slow_down.max_lat_margin</code></td>
+<td>double</td>
+<td>maximum lateral margin to linearly calculate slow down velocity [m]</td>
+</tr>
+</tbody>
+</table>
+<p>The role of the slow down planning is inserting slow down velocity in the trajectory where the trajectory points are close to the obstacles.</p>
+<p>The closest point on the obstacle to the ego's trajectory is calculated.
+Then, the slow down velocity is calculated by linear interpolation with the distance between the point and trajectory as follows.</p>
+<p><img alt="slow_down_velocity_calculation" src="media/slow_down_velocity_calculation.svg" /></p>
+<table>
+<thead>
+<tr>
+<th>Variable</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>v_{out}</code></td>
+<td>calculated velocity for slow down</td>
+</tr>
+<tr>
+<td><code>v_{min}</code></td>
+<td><code>slow_down.min_lat_velocity</code></td>
+</tr>
+<tr>
+<td><code>v_{max}</code></td>
+<td><code>slow_down.max_lat_velocity</code></td>
+</tr>
+<tr>
+<td><code>l_{min}</code></td>
+<td><code>slow_down.min_lat_margin</code></td>
+</tr>
+<tr>
+<td><code>l_{max}</code></td>
+<td><code>slow_down.max_lat_margin</code></td>
+</tr>
+<tr>
+<td><code>l'_{max}</code></td>
+<td><code>behavior_determination.slow_down.max_lat_margin</code></td>
+</tr>
+</tbody>
+</table>
+<p>The calculated velocity is inserted in the trajectory where the obstacle is inside the area with <code>behavior_determination.slow_down.max_lat_margin</code>.</p>
+<p><img alt="slow_down_planning" src="media/slow_down_planning.drawio.svg" /></p>
 <h2 id="implementation">Implementation<a class="headerlink" href="#implementation" title="Permanent link">#</a></h2>
 <h3 id="flowchart">Flowchart<a class="headerlink" href="#flowchart" title="Permanent link">#</a></h3>
 <p>Successive functions consist of <code>obstacle_cruise_planner</code> as follows.</p>
 <p>Various algorithms for stop and cruise planning will be implemented, and one of them is designated depending on the use cases.
 The core algorithm implementation <code>generateTrajectory</code> depends on the designated algorithm.</p>
-<p><img src="data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0idXMtYXNjaWkiIHN0YW5kYWxvbmU9Im5vIj8+PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHhtbG5zOnhsaW5rPSJodHRwOi8vd3d3LnczLm9yZy8xOTk5L3hsaW5rIiBjb250ZW50U3R5bGVUeXBlPSJ0ZXh0L2NzcyIgaGVpZ2h0PSIxMDk5cHgiIHByZXNlcnZlQXNwZWN0UmF0aW89Im5vbmUiIHN0eWxlPSJ3aWR0aDozNDJweDtoZWlnaHQ6MTA5OXB4O2JhY2tncm91bmQ6I0ZGRkZGRjsiIHZlcnNpb249IjEuMSIgdmlld0JveD0iMCAwIDM0MiAxMDk5IiB3aWR0aD0iMzQycHgiIHpvb21BbmRQYW49Im1hZ25pZnkiPjxkZWZzLz48Zz48dGV4dCBmaWxsPSIjMDAwMDAwIiBmb250LWZhbWlseT0ic2Fucy1zZXJpZiIgZm9udC1zaXplPSIxNCIgZm9udC13ZWlnaHQ9ImJvbGQiIGxlbmd0aEFkanVzdD0ic3BhY2luZyIgdGV4dExlbmd0aD0iMTA1IiB4PSIxMTciIHk9IjMyLjk5NTEiPm9uVHJhamVjdG9yeTwvdGV4dD48ZWxsaXBzZSBjeD0iMTcxIiBjeT0iNTcuMjk2OSIgZmlsbD0iIzIyMjIyMiIgcng9IjEwIiByeT0iMTAiIHN0eWxlPSJzdHJva2U6IzIyMjIyMjtzdHJva2Utd2lkdGg6MS4wOyIvPjxyZWN0IGZpbGw9Im5vbmUiIGhlaWdodD0iMjQ0LjE3MTkiIHN0eWxlPSJzdHJva2U6IzAwMDAwMDtzdHJva2Utd2lkdGg6MS41OyIgd2lkdGg9IjMyMCIgeD0iMTEiIHk9Ijc3LjI5NjkiLz48cGF0aCBkPSJNMTY2LDc3LjI5NjkgTDE2Niw4Ni41OTM4IEwxNTYsOTYuNTkzOCBMMTEsOTYuNTkzOCAiIGZpbGw9Im5vbmUiIHN0eWxlPSJzdHJva2U6IzAwMDAwMDtzdHJva2Utd2lkdGg6MS41OyIvPjx0ZXh0IGZpbGw9IiMwMDAwMDAiIGZvbnQtZmFtaWx5PSJzYW5zLXNlcmlmIiBmb250LXNpemU9IjE0IiBsZW5ndGhBZGp1c3Q9InNwYWNpbmciIHRleHRMZW5ndGg9IjE0NSIgeD0iMTQiIHk9IjkxLjI5MiI+Y29udmVydFRvT2JzdGFjbGVzPC90ZXh0PjxyZWN0IGZpbGw9IiNGMUYxRjEiIGhlaWdodD0iMzMuOTY4OCIgcng9IjEyLjUiIHJ5PSIxMi41IiBzdHlsZT0ic3Ryb2tlOiMxODE4MTg7c3Ryb2tlLXdpZHRoOjAuNTsiIHdpZHRoPSIxNTUiIHg9IjkzLjUiIHk9IjExMy41OTM4Ii8+PHRleHQgZmlsbD0iIzAwMDAwMCIgZm9udC1mYW1pbHk9InNhbnMtc2VyaWYiIGZvbnQtc2l6ZT0iMTIiIGxlbmd0aEFkanVzdD0ic3BhY2luZyIgdGV4dExlbmd0aD0iMTM1IiB4PSIxMDMuNSIgeT0iMTM0LjczMjQiPmNoZWNrIG9ic3RhY2xlJ3MgbGFiZWw8L3RleHQ+PHJlY3QgZmlsbD0iI0YxRjFGMSIgaGVpZ2h0PSIzMy45Njg4IiByeD0iMTIuNSIgcnk9IjEyLjUiIHN0eWxlPSJzdHJva2U6IzE4MTgxODtzdHJva2Utd2lkdGg6MC41OyIgd2lkdGg9IjIxNiIgeD0iNjMiIHk9IjE2Ny41NjI1Ii8+PHRleHQgZmlsbD0iIzAwMDAwMCIgZm9udC1mYW1pbHk9InNhbnMtc2VyaWYiIGZvbnQtc2l6ZT0iMTIiIGxlbmd0aEFkanVzdD0ic3BhY2luZyIgdGV4dExlbmd0aD0iMTk2IiB4PSI3MyIgeT0iMTg4LjcwMTIiPmNoZWNrIG9ic3RhY2xlIGlzIGluIGZyb250IG9mIGVnbzwvdGV4dD48cmVjdCBmaWxsPSIjRjFGMUYxIiBoZWlnaHQ9IjMzLjk2ODgiIHJ4PSIxMi41IiByeT0iMTIuNSIgc3R5bGU9InN0cm9rZTojMTgxODE4O3N0cm9rZS13aWR0aDowLjU7IiB3aWR0aD0iMzAwIiB4PSIyMSIgeT0iMjIxLjUzMTMiLz48dGV4dCBmaWxsPSIjMDAwMDAwIiBmb250LWZhbWlseT0ic2Fucy1zZXJpZiIgZm9udC1zaXplPSIxMiIgbGVuZ3RoQWRqdXN0PSJzcGFjaW5nIiB0ZXh0TGVuZ3RoPSIyODAiIHg9IjMxIiB5PSIyNDIuNjY5OSI+Y2hlY2sgb2JzdGFjbGUncyBsYXRlcmFsIGRldmlhdGlvbiB0byB0cmFqZWN0b3J5PC90ZXh0PjxyZWN0IGZpbGw9IiNGMUYxRjEiIGhlaWdodD0iMzMuOTY4OCIgcng9IjEyLjUiIHJ5PSIxMi41IiBzdHlsZT0ic3Ryb2tlOiMxODE4MTg7c3Ryb2tlLXdpZHRoOjAuNTsiIHdpZHRoPSIxNjkiIHg9Ijg2LjUiIHk9IjI3NS41Ii8+PHRleHQgZmlsbD0iIzAwMDAwMCIgZm9udC1mYW1pbHk9InNhbnMtc2VyaWYiIGZvbnQtc2l6ZT0iMTIiIGxlbmd0aEFkanVzdD0ic3BhY2luZyIgdGV4dExlbmd0aD0iMTQ5IiB4PSI5Ni41IiB5PSIyOTYuNjM4NyI+Y3JlYXRlIG9ic3RhY2xlIGluc3RhbmNlPC90ZXh0PjxyZWN0IGZpbGw9Im5vbmUiIGhlaWdodD0iMzM2LjQzNzUiIHN0eWxlPSJzdHJva2U6IzAwMDAwMDtzdHJva2Utd2lkdGg6MS41OyIgd2lkdGg9IjMxMSIgeD0iMTUuNSIgeT0iMzMyLjI3MDUiLz48cGF0aCBkPSJNMzE2LjUsMzMyLjI3MDUgTDMxNi41LDM0MS41Njc0IEwzMDYuNSwzNTEuNTY3NCBMMTUuNSwzNTEuNTY3NCAiIGZpbGw9Im5vbmUiIHN0eWxlPSJzdHJva2U6IzAwMDAwMDtzdHJva2Utd2lkdGg6MS41OyIvPjx0ZXh0IGZpbGw9IiMwMDAwMDAiIGZvbnQtZmFtaWx5PSJzYW5zLXNlcmlmIiBmb250LXNpemU9IjE0IiBsZW5ndGhBZGp1c3Q9InNwYWNpbmciIHRleHRMZW5ndGg9IjI5MSIgeD0iMTguNSIgeT0iMzQ2LjI2NTYiPmRldGVybWluZUVnb0JlaGF2aW9yQWdhaW5zdE9ic3RhY2xlczwvdGV4dD48cmVjdCBmaWxsPSIjRjFGMUYxIiBoZWlnaHQ9IjMzLjk2ODgiIHJ4PSIxMi41IiByeT0iMTIuNSIgc3R5bGU9InN0cm9rZTojMTgxODE4O3N0cm9rZS13aWR0aDowLjU7IiB3aWR0aD0iMTk1IiB4PSI3My41IiB5PSIzNjguNTY3NCIvPjx0ZXh0IGZpbGw9IiMwMDAwMDAiIGZvbnQtZmFtaWx5PSJzYW5zLXNlcmlmIiBmb250LXNpemU9IjEyIiBsZW5ndGhBZGp1c3Q9InNwYWNpbmciIHRleHRMZW5ndGg9IjE3NSIgeD0iODMuNSIgeT0iMzg5LjcwNjEiPnJlc2FtcGxlRXh0ZW5kZWRUcmFqZWN0b3J5PC90ZXh0PjxyZWN0IGZpbGw9Im5vbmUiIGhlaWdodD0iMTkwLjIwMzEiIHN0eWxlPSJzdHJva2U6IzAwMDAwMDtzdHJva2Utd2lkdGg6MS41OyIgd2lkdGg9IjE5NiIgeD0iNzMiIHk9IjQxMi41MzYxIi8+PHBhdGggZD0iTTIwOCw0MTIuNTM2MSBMMjA4LDQyMS44MzMgTDE5OCw0MzEuODMzIEw3Myw0MzEuODMzICIgZmlsbD0ibm9uZSIgc3R5bGU9InN0cm9rZTojMDAwMDAwO3N0cm9rZS13aWR0aDoxLjU7Ii8+PHRleHQgZmlsbD0iIzAwMDAwMCIgZm9udC1mYW1pbHk9InNhbnMtc2VyaWYiIGZvbnQtc2l6ZT0iMTQiIGxlbmd0aEFkanVzdD0ic3BhY2luZyIgdGV4dExlbmd0aD0iMTI1IiB4PSI3NiIgeT0iNDI2LjUzMTMiPmZvciBlYWNoIG9ic3RhY2xlPC90ZXh0PjxyZWN0IGZpbGw9IiNGMUYxRjEiIGhlaWdodD0iMzMuOTY4OCIgcng9IjEyLjUiIHJ5PSIxMi41IiBzdHlsZT0ic3Ryb2tlOiMxODE4MTg7c3Ryb2tlLXdpZHRoOjAuNTsiIHdpZHRoPSIxNTEiIHg9Ijk1LjUiIHk9IjQ0OC44MzMiLz48dGV4dCBmaWxsPSIjMDAwMDAwIiBmb250LWZhbWlseT0ic2Fucy1zZXJpZiIgZm9udC1zaXplPSIxMiIgbGVuZ3RoQWRqdXN0PSJzcGFjaW5nIiB0ZXh0TGVuZ3RoPSIxMzEiIHg9IjEwNS41IiB5PSI0NjkuOTcxNyI+Y3JlYXRlQ3J1aXNlT2JzdGFjbGU8L3RleHQ+PHJlY3QgZmlsbD0iI0YxRjFGMSIgaGVpZ2h0PSIzMy45Njg4IiByeD0iMTIuNSIgcnk9IjEyLjUiIHN0eWxlPSJzdHJva2U6IzE4MTgxODtzdHJva2Utd2lkdGg6MC41OyIgd2lkdGg9IjE0MSIgeD0iMTAwLjUiIHk9IjUwMi44MDE4Ii8+PHRleHQgZmlsbD0iIzAwMDAwMCIgZm9udC1mYW1pbHk9InNhbnMtc2VyaWYiIGZvbnQtc2l6ZT0iMTIiIGxlbmd0aEFkanVzdD0ic3BhY2luZyIgdGV4dExlbmd0aD0iMTIxIiB4PSIxMTAuNSIgeT0iNTIzLjk0MDQiPmNyZWF0ZVN0b3BPYnN0YWNsZTwvdGV4dD48cmVjdCBmaWxsPSIjRjFGMUYxIiBoZWlnaHQ9IjMzLjk2ODgiIHJ4PSIxMi41IiByeT0iMTIuNSIgc3R5bGU9InN0cm9rZTojMTgxODE4O3N0cm9rZS13aWR0aDowLjU7IiB3aWR0aD0iMTc2IiB4PSI4MyIgeT0iNTU2Ljc3MDUiLz48dGV4dCBmaWxsPSIjMDAwMDAwIiBmb250LWZhbWlseT0ic2Fucy1zZXJpZiIgZm9udC1zaXplPSIxMiIgbGVuZ3RoQWRqdXN0PSJzcGFjaW5nIiB0ZXh0TGVuZ3RoPSIxNTYiIHg9IjkzIiB5PSI1NzcuOTA5MiI+Y3JlYXRlU2xvd0Rvd25PYnN0YWNsZTwvdGV4dD48cmVjdCBmaWxsPSIjRjFGMUYxIiBoZWlnaHQ9IjMzLjk2ODgiIHJ4PSIxMi41IiByeT0iMTIuNSIgc3R5bGU9InN0cm9rZTojMTgxODE4O3N0cm9rZS13aWR0aDowLjU7IiB3aWR0aD0iMTgyIiB4PSI4MCIgeT0iNjIyLjczOTMiLz48dGV4dCBmaWxsPSIjMDAwMDAwIiBmb250LWZhbWlseT0ic2Fucy1zZXJpZiIgZm9udC1zaXplPSIxMiIgbGVuZ3RoQWRqdXN0PSJzcGFjaW5nIiB0ZXh0TGVuZ3RoPSIxNjIiIHg9IjkwIiB5PSI2NDMuODc3OSI+dXBkYXRlIHByZXZpb3VzIG9ic3RhY2xlczwvdGV4dD48cmVjdCBmaWxsPSIjRjFGMUYxIiBoZWlnaHQ9IjMzLjk2ODgiIHJ4PSIxMi41IiByeT0iMTIuNSIgc3R5bGU9InN0cm9rZTojMTgxODE4O3N0cm9rZS13aWR0aDowLjU7IiB3aWR0aD0iMTI5IiB4PSIxMDYuNSIgeT0iNjg4LjcwOCIvPjx0ZXh0IGZpbGw9IiMwMDAwMDAiIGZvbnQtZmFtaWx5PSJzYW5zLXNlcmlmIiBmb250LXNpemU9IjEyIiBsZW5ndGhBZGp1c3Q9InNwYWNpbmciIHRleHRMZW5ndGg9IjEwOSIgeD0iMTE2LjUiIHk9IjcwOS44NDY3Ij5jcmVhdGVQbGFubmVyRGF0YTwvdGV4dD48cmVjdCBmaWxsPSIjRjFGMUYxIiBoZWlnaHQ9IjMzLjk2ODgiIHJ4PSIxMi41IiByeT0iMTIuNSIgc3R5bGU9InN0cm9rZTojMTgxODE4O3N0cm9rZS13aWR0aDowLjU7IiB3aWR0aD0iMTY0IiB4PSI4OSIgeT0iNzQyLjY3NjgiLz48dGV4dCBmaWxsPSIjMDAwMDAwIiBmb250LWZhbWlseT0ic2Fucy1zZXJpZiIgZm9udC1zaXplPSIxMiIgbGVuZ3RoQWRqdXN0PSJzcGFjaW5nIiB0ZXh0TGVuZ3RoPSIxNDQiIHg9Ijk5IiB5PSI3NjMuODE1NCI+Z2VuZXJhdGVTdG9wVHJhamVjdG9yeTwvdGV4dD48cmVjdCBmaWxsPSIjRjFGMUYxIiBoZWlnaHQ9IjMzLjk2ODgiIHJ4PSIxMi41IiByeT0iMTIuNSIgc3R5bGU9InN0cm9rZTojMTgxODE4O3N0cm9rZS13aWR0aDowLjU7IiB3aWR0aD0iMTc0IiB4PSI4NCIgeT0iNzk2LjY0NTUiLz48dGV4dCBmaWxsPSIjMDAwMDAwIiBmb250LWZhbWlseT0ic2Fucy1zZXJpZiIgZm9udC1zaXplPSIxMiIgbGVuZ3RoQWRqdXN0PSJzcGFjaW5nIiB0ZXh0TGVuZ3RoPSIxNTQiIHg9Ijk0IiB5PSI4MTcuNzg0MiI+Z2VuZXJhdGVDcnVpc2VUcmFqZWN0b3J5PC90ZXh0PjxyZWN0IGZpbGw9IiNGMUYxRjEiIGhlaWdodD0iMzMuOTY4OCIgcng9IjEyLjUiIHJ5PSIxMi41IiBzdHlsZT0ic3Ryb2tlOiMxODE4MTg7c3Ryb2tlLXdpZHRoOjAuNTsiIHdpZHRoPSIxNzgiIHg9IjgyIiB5PSI4NTAuNjE0MyIvPjx0ZXh0IGZpbGw9IiMwMDAwMDAiIGZvbnQtZmFtaWx5PSJzYW5zLXNlcmlmIiBmb250LXNpemU9IjEyIiBsZW5ndGhBZGp1c3Q9InNwYWNpbmciIHRleHRMZW5ndGg9IjE1OCIgeD0iOTIiIHk9Ijg3MS43NTI5Ij5nZXRTbG93RG93blZlbG9jaXR5TGltaXQ8L3RleHQ+PHJlY3QgZmlsbD0iI0YxRjFGMSIgaGVpZ2h0PSIzMy45Njg4IiByeD0iMTIuNSIgcnk9IjEyLjUiIHN0eWxlPSJzdHJva2U6IzE4MTgxODtzdHJva2Utd2lkdGg6MC41OyIgd2lkdGg9IjEyNSIgeD0iMTA4LjUiIHk9IjkwNC41ODMiLz48dGV4dCBmaWxsPSIjMDAwMDAwIiBmb250LWZhbWlseT0ic2Fucy1zZXJpZiIgZm9udC1zaXplPSIxMiIgbGVuZ3RoQWRqdXN0PSJzcGFjaW5nIiB0ZXh0TGVuZ3RoPSIxMDUiIHg9IjExOC41IiB5PSI5MjUuNzIxNyI+cHVibGlzaCB0cmFqZWN0b3J5PC90ZXh0PjxyZWN0IGZpbGw9IiNGMUYxRjEiIGhlaWdodD0iMzMuOTY4OCIgcng9IjEyLjUiIHJ5PSIxMi41IiBzdHlsZT0ic3Ryb2tlOiMxODE4MTg7c3Ryb2tlLXdpZHRoOjAuNTsiIHdpZHRoPSIxMzAiIHg9IjEwNiIgeT0iOTU4LjU1MTgiLz48dGV4dCBmaWxsPSIjMDAwMDAwIiBmb250LWZhbWlseT0ic2Fucy1zZXJpZiIgZm9udC1zaXplPSIxMiIgbGVuZ3RoQWRqdXN0PSJzcGFjaW5nIiB0ZXh0TGVuZ3RoPSIxMTAiIHg9IjExNiIgeT0iOTc5LjY5MDQiPnB1Ymxpc2hEZWJ1Z0RhdGE8L3RleHQ+PHJlY3QgZmlsbD0iI0YxRjFGMSIgaGVpZ2h0PSIzMy45Njg4IiByeD0iMTIuNSIgcnk9IjEyLjUiIHN0eWxlPSJzdHJva2U6IzE4MTgxODtzdHJva2Utd2lkdGg6MC41OyIgd2lkdGg9IjIxNyIgeD0iNjIuNSIgeT0iMTAxMi41MjA1Ii8+PHRleHQgZmlsbD0iIzAwMDAwMCIgZm9udC1mYW1pbHk9InNhbnMtc2VyaWYiIGZvbnQtc2l6ZT0iMTIiIGxlbmd0aEFkanVzdD0ic3BhY2luZyIgdGV4dExlbmd0aD0iMTk3IiB4PSI3Mi41IiB5PSIxMDMzLjY1OTIiPnB1Ymxpc2ggYW5kIHByaW50IGNhbGN1bGF0aW9uIHRpbWU8L3RleHQ+PGVsbGlwc2UgY3g9IjE3MSIgY3k9IjEwNzcuNDg5MyIgZmlsbD0ibm9uZSIgcng9IjExIiByeT0iMTEiIHN0eWxlPSJzdHJva2U6IzIyMjIyMjtzdHJva2Utd2lkdGg6MS4wOyIvPjxlbGxpcHNlIGN4PSIxNzEiIGN5PSIxMDc3LjQ4OTMiIGZpbGw9IiMyMjIyMjIiIHJ4PSI2IiByeT0iNiIgc3R5bGU9InN0cm9rZTojMTExMTExO3N0cm9rZS13aWR0aDoxLjA7Ii8+PGxpbmUgc3R5bGU9InN0cm9rZTojMTgxODE4O3N0cm9rZS13aWR0aDoxLjA7IiB4MT0iMTcxIiB4Mj0iMTcxIiB5MT0iMTQ3LjU2MjUiIHkyPSIxNjcuNTYyNSIvPjxwb2x5Z29uIGZpbGw9IiMxODE4MTgiIHBvaW50cz0iMTY3LDE1Ny41NjI1LDE3MSwxNjcuNTYyNSwxNzUsMTU3LjU2MjUsMTcxLDE2MS41NjI1IiBzdHlsZT0ic3Ryb2tlOiMxODE4MTg7c3Ryb2tlLXdpZHRoOjEuMDsiLz48bGluZSBzdHlsZT0ic3Ryb2tlOiMxODE4MTg7c3Ryb2tlLXdpZHRoOjEuMDsiIHgxPSIxNzEiIHgyPSIxNzEiIHkxPSIyMDEuNTMxMyIgeTI9IjIyMS41MzEzIi8+PHBvbHlnb24gZmlsbD0iIzE4MTgxOCIgcG9pbnRzPSIxNjcsMjExLjUzMTMsMTcxLDIyMS41MzEzLDE3NSwyMTEuNTMxMywxNzEsMjE1LjUzMTMiIHN0eWxlPSJzdHJva2U6IzE4MTgxODtzdHJva2Utd2lkdGg6MS4wOyIvPjxsaW5lIHN0eWxlPSJzdHJva2U6IzE4MTgxODtzdHJva2Utd2lkdGg6MS4wOyIgeDE9IjE3MSIgeDI9IjE3MSIgeTE9IjI1NS41IiB5Mj0iMjc1LjUiLz48cG9seWdvbiBmaWxsPSIjMTgxODE4IiBwb2ludHM9IjE2NywyNjUuNSwxNzEsMjc1LjUsMTc1LDI2NS41LDE3MSwyNjkuNSIgc3R5bGU9InN0cm9rZTojMTgxODE4O3N0cm9rZS13aWR0aDoxLjA7Ii8+PGxpbmUgc3R5bGU9InN0cm9rZTojMTgxODE4O3N0cm9rZS13aWR0aDoxLjA7IiB4MT0iMTcxIiB4Mj0iMTcxIiB5MT0iNjcuMjk2OSIgeTI9IjExMy41OTM4Ii8+PHBvbHlnb24gZmlsbD0iIzE4MTgxOCIgcG9pbnRzPSIxNjcsMTAzLjU5MzgsMTcxLDExMy41OTM4LDE3NSwxMDMuNTkzOCwxNzEsMTA3LjU5MzgiIHN0eWxlPSJzdHJva2U6IzE4MTgxODtzdHJva2Utd2lkdGg6MS4wOyIvPjxsaW5lIHN0eWxlPSJzdHJva2U6IzE4MTgxODtzdHJva2Utd2lkdGg6MS4wOyIgeDE9IjE3MSIgeDI9IjE3MSIgeTE9IjQ4Mi44MDE4IiB5Mj0iNTAyLjgwMTgiLz48cG9seWdvbiBmaWxsPSIjMTgxODE4IiBwb2ludHM9IjE2Nyw0OTIuODAxOCwxNzEsNTAyLjgwMTgsMTc1LDQ5Mi44MDE4LDE3MSw0OTYuODAxOCIgc3R5bGU9InN0cm9rZTojMTgxODE4O3N0cm9rZS13aWR0aDoxLjA7Ii8+PGxpbmUgc3R5bGU9InN0cm9rZTojMTgxODE4O3N0cm9rZS13aWR0aDoxLjA7IiB4MT0iMTcxIiB4Mj0iMTcxIiB5MT0iNTM2Ljc3MDUiIHkyPSI1NTYuNzcwNSIvPjxwb2x5Z29uIGZpbGw9IiMxODE4MTgiIHBvaW50cz0iMTY3LDU0Ni43NzA1LDE3MSw1NTYuNzcwNSwxNzUsNTQ2Ljc3MDUsMTcxLDU1MC43NzA1IiBzdHlsZT0ic3Ryb2tlOiMxODE4MTg7c3Ryb2tlLXdpZHRoOjEuMDsiLz48bGluZSBzdHlsZT0ic3Ryb2tlOiMxODE4MTg7c3Ryb2tlLXdpZHRoOjEuMDsiIHgxPSIxNzEiIHgyPSIxNzEiIHkxPSI0MDIuNTM2MSIgeTI9IjQ0OC44MzMiLz48cG9seWdvbiBmaWxsPSIjMTgxODE4IiBwb2ludHM9IjE2Nyw0MzguODMzLDE3MSw0NDguODMzLDE3NSw0MzguODMzLDE3MSw0NDIuODMzIiBzdHlsZT0ic3Ryb2tlOiMxODE4MTg7c3Ryb2tlLXdpZHRoOjEuMDsiLz48bGluZSBzdHlsZT0ic3Ryb2tlOiMxODE4MTg7c3Ryb2tlLXdpZHRoOjEuMDsiIHgxPSIxNzEiIHgyPSIxNzEiIHkxPSI1OTAuNzM5MyIgeTI9IjYyMi43MzkzIi8+PHBvbHlnb24gZmlsbD0iIzE4MTgxOCIgcG9pbnRzPSIxNjcsNjEyLjczOTMsMTcxLDYyMi43MzkzLDE3NSw2MTIuNzM5MywxNzEsNjE2LjczOTMiIHN0eWxlPSJzdHJva2U6IzE4MTgxODtzdHJva2Utd2lkdGg6MS4wOyIvPjxsaW5lIHN0eWxlPSJzdHJva2U6IzE4MTgxODtzdHJva2Utd2lkdGg6MS4wOyIgeDE9IjE3MSIgeDI9IjE3MSIgeTE9IjMwOS40Njg4IiB5Mj0iMzY4LjU2NzQiLz48cG9seWdvbiBmaWxsPSIjMTgxODE4IiBwb2ludHM9IjE2NywzNTguNTY3NCwxNzEsMzY4LjU2NzQsMTc1LDM1OC41Njc0LDE3MSwzNjIuNTY3NCIgc3R5bGU9InN0cm9rZTojMTgxODE4O3N0cm9rZS13aWR0aDoxLjA7Ii8+PGxpbmUgc3R5bGU9InN0cm9rZTojMTgxODE4O3N0cm9rZS13aWR0aDoxLjA7IiB4MT0iMTcxIiB4Mj0iMTcxIiB5MT0iNjU2LjcwOCIgeTI9IjY4OC43MDgiLz48cG9seWdvbiBmaWxsPSIjMTgxODE4IiBwb2ludHM9IjE2Nyw2NzguNzA4LDE3MSw2ODguNzA4LDE3NSw2NzguNzA4LDE3MSw2ODIuNzA4IiBzdHlsZT0ic3Ryb2tlOiMxODE4MTg7c3Ryb2tlLXdpZHRoOjEuMDsiLz48bGluZSBzdHlsZT0ic3Ryb2tlOiMxODE4MTg7c3Ryb2tlLXdpZHRoOjEuMDsiIHgxPSIxNzEiIHgyPSIxNzEiIHkxPSI3MjIuNjc2OCIgeTI9Ijc0Mi42NzY4Ii8+PHBvbHlnb24gZmlsbD0iIzE4MTgxOCIgcG9pbnRzPSIxNjcsNzMyLjY3NjgsMTcxLDc0Mi42NzY4LDE3NSw3MzIuNjc2OCwxNzEsNzM2LjY3NjgiIHN0eWxlPSJzdHJva2U6IzE4MTgxODtzdHJva2Utd2lkdGg6MS4wOyIvPjxsaW5lIHN0eWxlPSJzdHJva2U6IzE4MTgxODtzdHJva2Utd2lkdGg6MS4wOyIgeDE9IjE3MSIgeDI9IjE3MSIgeTE9Ijc3Ni42NDU1IiB5Mj0iNzk2LjY0NTUiLz48cG9seWdvbiBmaWxsPSIjMTgxODE4IiBwb2ludHM9IjE2Nyw3ODYuNjQ1NSwxNzEsNzk2LjY0NTUsMTc1LDc4Ni42NDU1LDE3MSw3OTAuNjQ1NSIgc3R5bGU9InN0cm9rZTojMTgxODE4O3N0cm9rZS13aWR0aDoxLjA7Ii8+PGxpbmUgc3R5bGU9InN0cm9rZTojMTgxODE4O3N0cm9rZS13aWR0aDoxLjA7IiB4MT0iMTcxIiB4Mj0iMTcxIiB5MT0iODMwLjYxNDMiIHkyPSI4NTAuNjE0MyIvPjxwb2x5Z29uIGZpbGw9IiMxODE4MTgiIHBvaW50cz0iMTY3LDg0MC42MTQzLDE3MSw4NTAuNjE0MywxNzUsODQwLjYxNDMsMTcxLDg0NC42MTQzIiBzdHlsZT0ic3Ryb2tlOiMxODE4MTg7c3Ryb2tlLXdpZHRoOjEuMDsiLz48bGluZSBzdHlsZT0ic3Ryb2tlOiMxODE4MTg7c3Ryb2tlLXdpZHRoOjEuMDsiIHgxPSIxNzEiIHgyPSIxNzEiIHkxPSI4ODQuNTgzIiB5Mj0iOTA0LjU4MyIvPjxwb2x5Z29uIGZpbGw9IiMxODE4MTgiIHBvaW50cz0iMTY3LDg5NC41ODMsMTcxLDkwNC41ODMsMTc1LDg5NC41ODMsMTcxLDg5OC41ODMiIHN0eWxlPSJzdHJva2U6IzE4MTgxODtzdHJva2Utd2lkdGg6MS4wOyIvPjxsaW5lIHN0eWxlPSJzdHJva2U6IzE4MTgxODtzdHJva2Utd2lkdGg6MS4wOyIgeDE9IjE3MSIgeDI9IjE3MSIgeTE9IjkzOC41NTE4IiB5Mj0iOTU4LjU1MTgiLz48cG9seWdvbiBmaWxsPSIjMTgxODE4IiBwb2ludHM9IjE2Nyw5NDguNTUxOCwxNzEsOTU4LjU1MTgsMTc1LDk0OC41NTE4LDE3MSw5NTIuNTUxOCIgc3R5bGU9InN0cm9rZTojMTgxODE4O3N0cm9rZS13aWR0aDoxLjA7Ii8+PGxpbmUgc3R5bGU9InN0cm9rZTojMTgxODE4O3N0cm9rZS13aWR0aDoxLjA7IiB4MT0iMTcxIiB4Mj0iMTcxIiB5MT0iOTkyLjUyMDUiIHkyPSIxMDEyLjUyMDUiLz48cG9seWdvbiBmaWxsPSIjMTgxODE4IiBwb2ludHM9IjE2NywxMDAyLjUyMDUsMTcxLDEwMTIuNTIwNSwxNzUsMTAwMi41MjA1LDE3MSwxMDA2LjUyMDUiIHN0eWxlPSJzdHJva2U6IzE4MTgxODtzdHJva2Utd2lkdGg6MS4wOyIvPjxsaW5lIHN0eWxlPSJzdHJva2U6IzE4MTgxODtzdHJva2Utd2lkdGg6MS4wOyIgeDE9IjE3MSIgeDI9IjE3MSIgeTE9IjEwNDYuNDg5MyIgeTI9IjEwNjYuNDg5MyIvPjxwb2x5Z29uIGZpbGw9IiMxODE4MTgiIHBvaW50cz0iMTY3LDEwNTYuNDg5MywxNzEsMTA2Ni40ODkzLDE3NSwxMDU2LjQ4OTMsMTcxLDEwNjAuNDg5MyIgc3R5bGU9InN0cm9rZTojMTgxODE4O3N0cm9rZS13aWR0aDoxLjA7Ii8+PCEtLVNSQz1bVEw5QktpQ20zRHRkNURmbjF4ODJzWHFwQzRFZFV5TEg0dURaVU1JdmZSVDdmS2NReURkUFVqQnhNNVFsV08zWkpsMlRkQkFTZ3dtZU1iTVRTNGRXRTF2OVRDU2xaVExUZTVtMXRCa1V0MFZtTUJoQjRCMlhLRi02bTZWbTRHeDJLTzRGRzF0Tl9uMGUyR1Bld1VYSEZLVEcxZnJETk9VNGg2bDE3VXFHN1RLTG5IUS1fS3dzTXBBd21LVlFUbG44Rkh1em9xRTdidWJMNEE2Q0dtZ3FfTEpaZTdRdEtobm83TFkwcUZNcGkyNnBjb1NmRmpGNE1JLVhELU5xRG4zdWpFNUpOOEF0MURQTUtkaTljaUdVV3FrVVhWQ2d3U1pzNloxNmFXcWdyYlJpbzJ3Wi1aQkQzUmJRX2VkZnY2ZkZXUHROeXhDVmw1d21MOWhXU3hfUW5icFRLNUV3SU5sZ0gzRVBuRGxBN0dQTm1oWEdGclhLLXJ3U2xXMDBdLS0+PC9nPjwvc3ZnPg==" class="uml" alt="uml diagram" title="" /></p>
-<h3 id="algorithm-selection">Algorithm selection<a class="headerlink" href="#algorithm-selection" title="Permanent link">#</a></h3>
+<p><img src="data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0idXMtYXNjaWkiIHN0YW5kYWxvbmU9Im5vIj8+PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHhtbG5zOnhsaW5rPSJodHRwOi8vd3d3LnczLm9yZy8xOTk5L3hsaW5rIiBjb250ZW50U3R5bGVUeXBlPSJ0ZXh0L2NzcyIgaGVpZ2h0PSIxMDk5cHgiIHByZXNlcnZlQXNwZWN0UmF0aW89Im5vbmUiIHN0eWxlPSJ3aWR0aDozNDJweDtoZWlnaHQ6MTA5OXB4O2JhY2tncm91bmQ6I0ZGRkZGRjsiIHZlcnNpb249IjEuMSIgdmlld0JveD0iMCAwIDM0MiAxMDk5IiB3aWR0aD0iMzQycHgiIHpvb21BbmRQYW49Im1hZ25pZnkiPjxkZWZzLz48Zz48dGV4dCBmaWxsPSIjMDAwMDAwIiBmb250LWZhbWlseT0ic2Fucy1zZXJpZiIgZm9udC1zaXplPSIxNCIgZm9udC13ZWlnaHQ9ImJvbGQiIGxlbmd0aEFkanVzdD0ic3BhY2luZyIgdGV4dExlbmd0aD0iMTA1IiB4PSIxMTciIHk9IjMyLjk5NTEiPm9uVHJhamVjdG9yeTwvdGV4dD48ZWxsaXBzZSBjeD0iMTcxIiBjeT0iNTcuMjk2OSIgZmlsbD0iIzIyMjIyMiIgcng9IjEwIiByeT0iMTAiIHN0eWxlPSJzdHJva2U6IzIyMjIyMjtzdHJva2Utd2lkdGg6MS4wOyIvPjxyZWN0IGZpbGw9Im5vbmUiIGhlaWdodD0iMjQ0LjE3MTkiIHN0eWxlPSJzdHJva2U6IzAwMDAwMDtzdHJva2Utd2lkdGg6MS41OyIgd2lkdGg9IjMyMCIgeD0iMTEiIHk9Ijc3LjI5NjkiLz48cGF0aCBkPSJNMTY2LDc3LjI5NjkgTDE2Niw4Ni41OTM4IEwxNTYsOTYuNTkzOCBMMTEsOTYuNTkzOCAiIGZpbGw9Im5vbmUiIHN0eWxlPSJzdHJva2U6IzAwMDAwMDtzdHJva2Utd2lkdGg6MS41OyIvPjx0ZXh0IGZpbGw9IiMwMDAwMDAiIGZvbnQtZmFtaWx5PSJzYW5zLXNlcmlmIiBmb250LXNpemU9IjE0IiBsZW5ndGhBZGp1c3Q9InNwYWNpbmciIHRleHRMZW5ndGg9IjE0NSIgeD0iMTQiIHk9IjkxLjI5MiI+Y29udmVydFRvT2JzdGFjbGVzPC90ZXh0PjxyZWN0IGZpbGw9IiNGMUYxRjEiIGhlaWdodD0iMzMuOTY4OCIgcng9IjEyLjUiIHJ5PSIxMi41IiBzdHlsZT0ic3Ryb2tlOiMxODE4MTg7c3Ryb2tlLXdpZHRoOjAuNTsiIHdpZHRoPSIxNTUiIHg9IjkzLjUiIHk9IjExMy41OTM4Ii8+PHRleHQgZmlsbD0iIzAwMDAwMCIgZm9udC1mYW1pbHk9InNhbnMtc2VyaWYiIGZvbnQtc2l6ZT0iMTIiIGxlbmd0aEFkanVzdD0ic3BhY2luZyIgdGV4dExlbmd0aD0iMTM1IiB4PSIxMDMuNSIgeT0iMTM0LjczMjQiPmNoZWNrIG9ic3RhY2xlJ3MgbGFiZWw8L3RleHQ+PHJlY3QgZmlsbD0iI0YxRjFGMSIgaGVpZ2h0PSIzMy45Njg4IiByeD0iMTIuNSIgcnk9IjEyLjUiIHN0eWxlPSJzdHJva2U6IzE4MTgxODtzdHJva2Utd2lkdGg6MC41OyIgd2lkdGg9IjIxNiIgeD0iNjMiIHk9IjE2Ny41NjI1Ii8+PHRleHQgZmlsbD0iIzAwMDAwMCIgZm9udC1mYW1pbHk9InNhbnMtc2VyaWYiIGZvbnQtc2l6ZT0iMTIiIGxlbmd0aEFkanVzdD0ic3BhY2luZyIgdGV4dExlbmd0aD0iMTk2IiB4PSI3MyIgeT0iMTg4LjcwMTIiPmNoZWNrIG9ic3RhY2xlIGlzIGluIGZyb250IG9mIGVnbzwvdGV4dD48cmVjdCBmaWxsPSIjRjFGMUYxIiBoZWlnaHQ9IjMzLjk2ODgiIHJ4PSIxMi41IiByeT0iMTIuNSIgc3R5bGU9InN0cm9rZTojMTgxODE4O3N0cm9rZS13aWR0aDowLjU7IiB3aWR0aD0iMzAwIiB4PSIyMSIgeT0iMjIxLjUzMTMiLz48dGV4dCBmaWxsPSIjMDAwMDAwIiBmb250LWZhbWlseT0ic2Fucy1zZXJpZiIgZm9udC1zaXplPSIxMiIgbGVuZ3RoQWRqdXN0PSJzcGFjaW5nIiB0ZXh0TGVuZ3RoPSIyODAiIHg9IjMxIiB5PSIyNDIuNjY5OSI+Y2hlY2sgb2JzdGFjbGUncyBsYXRlcmFsIGRldmlhdGlvbiB0byB0cmFqZWN0b3J5PC90ZXh0PjxyZWN0IGZpbGw9IiNGMUYxRjEiIGhlaWdodD0iMzMuOTY4OCIgcng9IjEyLjUiIHJ5PSIxMi41IiBzdHlsZT0ic3Ryb2tlOiMxODE4MTg7c3Ryb2tlLXdpZHRoOjAuNTsiIHdpZHRoPSIxNjkiIHg9Ijg2LjUiIHk9IjI3NS41Ii8+PHRleHQgZmlsbD0iIzAwMDAwMCIgZm9udC1mYW1pbHk9InNhbnMtc2VyaWYiIGZvbnQtc2l6ZT0iMTIiIGxlbmd0aEFkanVzdD0ic3BhY2luZyIgdGV4dExlbmd0aD0iMTQ5IiB4PSI5Ni41IiB5PSIyOTYuNjM4NyI+Y3JlYXRlIG9ic3RhY2xlIGluc3RhbmNlPC90ZXh0PjxyZWN0IGZpbGw9Im5vbmUiIGhlaWdodD0iMzM2LjQzNzUiIHN0eWxlPSJzdHJva2U6IzAwMDAwMDtzdHJva2Utd2lkdGg6MS41OyIgd2lkdGg9IjMxMSIgeD0iMTUuNSIgeT0iMzMyLjI3MDUiLz48cGF0aCBkPSJNMzE2LjUsMzMyLjI3MDUgTDMxNi41LDM0MS41Njc0IEwzMDYuNSwzNTEuNTY3NCBMMTUuNSwzNTEuNTY3NCAiIGZpbGw9Im5vbmUiIHN0eWxlPSJzdHJva2U6IzAwMDAwMDtzdHJva2Utd2lkdGg6MS41OyIvPjx0ZXh0IGZpbGw9IiMwMDAwMDAiIGZvbnQtZmFtaWx5PSJzYW5zLXNlcmlmIiBmb250LXNpemU9IjE0IiBsZW5ndGhBZGp1c3Q9InNwYWNpbmciIHRleHRMZW5ndGg9IjI5MSIgeD0iMTguNSIgeT0iMzQ2LjI2NTYiPmRldGVybWluZUVnb0JlaGF2aW9yQWdhaW5zdE9ic3RhY2xlczwvdGV4dD48cmVjdCBmaWxsPSIjRjFGMUYxIiBoZWlnaHQ9IjMzLjk2ODgiIHJ4PSIxMi41IiByeT0iMTIuNSIgc3R5bGU9InN0cm9rZTojMTgxODE4O3N0cm9rZS13aWR0aDowLjU7IiB3aWR0aD0iMTk1IiB4PSI3My41IiB5PSIzNjguNTY3NCIvPjx0ZXh0IGZpbGw9IiMwMDAwMDAiIGZvbnQtZmFtaWx5PSJzYW5zLXNlcmlmIiBmb250LXNpemU9IjEyIiBsZW5ndGhBZGp1c3Q9InNwYWNpbmciIHRleHRMZW5ndGg9IjE3NSIgeD0iODMuNSIgeT0iMzg5LjcwNjEiPnJlc2FtcGxlRXh0ZW5kZWRUcmFqZWN0b3J5PC90ZXh0PjxyZWN0IGZpbGw9Im5vbmUiIGhlaWdodD0iMTkwLjIwMzEiIHN0eWxlPSJzdHJva2U6IzAwMDAwMDtzdHJva2Utd2lkdGg6MS41OyIgd2lkdGg9IjE5NiIgeD0iNzMiIHk9IjQxMi41MzYxIi8+PHBhdGggZD0iTTIwOCw0MTIuNTM2MSBMMjA4LDQyMS44MzMgTDE5OCw0MzEuODMzIEw3Myw0MzEuODMzICIgZmlsbD0ibm9uZSIgc3R5bGU9InN0cm9rZTojMDAwMDAwO3N0cm9rZS13aWR0aDoxLjU7Ii8+PHRleHQgZmlsbD0iIzAwMDAwMCIgZm9udC1mYW1pbHk9InNhbnMtc2VyaWYiIGZvbnQtc2l6ZT0iMTQiIGxlbmd0aEFkanVzdD0ic3BhY2luZyIgdGV4dExlbmd0aD0iMTI1IiB4PSI3NiIgeT0iNDI2LjUzMTMiPmZvciBlYWNoIG9ic3RhY2xlPC90ZXh0PjxyZWN0IGZpbGw9IiNGMUYxRjEiIGhlaWdodD0iMzMuOTY4OCIgcng9IjEyLjUiIHJ5PSIxMi41IiBzdHlsZT0ic3Ryb2tlOiMxODE4MTg7c3Ryb2tlLXdpZHRoOjAuNTsiIHdpZHRoPSIxNTEiIHg9Ijk1LjUiIHk9IjQ0OC44MzMiLz48dGV4dCBmaWxsPSIjMDAwMDAwIiBmb250LWZhbWlseT0ic2Fucy1zZXJpZiIgZm9udC1zaXplPSIxMiIgbGVuZ3RoQWRqdXN0PSJzcGFjaW5nIiB0ZXh0TGVuZ3RoPSIxMzEiIHg9IjEwNS41IiB5PSI0NjkuOTcxNyI+Y3JlYXRlQ3J1aXNlT2JzdGFjbGU8L3RleHQ+PHJlY3QgZmlsbD0iI0YxRjFGMSIgaGVpZ2h0PSIzMy45Njg4IiByeD0iMTIuNSIgcnk9IjEyLjUiIHN0eWxlPSJzdHJva2U6IzE4MTgxODtzdHJva2Utd2lkdGg6MC41OyIgd2lkdGg9IjE0MSIgeD0iMTAwLjUiIHk9IjUwMi44MDE4Ii8+PHRleHQgZmlsbD0iIzAwMDAwMCIgZm9udC1mYW1pbHk9InNhbnMtc2VyaWYiIGZvbnQtc2l6ZT0iMTIiIGxlbmd0aEFkanVzdD0ic3BhY2luZyIgdGV4dExlbmd0aD0iMTIxIiB4PSIxMTAuNSIgeT0iNTIzLjk0MDQiPmNyZWF0ZVN0b3BPYnN0YWNsZTwvdGV4dD48cmVjdCBmaWxsPSIjRjFGMUYxIiBoZWlnaHQ9IjMzLjk2ODgiIHJ4PSIxMi41IiByeT0iMTIuNSIgc3R5bGU9InN0cm9rZTojMTgxODE4O3N0cm9rZS13aWR0aDowLjU7IiB3aWR0aD0iMTc2IiB4PSI4MyIgeT0iNTU2Ljc3MDUiLz48dGV4dCBmaWxsPSIjMDAwMDAwIiBmb250LWZhbWlseT0ic2Fucy1zZXJpZiIgZm9udC1zaXplPSIxMiIgbGVuZ3RoQWRqdXN0PSJzcGFjaW5nIiB0ZXh0TGVuZ3RoPSIxNTYiIHg9IjkzIiB5PSI1NzcuOTA5MiI+Y3JlYXRlU2xvd0Rvd25PYnN0YWNsZTwvdGV4dD48cmVjdCBmaWxsPSIjRjFGMUYxIiBoZWlnaHQ9IjMzLjk2ODgiIHJ4PSIxMi41IiByeT0iMTIuNSIgc3R5bGU9InN0cm9rZTojMTgxODE4O3N0cm9rZS13aWR0aDowLjU7IiB3aWR0aD0iMTgyIiB4PSI4MCIgeT0iNjIyLjczOTMiLz48dGV4dCBmaWxsPSIjMDAwMDAwIiBmb250LWZhbWlseT0ic2Fucy1zZXJpZiIgZm9udC1zaXplPSIxMiIgbGVuZ3RoQWRqdXN0PSJzcGFjaW5nIiB0ZXh0TGVuZ3RoPSIxNjIiIHg9IjkwIiB5PSI2NDMuODc3OSI+dXBkYXRlIHByZXZpb3VzIG9ic3RhY2xlczwvdGV4dD48cmVjdCBmaWxsPSIjRjFGMUYxIiBoZWlnaHQ9IjMzLjk2ODgiIHJ4PSIxMi41IiByeT0iMTIuNSIgc3R5bGU9InN0cm9rZTojMTgxODE4O3N0cm9rZS13aWR0aDowLjU7IiB3aWR0aD0iMTI5IiB4PSIxMDYuNSIgeT0iNjg4LjcwOCIvPjx0ZXh0IGZpbGw9IiMwMDAwMDAiIGZvbnQtZmFtaWx5PSJzYW5zLXNlcmlmIiBmb250LXNpemU9IjEyIiBsZW5ndGhBZGp1c3Q9InNwYWNpbmciIHRleHRMZW5ndGg9IjEwOSIgeD0iMTE2LjUiIHk9IjcwOS44NDY3Ij5jcmVhdGVQbGFubmVyRGF0YTwvdGV4dD48cmVjdCBmaWxsPSIjRjFGMUYxIiBoZWlnaHQ9IjMzLjk2ODgiIHJ4PSIxMi41IiByeT0iMTIuNSIgc3R5bGU9InN0cm9rZTojMTgxODE4O3N0cm9rZS13aWR0aDowLjU7IiB3aWR0aD0iMTY0IiB4PSI4OSIgeT0iNzQyLjY3NjgiLz48dGV4dCBmaWxsPSIjMDAwMDAwIiBmb250LWZhbWlseT0ic2Fucy1zZXJpZiIgZm9udC1zaXplPSIxMiIgbGVuZ3RoQWRqdXN0PSJzcGFjaW5nIiB0ZXh0TGVuZ3RoPSIxNDQiIHg9Ijk5IiB5PSI3NjMuODE1NCI+Z2VuZXJhdGVTdG9wVHJhamVjdG9yeTwvdGV4dD48cmVjdCBmaWxsPSIjRjFGMUYxIiBoZWlnaHQ9IjMzLjk2ODgiIHJ4PSIxMi41IiByeT0iMTIuNSIgc3R5bGU9InN0cm9rZTojMTgxODE4O3N0cm9rZS13aWR0aDowLjU7IiB3aWR0aD0iMTc0IiB4PSI4NCIgeT0iNzk2LjY0NTUiLz48dGV4dCBmaWxsPSIjMDAwMDAwIiBmb250LWZhbWlseT0ic2Fucy1zZXJpZiIgZm9udC1zaXplPSIxMiIgbGVuZ3RoQWRqdXN0PSJzcGFjaW5nIiB0ZXh0TGVuZ3RoPSIxNTQiIHg9Ijk0IiB5PSI4MTcuNzg0MiI+Z2VuZXJhdGVDcnVpc2VUcmFqZWN0b3J5PC90ZXh0PjxyZWN0IGZpbGw9IiNGMUYxRjEiIGhlaWdodD0iMzMuOTY4OCIgcng9IjEyLjUiIHJ5PSIxMi41IiBzdHlsZT0ic3Ryb2tlOiMxODE4MTg7c3Ryb2tlLXdpZHRoOjAuNTsiIHdpZHRoPSIxOTkiIHg9IjcxLjUiIHk9Ijg1MC42MTQzIi8+PHRleHQgZmlsbD0iIzAwMDAwMCIgZm9udC1mYW1pbHk9InNhbnMtc2VyaWYiIGZvbnQtc2l6ZT0iMTIiIGxlbmd0aEFkanVzdD0ic3BhY2luZyIgdGV4dExlbmd0aD0iMTc5IiB4PSI4MS41IiB5PSI4NzEuNzUyOSI+Z2VuZXJhdGVTbG93RG93blRyYWplY3Rvcnk8L3RleHQ+PHJlY3QgZmlsbD0iI0YxRjFGMSIgaGVpZ2h0PSIzMy45Njg4IiByeD0iMTIuNSIgcnk9IjEyLjUiIHN0eWxlPSJzdHJva2U6IzE4MTgxODtzdHJva2Utd2lkdGg6MC41OyIgd2lkdGg9IjEyNSIgeD0iMTA4LjUiIHk9IjkwNC41ODMiLz48dGV4dCBmaWxsPSIjMDAwMDAwIiBmb250LWZhbWlseT0ic2Fucy1zZXJpZiIgZm9udC1zaXplPSIxMiIgbGVuZ3RoQWRqdXN0PSJzcGFjaW5nIiB0ZXh0TGVuZ3RoPSIxMDUiIHg9IjExOC41IiB5PSI5MjUuNzIxNyI+cHVibGlzaCB0cmFqZWN0b3J5PC90ZXh0PjxyZWN0IGZpbGw9IiNGMUYxRjEiIGhlaWdodD0iMzMuOTY4OCIgcng9IjEyLjUiIHJ5PSIxMi41IiBzdHlsZT0ic3Ryb2tlOiMxODE4MTg7c3Ryb2tlLXdpZHRoOjAuNTsiIHdpZHRoPSIxMzAiIHg9IjEwNiIgeT0iOTU4LjU1MTgiLz48dGV4dCBmaWxsPSIjMDAwMDAwIiBmb250LWZhbWlseT0ic2Fucy1zZXJpZiIgZm9udC1zaXplPSIxMiIgbGVuZ3RoQWRqdXN0PSJzcGFjaW5nIiB0ZXh0TGVuZ3RoPSIxMTAiIHg9IjExNiIgeT0iOTc5LjY5MDQiPnB1Ymxpc2hEZWJ1Z0RhdGE8L3RleHQ+PHJlY3QgZmlsbD0iI0YxRjFGMSIgaGVpZ2h0PSIzMy45Njg4IiByeD0iMTIuNSIgcnk9IjEyLjUiIHN0eWxlPSJzdHJva2U6IzE4MTgxODtzdHJva2Utd2lkdGg6MC41OyIgd2lkdGg9IjIxNyIgeD0iNjIuNSIgeT0iMTAxMi41MjA1Ii8+PHRleHQgZmlsbD0iIzAwMDAwMCIgZm9udC1mYW1pbHk9InNhbnMtc2VyaWYiIGZvbnQtc2l6ZT0iMTIiIGxlbmd0aEFkanVzdD0ic3BhY2luZyIgdGV4dExlbmd0aD0iMTk3IiB4PSI3Mi41IiB5PSIxMDMzLjY1OTIiPnB1Ymxpc2ggYW5kIHByaW50IGNhbGN1bGF0aW9uIHRpbWU8L3RleHQ+PGVsbGlwc2UgY3g9IjE3MSIgY3k9IjEwNzcuNDg5MyIgZmlsbD0ibm9uZSIgcng9IjExIiByeT0iMTEiIHN0eWxlPSJzdHJva2U6IzIyMjIyMjtzdHJva2Utd2lkdGg6MS4wOyIvPjxlbGxpcHNlIGN4PSIxNzEiIGN5PSIxMDc3LjQ4OTMiIGZpbGw9IiMyMjIyMjIiIHJ4PSI2IiByeT0iNiIgc3R5bGU9InN0cm9rZTojMTExMTExO3N0cm9rZS13aWR0aDoxLjA7Ii8+PGxpbmUgc3R5bGU9InN0cm9rZTojMTgxODE4O3N0cm9rZS13aWR0aDoxLjA7IiB4MT0iMTcxIiB4Mj0iMTcxIiB5MT0iMTQ3LjU2MjUiIHkyPSIxNjcuNTYyNSIvPjxwb2x5Z29uIGZpbGw9IiMxODE4MTgiIHBvaW50cz0iMTY3LDE1Ny41NjI1LDE3MSwxNjcuNTYyNSwxNzUsMTU3LjU2MjUsMTcxLDE2MS41NjI1IiBzdHlsZT0ic3Ryb2tlOiMxODE4MTg7c3Ryb2tlLXdpZHRoOjEuMDsiLz48bGluZSBzdHlsZT0ic3Ryb2tlOiMxODE4MTg7c3Ryb2tlLXdpZHRoOjEuMDsiIHgxPSIxNzEiIHgyPSIxNzEiIHkxPSIyMDEuNTMxMyIgeTI9IjIyMS41MzEzIi8+PHBvbHlnb24gZmlsbD0iIzE4MTgxOCIgcG9pbnRzPSIxNjcsMjExLjUzMTMsMTcxLDIyMS41MzEzLDE3NSwyMTEuNTMxMywxNzEsMjE1LjUzMTMiIHN0eWxlPSJzdHJva2U6IzE4MTgxODtzdHJva2Utd2lkdGg6MS4wOyIvPjxsaW5lIHN0eWxlPSJzdHJva2U6IzE4MTgxODtzdHJva2Utd2lkdGg6MS4wOyIgeDE9IjE3MSIgeDI9IjE3MSIgeTE9IjI1NS41IiB5Mj0iMjc1LjUiLz48cG9seWdvbiBmaWxsPSIjMTgxODE4IiBwb2ludHM9IjE2NywyNjUuNSwxNzEsMjc1LjUsMTc1LDI2NS41LDE3MSwyNjkuNSIgc3R5bGU9InN0cm9rZTojMTgxODE4O3N0cm9rZS13aWR0aDoxLjA7Ii8+PGxpbmUgc3R5bGU9InN0cm9rZTojMTgxODE4O3N0cm9rZS13aWR0aDoxLjA7IiB4MT0iMTcxIiB4Mj0iMTcxIiB5MT0iNjcuMjk2OSIgeTI9IjExMy41OTM4Ii8+PHBvbHlnb24gZmlsbD0iIzE4MTgxOCIgcG9pbnRzPSIxNjcsMTAzLjU5MzgsMTcxLDExMy41OTM4LDE3NSwxMDMuNTkzOCwxNzEsMTA3LjU5MzgiIHN0eWxlPSJzdHJva2U6IzE4MTgxODtzdHJva2Utd2lkdGg6MS4wOyIvPjxsaW5lIHN0eWxlPSJzdHJva2U6IzE4MTgxODtzdHJva2Utd2lkdGg6MS4wOyIgeDE9IjE3MSIgeDI9IjE3MSIgeTE9IjQ4Mi44MDE4IiB5Mj0iNTAyLjgwMTgiLz48cG9seWdvbiBmaWxsPSIjMTgxODE4IiBwb2ludHM9IjE2Nyw0OTIuODAxOCwxNzEsNTAyLjgwMTgsMTc1LDQ5Mi44MDE4LDE3MSw0OTYuODAxOCIgc3R5bGU9InN0cm9rZTojMTgxODE4O3N0cm9rZS13aWR0aDoxLjA7Ii8+PGxpbmUgc3R5bGU9InN0cm9rZTojMTgxODE4O3N0cm9rZS13aWR0aDoxLjA7IiB4MT0iMTcxIiB4Mj0iMTcxIiB5MT0iNTM2Ljc3MDUiIHkyPSI1NTYuNzcwNSIvPjxwb2x5Z29uIGZpbGw9IiMxODE4MTgiIHBvaW50cz0iMTY3LDU0Ni43NzA1LDE3MSw1NTYuNzcwNSwxNzUsNTQ2Ljc3MDUsMTcxLDU1MC43NzA1IiBzdHlsZT0ic3Ryb2tlOiMxODE4MTg7c3Ryb2tlLXdpZHRoOjEuMDsiLz48bGluZSBzdHlsZT0ic3Ryb2tlOiMxODE4MTg7c3Ryb2tlLXdpZHRoOjEuMDsiIHgxPSIxNzEiIHgyPSIxNzEiIHkxPSI0MDIuNTM2MSIgeTI9IjQ0OC44MzMiLz48cG9seWdvbiBmaWxsPSIjMTgxODE4IiBwb2ludHM9IjE2Nyw0MzguODMzLDE3MSw0NDguODMzLDE3NSw0MzguODMzLDE3MSw0NDIuODMzIiBzdHlsZT0ic3Ryb2tlOiMxODE4MTg7c3Ryb2tlLXdpZHRoOjEuMDsiLz48bGluZSBzdHlsZT0ic3Ryb2tlOiMxODE4MTg7c3Ryb2tlLXdpZHRoOjEuMDsiIHgxPSIxNzEiIHgyPSIxNzEiIHkxPSI1OTAuNzM5MyIgeTI9IjYyMi43MzkzIi8+PHBvbHlnb24gZmlsbD0iIzE4MTgxOCIgcG9pbnRzPSIxNjcsNjEyLjczOTMsMTcxLDYyMi43MzkzLDE3NSw2MTIuNzM5MywxNzEsNjE2LjczOTMiIHN0eWxlPSJzdHJva2U6IzE4MTgxODtzdHJva2Utd2lkdGg6MS4wOyIvPjxsaW5lIHN0eWxlPSJzdHJva2U6IzE4MTgxODtzdHJva2Utd2lkdGg6MS4wOyIgeDE9IjE3MSIgeDI9IjE3MSIgeTE9IjMwOS40Njg4IiB5Mj0iMzY4LjU2NzQiLz48cG9seWdvbiBmaWxsPSIjMTgxODE4IiBwb2ludHM9IjE2NywzNTguNTY3NCwxNzEsMzY4LjU2NzQsMTc1LDM1OC41Njc0LDE3MSwzNjIuNTY3NCIgc3R5bGU9InN0cm9rZTojMTgxODE4O3N0cm9rZS13aWR0aDoxLjA7Ii8+PGxpbmUgc3R5bGU9InN0cm9rZTojMTgxODE4O3N0cm9rZS13aWR0aDoxLjA7IiB4MT0iMTcxIiB4Mj0iMTcxIiB5MT0iNjU2LjcwOCIgeTI9IjY4OC43MDgiLz48cG9seWdvbiBmaWxsPSIjMTgxODE4IiBwb2ludHM9IjE2Nyw2NzguNzA4LDE3MSw2ODguNzA4LDE3NSw2NzguNzA4LDE3MSw2ODIuNzA4IiBzdHlsZT0ic3Ryb2tlOiMxODE4MTg7c3Ryb2tlLXdpZHRoOjEuMDsiLz48bGluZSBzdHlsZT0ic3Ryb2tlOiMxODE4MTg7c3Ryb2tlLXdpZHRoOjEuMDsiIHgxPSIxNzEiIHgyPSIxNzEiIHkxPSI3MjIuNjc2OCIgeTI9Ijc0Mi42NzY4Ii8+PHBvbHlnb24gZmlsbD0iIzE4MTgxOCIgcG9pbnRzPSIxNjcsNzMyLjY3NjgsMTcxLDc0Mi42NzY4LDE3NSw3MzIuNjc2OCwxNzEsNzM2LjY3NjgiIHN0eWxlPSJzdHJva2U6IzE4MTgxODtzdHJva2Utd2lkdGg6MS4wOyIvPjxsaW5lIHN0eWxlPSJzdHJva2U6IzE4MTgxODtzdHJva2Utd2lkdGg6MS4wOyIgeDE9IjE3MSIgeDI9IjE3MSIgeTE9Ijc3Ni42NDU1IiB5Mj0iNzk2LjY0NTUiLz48cG9seWdvbiBmaWxsPSIjMTgxODE4IiBwb2ludHM9IjE2Nyw3ODYuNjQ1NSwxNzEsNzk2LjY0NTUsMTc1LDc4Ni42NDU1LDE3MSw3OTAuNjQ1NSIgc3R5bGU9InN0cm9rZTojMTgxODE4O3N0cm9rZS13aWR0aDoxLjA7Ii8+PGxpbmUgc3R5bGU9InN0cm9rZTojMTgxODE4O3N0cm9rZS13aWR0aDoxLjA7IiB4MT0iMTcxIiB4Mj0iMTcxIiB5MT0iODMwLjYxNDMiIHkyPSI4NTAuNjE0MyIvPjxwb2x5Z29uIGZpbGw9IiMxODE4MTgiIHBvaW50cz0iMTY3LDg0MC42MTQzLDE3MSw4NTAuNjE0MywxNzUsODQwLjYxNDMsMTcxLDg0NC42MTQzIiBzdHlsZT0ic3Ryb2tlOiMxODE4MTg7c3Ryb2tlLXdpZHRoOjEuMDsiLz48bGluZSBzdHlsZT0ic3Ryb2tlOiMxODE4MTg7c3Ryb2tlLXdpZHRoOjEuMDsiIHgxPSIxNzEiIHgyPSIxNzEiIHkxPSI4ODQuNTgzIiB5Mj0iOTA0LjU4MyIvPjxwb2x5Z29uIGZpbGw9IiMxODE4MTgiIHBvaW50cz0iMTY3LDg5NC41ODMsMTcxLDkwNC41ODMsMTc1LDg5NC41ODMsMTcxLDg5OC41ODMiIHN0eWxlPSJzdHJva2U6IzE4MTgxODtzdHJva2Utd2lkdGg6MS4wOyIvPjxsaW5lIHN0eWxlPSJzdHJva2U6IzE4MTgxODtzdHJva2Utd2lkdGg6MS4wOyIgeDE9IjE3MSIgeDI9IjE3MSIgeTE9IjkzOC41NTE4IiB5Mj0iOTU4LjU1MTgiLz48cG9seWdvbiBmaWxsPSIjMTgxODE4IiBwb2ludHM9IjE2Nyw5NDguNTUxOCwxNzEsOTU4LjU1MTgsMTc1LDk0OC41NTE4LDE3MSw5NTIuNTUxOCIgc3R5bGU9InN0cm9rZTojMTgxODE4O3N0cm9rZS13aWR0aDoxLjA7Ii8+PGxpbmUgc3R5bGU9InN0cm9rZTojMTgxODE4O3N0cm9rZS13aWR0aDoxLjA7IiB4MT0iMTcxIiB4Mj0iMTcxIiB5MT0iOTkyLjUyMDUiIHkyPSIxMDEyLjUyMDUiLz48cG9seWdvbiBmaWxsPSIjMTgxODE4IiBwb2ludHM9IjE2NywxMDAyLjUyMDUsMTcxLDEwMTIuNTIwNSwxNzUsMTAwMi41MjA1LDE3MSwxMDA2LjUyMDUiIHN0eWxlPSJzdHJva2U6IzE4MTgxODtzdHJva2Utd2lkdGg6MS4wOyIvPjxsaW5lIHN0eWxlPSJzdHJva2U6IzE4MTgxODtzdHJva2Utd2lkdGg6MS4wOyIgeDE9IjE3MSIgeDI9IjE3MSIgeTE9IjEwNDYuNDg5MyIgeTI9IjEwNjYuNDg5MyIvPjxwb2x5Z29uIGZpbGw9IiMxODE4MTgiIHBvaW50cz0iMTY3LDEwNTYuNDg5MywxNzEsMTA2Ni40ODkzLDE3NSwxMDU2LjQ4OTMsMTcxLDEwNjAuNDg5MyIgc3R5bGU9InN0cm9rZTojMTgxODE4O3N0cm9rZS13aWR0aDoxLjA7Ii8+PCEtLVNSQz1bVEw5QktpQ20zRHRkNURmbjF4ODJzWk5DcTBpZVpmZU83Q2lab29kUzdmTHljV25iUC1qOXhzRFBsR08yWllWMTN0QkF5YnJiSFQ2Z3dlSEIwaVRuOUQ0SmxwUE1UdTVvMVYzZVVkQVZtN0ZmOEtGMFhhQno1bUFWbUtTdTJxUzVGV0RyTkZ6M2UyR09lQU5IZXRnRWUwb3djZmc2WEFuaG1udGo0MXRMNVNLTVZscWtqYmlva2k1N0VkUnlKM3NFZGtNZm0tbDRCZVhHblk0NUVkd2ZTTDF4c1liRU42U004N0p6QWNwOHdrUDVZaS1xU0RQUnc1cXZ0R1MyTm12eVlMbG1iaTNRSWNnbEdQRk9PdDM5Z3QzVTlQdFB0V0I2STc5MG5UZ0E3VGJiTGotY2tJNkp2VmxPT2NzRmZqODRkX2xURmpSZ1dQaElCVWZCOXZoRDlEd014WjJ1NGtRTC1pNzJzV1ZaejBDMF0tLT48L2c+PC9zdmc+" class="uml" alt="uml diagram" title="" /></p>
+<h3 id="algorithm-selection-for-cruise-planner">Algorithm selection for cruise planner<a class="headerlink" href="#algorithm-selection-for-cruise-planner" title="Permanent link">#</a></h3>
 <p>Currently, only a PID-based planner is supported.
 Each planner will be explained in the following.</p>
 <table>
@@ -12645,7 +12838,7 @@ Each planner will be explained in the following.</p>
 <p>Only one obstacle is targeted for the stop planning.
 It is the obstacle among obstacle candidates whose velocity is less than <code>obstacle_velocity_threshold_from_cruise_to_stop</code>, and which is the nearest to the ego along the trajectory. A stop point is inserted keeping<code>common.safe_distance_margin</code> distance between the ego and obstacle.</p>
 <p>Note that, as explained in the stop planning design, a stop planning which requires a strong acceleration (less than <code>common.min_strong_accel</code>) will be canceled.</p>
-<h4 id="adaptive-cruise-planning_1">Adaptive cruise planning<a class="headerlink" href="#adaptive-cruise-planning_1" title="Permanent link">#</a></h4>
+<h4 id="cruise-planning_1">Cruise planning<a class="headerlink" href="#cruise-planning_1" title="Permanent link">#</a></h4>
 <p>In the <code>pid_based_planner</code> namespace,</p>
 <table>
 <thead>
