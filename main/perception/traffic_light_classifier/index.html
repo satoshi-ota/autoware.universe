@@ -7638,7 +7638,7 @@
   
     <li class="md-nav__item">
       <a href="../../planning/behavior_path_planner/docs/behavior_path_planner_interface_design/" class="md-nav__link">
-        Behavior path planner interface design
+        Interface design
       </a>
     </li>
   
@@ -12166,26 +12166,6 @@
     Core Parameters
   </a>
   
-    <nav class="md-nav" aria-label="Core Parameters">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#cnn_classifier_1" class="md-nav__link">
-    cnn_classifier
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#hsv_classifier_1" class="md-nav__link">
-    hsv_classifier
-  </a>
-  
-</li>
-        
-      </ul>
-    </nav>
-  
 </li>
         
       </ul>
@@ -12287,12 +12267,12 @@
   
 
 
-<h1 id="traffic_light_classifier">traffic_light_classifier<a class="headerlink" href="#traffic_light_classifier" title="Permanent link">#</a></h1>
+<div><h1 id="traffic_light_classifier">traffic_light_classifier<a class="headerlink" href="#traffic_light_classifier" title="Permanent link">#</a></h1>
 <h2 id="purpose">Purpose<a class="headerlink" href="#purpose" title="Permanent link">#</a></h2>
 <p>traffic_light_classifier is a package for classifying traffic light labels using cropped image around a traffic light. This package has two classifier models: <code>cnn_classifier</code> and <code>hsv_classifier</code>.</p>
 <h2 id="inner-workings-algorithms">Inner-workings / Algorithms<a class="headerlink" href="#inner-workings-algorithms" title="Permanent link">#</a></h2>
 <h3 id="cnn_classifier">cnn_classifier<a class="headerlink" href="#cnn_classifier" title="Permanent link">#</a></h3>
-<p>Traffic light labels are classified by MobileNetV2.<br />
+<p>Traffic light labels are classified by MobileNetV2.<br>
 Totally 37600 (26300 for training, 6800 for evaluation and 4500 for test) TIER IV internal images of Japanese traffic lights were used for fine-tuning.</p>
 <h3 id="hsv_classifier">hsv_classifier<a class="headerlink" href="#hsv_classifier" title="Permanent link">#</a></h3>
 <p>Traffic light colors (green, yellow and red) are classified in HSV model.</p>
@@ -12301,7 +12281,7 @@ Totally 37600 (26300 for training, 6800 for evaluation and 4500 for test) TIER I
 <p>There are rules for naming labels that nodes receive. One traffic light is represented by the following character string separated by commas. <code>color1-shape1, color2-shape2</code> .</p>
 <p>For example, the simple red and red cross traffic light label must be expressed as "red-circle, red-cross".</p>
 <p>These colors and shapes are assigned to the message as follows:
-<img alt="TrafficLightDataStructure.jpg" src="image/TrafficLightDataStructure.jpg" /></p>
+<img alt="TrafficLightDataStructure.jpg" src="image/TrafficLightDataStructure.jpg"></p>
 <h2 id="inputs-outputs">Inputs / Outputs<a class="headerlink" href="#inputs-outputs" title="Permanent link">#</a></h2>
 <h3 id="input">Input<a class="headerlink" href="#input" title="Permanent link">#</a></h3>
 <table>
@@ -12615,7 +12595,7 @@ Example:
 Example:
   Currently, this package can't handle the chattering obstacles well. We plan to add some probabilistic filters in the perception layer to improve it.
   Also, there are some parameters that should be global(e.g. vehicle size, max steering, etc.). These will be refactored and defined as global parameters so that we can share the same parameters between different nodes.
--->
+--></div>
 
 
 
@@ -12680,7 +12660,7 @@ Example:
       <div class="md-copyright">
   
     <div class="md-copyright__highlight">
-      Copyright &copy; 2022 The Autoware Foundation
+      Copyright &copy; 2023 The Autoware Foundation
     </div>
   
   

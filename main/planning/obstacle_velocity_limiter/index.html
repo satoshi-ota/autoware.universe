@@ -7638,7 +7638,7 @@
   
     <li class="md-nav__item">
       <a href="../behavior_path_planner/docs/behavior_path_planner_interface_design/" class="md-nav__link">
-        Behavior path planner interface design
+        Interface design
       </a>
     </li>
   
@@ -12098,133 +12098,12 @@
     Simulated Motion, Footprint, and Collision Distance
   </a>
   
-    <nav class="md-nav" aria-label="Simulated Motion, Footprint, and Collision Distance">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#particle-model" class="md-nav__link">
-    Particle Model
-  </a>
-  
-    <nav class="md-nav" aria-label="Particle Model">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#footprint" class="md-nav__link">
-    Footprint
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#distance" class="md-nav__link">
-    Distance
-  </a>
-  
-</li>
-        
-      </ul>
-    </nav>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#bicycle-model" class="md-nav__link">
-    Bicycle Model
-  </a>
-  
-    <nav class="md-nav" aria-label="Bicycle Model">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#footprint_1" class="md-nav__link">
-    Footprint
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#distance_1" class="md-nav__link">
-    Distance
-  </a>
-  
-</li>
-        
-      </ul>
-    </nav>
-  
-</li>
-        
-      </ul>
-    </nav>
-  
 </li>
         
           <li class="md-nav__item">
   <a href="#obstacle-detection" class="md-nav__link">
     Obstacle Detection
   </a>
-  
-    <nav class="md-nav" aria-label="Obstacle Detection">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#obstacle-masks" class="md-nav__link">
-    Obstacle masks
-  </a>
-  
-    <nav class="md-nav" aria-label="Obstacle masks">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#dynamic-obstacles" class="md-nav__link">
-    Dynamic obstacles
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#obstacles-outside-of-the-safety-envelope" class="md-nav__link">
-    Obstacles outside of the safety envelope
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#obstacles-on-the-ego-path" class="md-nav__link">
-    Obstacles on the ego path
-  </a>
-  
-</li>
-        
-      </ul>
-    </nav>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#lanelet-map" class="md-nav__link">
-    Lanelet Map
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#occupancy-grid" class="md-nav__link">
-    Occupancy Grid
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#pointcloud" class="md-nav__link">
-    Pointcloud
-  </a>
-  
-</li>
-        
-      </ul>
-    </nav>
   
 </li>
         
@@ -12334,7 +12213,7 @@
   
 
 
-<h1 id="obstacle-velocity-limiter">Obstacle Velocity Limiter<a class="headerlink" href="#obstacle-velocity-limiter" title="Permanent link">#</a></h1>
+<div><h1 id="obstacle-velocity-limiter">Obstacle Velocity Limiter<a class="headerlink" href="#obstacle-velocity-limiter" title="Permanent link">#</a></h1>
 <h2 id="purpose">Purpose<a class="headerlink" href="#purpose" title="Permanent link">#</a></h2>
 <p>This node limits the velocity when driving in the direction of an obstacle.
 For example, it allows to reduce the velocity when driving close to a guard rail in a curve.</p>
@@ -12347,8 +12226,8 @@ For example, it allows to reduce the velocity when driving close to a guard rail
 </thead>
 <tbody>
 <tr>
-<td align="right"><img alt="obstacle_velocity_limiter_off" src="media/ovl_off.png" /></td>
-<td align="left"><img alt="obstacle_velocity_limiter_on" src="media/ovl_on.png" /></td>
+<td align="right"><img alt="obstacle_velocity_limiter_off" src="media/ovl_off.png"></td>
+<td align="left"><img alt="obstacle_velocity_limiter_on" src="media/ovl_on.png"></td>
 </tr>
 </tbody>
 </table>
@@ -12367,10 +12246,10 @@ If a collision is found, the distance from the trajectory point is used to calcu
 The simulated forward motion corresponds to a straight line and the footprint to a rectangle.</p>
 <h5 id="footprint">Footprint<a class="headerlink" href="#footprint" title="Permanent link">#</a></h5>
 <p>The rectangle footprint is built from 2 lines parallel to the simulated forward motion and at a distance of half the vehicle width.</p>
-<p><img alt="particle_footprint_image" src="media/particle_footprint.png" /></p>
+<p><img alt="particle_footprint_image" src="media/particle_footprint.png"></p>
 <h5 id="distance">Distance<a class="headerlink" href="#distance" title="Permanent link">#</a></h5>
 <p>When a collision point is found within the footprint, the distance is calculated as described in the following figure.</p>
-<p><img alt="particle_collision_distance_image" src="media/particle_distance.png" /></p>
+<p><img alt="particle_collision_distance_image" src="media/particle_distance.png"></p>
 <h4 id="bicycle-model">Bicycle Model<a class="headerlink" href="#bicycle-model" title="Permanent link">#</a></h4>
 <p>The bicycle model uses the constant heading, velocity, and steering of the vehicle at a trajectory point to simulate the future motion.
 The simulated forward motion corresponds to an arc around the circle of curvature associated with the steering.
@@ -12382,10 +12261,10 @@ Parameter <code>trajectory_preprocessing.calculate_steering_angles</code> allows
 <h5 id="footprint_1">Footprint<a class="headerlink" href="#footprint_1" title="Permanent link">#</a></h5>
 <p>The footprint of the bicycle model is created from lines parallel to the left and right simulated motion at a distance of half the vehicle width.
 In addition, the two points on the left and right of the end point of the central simulated motion are used to complete the polygon.</p>
-<p><img alt="bicycle_footprint_image" src="media/bicycle_footprint.png" /></p>
+<p><img alt="bicycle_footprint_image" src="media/bicycle_footprint.png"></p>
 <h5 id="distance_1">Distance<a class="headerlink" href="#distance_1" title="Permanent link">#</a></h5>
 <p>The distance to a collision point is calculated by finding the curvature circle passing through the trajectory point and the collision point.</p>
-<p><img alt="bicycle_collision_distance_image" src="media/bicycle_distance.png" /></p>
+<p><img alt="bicycle_collision_distance_image" src="media/bicycle_distance.png"></p>
 <h3 id="obstacle-detection">Obstacle Detection<a class="headerlink" href="#obstacle-detection" title="Permanent link">#</a></h3>
 <p>Obstacles are represented as points or linestrings (i.e., sequence of points) around the obstacles and are constructed from an occupancy grid, a pointcloud, or the lanelet map.
 The lanelet map is always checked for obstacles but the other source is switched using parameter <code>obstacles.dynamic_source</code>.</p>
@@ -12622,7 +12501,7 @@ This can cause a sudden brake and two mechanisms can be used to mitigate these e
 Parameter <code>max_deceleration</code> allow to set a maximum deceleration (relative to the <em>current</em> ego velocity) that the adjusted velocity would incur.</p>
 <h2 id="optional-performance-characterization">(Optional) Performance characterization<a class="headerlink" href="#optional-performance-characterization" title="Permanent link">#</a></h2>
 <h2 id="optional-referencesexternal-links">(Optional) References/External links<a class="headerlink" href="#optional-referencesexternal-links" title="Permanent link">#</a></h2>
-<h2 id="optional-future-extensions-unimplemented-parts">(Optional) Future extensions / Unimplemented parts<a class="headerlink" href="#optional-future-extensions-unimplemented-parts" title="Permanent link">#</a></h2>
+<h2 id="optional-future-extensions-unimplemented-parts">(Optional) Future extensions / Unimplemented parts<a class="headerlink" href="#optional-future-extensions-unimplemented-parts" title="Permanent link">#</a></h2></div>
 
 
 
@@ -12687,7 +12566,7 @@ Parameter <code>max_deceleration</code> allow to set a maximum deceleration (rel
       <div class="md-copyright">
   
     <div class="md-copyright__highlight">
-      Copyright &copy; 2022 The Autoware Foundation
+      Copyright &copy; 2023 The Autoware Foundation
     </div>
   
   

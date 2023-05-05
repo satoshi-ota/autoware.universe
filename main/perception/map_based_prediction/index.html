@@ -7638,7 +7638,7 @@
   
     <li class="md-nav__item">
       <a href="../../planning/behavior_path_planner/docs/behavior_path_planner_interface_design/" class="md-nav__link">
-        Behavior path planner interface design
+        Interface design
       </a>
     </li>
   
@@ -12112,59 +12112,12 @@
     Path prediction for road users
   </a>
   
-    <nav class="md-nav" aria-label="Path prediction for road users">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#remove-old-object-history" class="md-nav__link">
-    Remove old object history
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#get-current-lanelet-and-update-object-history" class="md-nav__link">
-    Get current lanelet and update Object history
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#get-predicted-reference-path" class="md-nav__link">
-    Get predicted reference path
-  </a>
-  
-</li>
-        
-      </ul>
-    </nav>
-  
 </li>
         
           <li class="md-nav__item">
   <a href="#tuning-lane-change-detection-logic" class="md-nav__link">
     Tuning lane change detection logic
   </a>
-  
-    <nav class="md-nav" aria-label="Tuning lane change detection logic">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#tuning-threshold-parameters" class="md-nav__link">
-    Tuning threshold parameters
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#tuning-lateral-velocity-calculation" class="md-nav__link">
-    Tuning lateral velocity calculation
-  </a>
-  
-</li>
-        
-      </ul>
-    </nav>
   
 </li>
         
@@ -12246,7 +12199,7 @@
   
 
 
-<h1 id="map_based_prediction">map_based_prediction<a class="headerlink" href="#map_based_prediction" title="Permanent link">#</a></h1>
+<div><h1 id="map_based_prediction">map_based_prediction<a class="headerlink" href="#map_based_prediction" title="Permanent link">#</a></h1>
 <h2 id="role">Role<a class="headerlink" href="#role" title="Permanent link">#</a></h2>
 <p><code>map_based_prediction</code> is a module to predict the future paths (and their probabilities) of other vehicles and pedestrians according to the shape of the map and the surrounding environment.</p>
 <h2 id="assumptions">Assumptions<a class="headerlink" href="#assumptions" title="Permanent link">#</a></h2>
@@ -12264,7 +12217,7 @@
 <h2 id="inner-workings-algorithms">Inner-workings / Algorithms<a class="headerlink" href="#inner-workings-algorithms" title="Permanent link">#</a></h2>
 <h3 id="flow-chart">Flow chart<a class="headerlink" href="#flow-chart" title="Permanent link">#</a></h3>
 <div align="center">
-  <img src="media/map_based_prediction_flow.drawio.svg" width=20%>
+  <img src="media/map_based_prediction_flow.drawio.svg" width="20%">
 </div>
 
 <h3 id="path-prediction-for-road-users">Path prediction for road users<a class="headerlink" href="#path-prediction-for-road-users" title="Permanent link">#</a></h3>
@@ -12306,7 +12259,7 @@
 <li>Check if the time to reach the left lane boundary is less than <code>time_threshold_to_bound_</code>.</li>
 </ul>
 <p>Lane change logics is illustrated in the figure below.An example of how to tune the parameters is described later.</p>
-<p><img alt="lane change detection" src="media/lane_change_detection.drawio.svg" /></p>
+<p><img alt="lane change detection" src="media/lane_change_detection.drawio.svg"></p>
 <ul>
 <li>Calculate object probability:<ul>
 <li>The path probability obtained above is calculated based on the current position and angle of the object.</li>
@@ -12394,17 +12347,17 @@ t_{predicted} = \dfrac{d_{lat}}{v_{lat}}
 <li>stop near the crosswalk</li>
 </ul>
 <div align="center">
-  <img src="images/target_objects.svg" width=90%>
+  <img src="images/target_objects.svg" width="90%">
 </div>
 
 <p>If there are a reachable crosswalk entry points within the <code>prediction_time_horizon</code> and the objects satisfies above condition, this module outputs additional predicted path to cross the opposite side via the crosswalk entry point.</p>
 <div align="center">
-  <img src="images/outside_road.svg" width=90%>
+  <img src="images/outside_road.svg" width="90%">
 </div>
 
 <p>If the target object is inside the road or crosswalk, this module outputs one or two additional prediction path(s) to reach exit point of the crosswalk. The number of prediction paths are depend on whether object is moving or not. If the object is moving, this module outputs one prediction path toward an exit point that existed in the direction of object's movement. One the other hand, if the object has stopped, it is impossible to infer which exit points the object want to go, so this module outputs two prediction paths toward both side exit point.</p>
 <div align="center">
-  <img src="images/inside_road.svg" width=90%>
+  <img src="images/inside_road.svg" width="90%">
 </div>
 
 <h2 id="inputs-outputs">Inputs / Outputs<a class="headerlink" href="#inputs-outputs" title="Permanent link">#</a></h2>
@@ -12561,7 +12514,7 @@ t_{predicted} = \dfrac{d_{lat}}{v_{lat}}
 <ol>
 <li>M. Werling, J. Ziegler, S. Kammel, and S. Thrun, “Optimal trajectory generation for dynamic street scenario in a frenet frame,” IEEE International Conference on Robotics and Automation, Anchorage, Alaska, USA, May 2010.</li>
 <li>A. Houenou, P. Bonnifait, V. Cherfaoui, and Wen Yao, “Vehicle trajectory prediction based on motion model and maneuver recognition,” in 2013 IEEE/RSJ International Conference on Intelligent Robots and Systems. IEEE, nov 2013, pp. 4363-4369.</li>
-</ol>
+</ol></div>
 
 
 
@@ -12626,7 +12579,7 @@ t_{predicted} = \dfrac{d_{lat}}{v_{lat}}
       <div class="md-copyright">
   
     <div class="md-copyright__highlight">
-      Copyright &copy; 2022 The Autoware Foundation
+      Copyright &copy; 2023 The Autoware Foundation
     </div>
   
   

@@ -7768,7 +7768,7 @@
   
     <li class="md-nav__item">
       <a href="../../../../planning/behavior_path_planner/docs/behavior_path_planner_interface_design/" class="md-nav__link">
-        Behavior path planner interface design
+        Interface design
       </a>
     </li>
   
@@ -12322,12 +12322,12 @@
   
 
 
-<h1 id="roi_cluster_fusion">roi_cluster_fusion<a class="headerlink" href="#roi_cluster_fusion" title="Permanent link">#</a></h1>
+<div><h1 id="roi_cluster_fusion">roi_cluster_fusion<a class="headerlink" href="#roi_cluster_fusion" title="Permanent link">#</a></h1>
 <h2 id="purpose">Purpose<a class="headerlink" href="#purpose" title="Permanent link">#</a></h2>
 <p>The <code>roi_cluster_fusion</code> is a package for filtering clusters that are less likely to be objects and overwriting labels of clusters with that of Region Of Interests (ROIs) by a 2D object detector.</p>
 <h2 id="inner-workings-algorithms">Inner-workings / Algorithms<a class="headerlink" href="#inner-workings-algorithms" title="Permanent link">#</a></h2>
 <p>The clusters are projected onto image planes, and then if the ROIs of clusters and ROIs by a detector are overlapped, the labels of clusters are overwritten with that of ROIs by detector. Intersection over Union (IoU) is used to determine if there are overlaps between them.</p>
-<p><img alt="roi_cluster_fusion_image" src="../images/roi_cluster_fusion.png" /></p>
+<p><img alt="roi_cluster_fusion_image" src="../images/roi_cluster_fusion.png"></p>
 <h2 id="inputs-outputs">Inputs / Outputs<a class="headerlink" href="#inputs-outputs" title="Permanent link">#</a></h2>
 <h3 id="input">Input<a class="headerlink" href="#input" title="Permanent link">#</a></h3>
 <table>
@@ -12474,7 +12474,7 @@ Example:
 Example:
   Currently, this package can't handle the chattering obstacles well. We plan to add some probabilistic filters in the perception layer to improve it.
   Also, there are some parameters that should be global(e.g. vehicle size, max steering, etc.). These will be refactored and defined as global parameters so that we can share the same parameters between different nodes.
--->
+--></div>
 
 
 
@@ -12539,7 +12539,7 @@ Example:
       <div class="md-copyright">
   
     <div class="md-copyright__highlight">
-      Copyright &copy; 2022 The Autoware Foundation
+      Copyright &copy; 2023 The Autoware Foundation
     </div>
   
   

@@ -7638,7 +7638,7 @@
   
     <li class="md-nav__item">
       <a href="../../planning/behavior_path_planner/docs/behavior_path_planner_interface_design/" class="md-nav__link">
-        Behavior path planner interface design
+        Interface design
       </a>
     </li>
   
@@ -12226,7 +12226,7 @@
   
 
 
-<h1 id="system-monitor-for-autoware">System Monitor for Autoware<a class="headerlink" href="#system-monitor-for-autoware" title="Permanent link">#</a></h1>
+<div><h1 id="system-monitor-for-autoware">System Monitor for Autoware<a class="headerlink" href="#system-monitor-for-autoware" title="Permanent link">#</a></h1>
 <p><strong>Further improvement of system monitor functionality for Autoware.</strong></p>
 <h2 id="description">Description<a class="headerlink" href="#description" title="Permanent link">#</a></h2>
 <p>This package provides the following nodes for monitoring system:</p>
@@ -12591,7 +12591,7 @@ As with the CPU monitor, this package provides an approach to minimize security 
 </li>
 <li>
 <p>Assign capabilities to 'hdd_reader' since SCSI kernel module requires rawio capability to send ATA PASS-THROUGH (12) command and NVMe kernel module requires admin capability to send Admin Command.</p>
-<div class="highlight"><pre><span></span><code>sudo<span class="w"> </span>setcap<span class="w"> </span><span class="s1">&#39;cap_sys_rawio=ep cap_sys_admin=ep&#39;</span><span class="w"> </span>install/system_monitor/lib/system_monitor/hdd_reader
+<div class="highlight"><pre><span></span><code>sudo<span class="w"> </span>setcap<span class="w"> </span><span class="s1">'cap_sys_rawio=ep cap_sys_admin=ep'</span><span class="w"> </span>install/system_monitor/lib/system_monitor/hdd_reader
 </code></pre></div>
 </li>
 <li>
@@ -12638,32 +12638,32 @@ fan2:             0 RPM  (min =    0 RPM)
 <span class="w">  </span><span class="nt">ros__parameters</span><span class="p">:</span>
 <span class="w">    </span><span class="nt">cmos_battery_warn</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">2.90</span>
 <span class="w">    </span><span class="nt">cmos_battery_error</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">2.70</span>
-<span class="w">    </span><span class="nt">cmos_battery_label</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;in7:&quot;</span>
+<span class="w">    </span><span class="nt">cmos_battery_label</span><span class="p">:</span><span class="w"> </span><span class="s">"in7:"</span>
 </code></pre></div>
 <p>The above values of 2.7V and 2.90V are hypothetical. Depending on the motherboard and chipset, the value may vary. However, if the voltage of the lithium battery drops below 2.7V, it is recommended to replace it.
 In the above example, the message output to the topic /diagnostics is as follows.
 If the voltage &lt; 2.9V then:</p>
 <div class="highlight"><pre><span></span><code>  name: /autoware/system/resource_monitoring/voltage/cmos_battery
   message: Warning
-  hardware_id: &#39;&#39;
+  hardware_id: ''
   values:
-  - key: &#39;voltage_monitor: CMOS Battery Status&#39;
+  - key: 'voltage_monitor: CMOS Battery Status'
     value: Low Battery
 </code></pre></div>
 <p>If the voltage &lt; 2.7V then:</p>
 <div class="highlight"><pre><span></span><code>  name: /autoware/system/resource_monitoring/voltage/cmos_battery
   message: Warning
-  hardware_id: &#39;&#39;
+  hardware_id: ''
   values:
-  - key: &#39;voltage_monitor: CMOS Battery Status&#39;
+  - key: 'voltage_monitor: CMOS Battery Status'
     value: Battery Died
 </code></pre></div>
 <p>If neither, then:</p>
 <div class="highlight"><pre><span></span><code>  name: /autoware/system/resource_monitoring/voltage/cmos_battery
   message: OK
-  hardware_id: &#39;&#39;
+  hardware_id: ''
   values:
-  - key: &#39;voltage_monitor: CMOS Battery Status&#39;
+  - key: 'voltage_monitor: CMOS Battery Status'
     value: OK
 </code></pre></div>
 <p>If the CMOS battery voltage drops less than voltage_error or voltage_warn,It will be a warning.
@@ -12671,7 +12671,7 @@ If the battery runs out, the RTC will stop working when the power is turned off.
 It can be determined by the value of "Low Battery" or "Battery Died".</p>
 <h2 id="uml-diagrams">UML diagrams<a class="headerlink" href="#uml-diagrams" title="Permanent link">#</a></h2>
 <p>See <a href="docs/class_diagrams/">Class diagrams</a>.
-See <a href="docs/seq_diagrams/">Sequence diagrams</a>.</p>
+See <a href="docs/seq_diagrams/">Sequence diagrams</a>.</p></div>
 
 
 
@@ -12736,7 +12736,7 @@ See <a href="docs/seq_diagrams/">Sequence diagrams</a>.</p>
       <div class="md-copyright">
   
     <div class="md-copyright__highlight">
-      Copyright &copy; 2022 The Autoware Foundation
+      Copyright &copy; 2023 The Autoware Foundation
     </div>
   
   

@@ -7686,7 +7686,7 @@
   
     <li class="md-nav__item">
       <a href="../../../planning/behavior_path_planner/docs/behavior_path_planner_interface_design/" class="md-nav__link">
-        Behavior path planner interface design
+        Interface design
       </a>
     </li>
   
@@ -12158,18 +12158,18 @@
   
 
 
-<h1 id="autoware-global-parameter-loader">Autoware Global Parameter Loader<a class="headerlink" href="#autoware-global-parameter-loader" title="Permanent link">#</a></h1>
+<div><h1 id="autoware-global-parameter-loader">Autoware Global Parameter Loader<a class="headerlink" href="#autoware-global-parameter-loader" title="Permanent link">#</a></h1>
 <p>This package is to set common ROS parameters to each node.</p>
 <h2 id="usage">Usage<a class="headerlink" href="#usage" title="Permanent link">#</a></h2>
 <p>Add the following lines to the launch file of the node in which you want to get global parameters.</p>
 <div class="highlight"><pre><span></span><code><span class="cm">&lt;!-- Global parameters --&gt;</span>
-<span class="w">  </span><span class="nt">&lt;include</span><span class="w"> </span><span class="na">file=</span><span class="s">&quot;$(find-pkg-share global_parameter_loader)/launch/global_params.launch.py&quot;</span><span class="nt">&gt;</span>
-<span class="w">    </span><span class="nt">&lt;arg</span><span class="w"> </span><span class="na">name=</span><span class="s">&quot;vehicle_model&quot;</span><span class="w"> </span><span class="na">value=</span><span class="s">&quot;$(var vehicle_model)&quot;</span><span class="nt">/&gt;</span>
+<span class="w">  </span><span class="nt">&lt;include</span><span class="w"> </span><span class="na">file=</span><span class="s">"$(find-pkg-share global_parameter_loader)/launch/global_params.launch.py"</span><span class="nt">&gt;</span>
+<span class="w">    </span><span class="nt">&lt;arg</span><span class="w"> </span><span class="na">name=</span><span class="s">"vehicle_model"</span><span class="w"> </span><span class="na">value=</span><span class="s">"$(var vehicle_model)"</span><span class="nt">/&gt;</span>
 <span class="w">  </span><span class="nt">&lt;/include&gt;</span>
 </code></pre></div>
 <p>The vehicle model parameter is read from <code>config/vehicle_info.param.yaml</code> in <code>vehicle_model</code>_description package.</p>
 <h2 id="assumptions-known-limits">Assumptions / Known limits<a class="headerlink" href="#assumptions-known-limits" title="Permanent link">#</a></h2>
-<p>Currently only vehicle_info is loaded by this launcher.</p>
+<p>Currently only vehicle_info is loaded by this launcher.</p></div>
 
 
 
@@ -12234,7 +12234,7 @@
       <div class="md-copyright">
   
     <div class="md-copyright__highlight">
-      Copyright &copy; 2022 The Autoware Foundation
+      Copyright &copy; 2023 The Autoware Foundation
     </div>
   
   

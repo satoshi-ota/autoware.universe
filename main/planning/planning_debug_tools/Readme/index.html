@@ -7638,7 +7638,7 @@
   
     <li class="md-nav__item">
       <a href="../../behavior_path_planner/docs/behavior_path_planner_interface_design/" class="md-nav__link">
-        Behavior path planner interface design
+        Interface design
       </a>
     </li>
   
@@ -8784,19 +8784,6 @@
   <a href="#how-to-use" class="md-nav__link">
     How to use
   </a>
-  
-    <nav class="md-nav" aria-label="How to use">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#setup-plotjuggler" class="md-nav__link">
-    setup PlotJuggler
-  </a>
-  
-</li>
-        
-      </ul>
-    </nav>
   
 </li>
         
@@ -12207,19 +12194,6 @@
     How to use
   </a>
   
-    <nav class="md-nav" aria-label="How to use">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#setup-plotjuggler" class="md-nav__link">
-    setup PlotJuggler
-  </a>
-  
-</li>
-        
-      </ul>
-    </nav>
-  
 </li>
         
           <li class="md-nav__item">
@@ -12280,7 +12254,7 @@
   
 
 
-<h1 id="planning-debug-tools">Planning Debug Tools<a class="headerlink" href="#planning-debug-tools" title="Permanent link">#</a></h1>
+<div><h1 id="planning-debug-tools">Planning Debug Tools<a class="headerlink" href="#planning-debug-tools" title="Permanent link">#</a></h1>
 <p>This package contains several planning-related debug tools.</p>
 <ul>
 <li><strong>Trajectory analyzer</strong>: visualizes the information (speed, curvature, yaw, etc) along the trajectory</li>
@@ -12288,7 +12262,7 @@
 </ul>
 <h2 id="trajectory-analyzer">Trajectory analyzer<a class="headerlink" href="#trajectory-analyzer" title="Permanent link">#</a></h2>
 <p>The <code>trajectory_analyzer</code> visualizes the information (speed, curvature, yaw, etc) along the trajectory. This feature would be helpful for purposes such as "<em>investigating the reason why the vehicle decelerates here</em>". This feature employs the OSS <a href="https://www.plotjuggler.io/">PlotJuggler</a>.</p>
-<p><img alt="how this works" src="https://user-images.githubusercontent.com/21360593/179361367-a9fa136c-cd65-4f3c-ad7c-f542346a8d37.mp4" /></p>
+<p><img alt="how this works" src="https://user-images.githubusercontent.com/21360593/179361367-a9fa136c-cd65-4f3c-ad7c-f542346a8d37.mp4"></p>
 <h2 id="stop-reason-visualizer">Stop reason visualizer<a class="headerlink" href="#stop-reason-visualizer" title="Permanent link">#</a></h2>
 <p>This is to visualize stop factor and reason.
 <a href="../doc-stop-reason-visualizer/">see the details</a></p>
@@ -12301,42 +12275,42 @@
 <p>For the first time, please add the following code to reactive script and save it as the picture below!
 (Looking for the way to automatically load the configuration file...)</p>
 <p>You can customize what you plot by editing this code.</p>
-<p><img alt="image" src="../image/lua.png" /></p>
+<p><img alt="image" src="../image/lua.png"></p>
 <p>in Global code</p>
-<div class="highlight"><pre><span></span><code><span class="n">behavior_path</span> <span class="o">=</span> <span class="s1">&#39;/planning/scenario_planning/lane_driving/behavior_planning/path_with_lane_id/debug_info&#39;</span>
-<span class="n">behavior_velocity</span> <span class="o">=</span> <span class="s1">&#39;/planning/scenario_planning/lane_driving/behavior_planning/path/debug_info&#39;</span>
-<span class="n">motion_avoid</span> <span class="o">=</span> <span class="s1">&#39;/planning/scenario_planning/lane_driving/motion_planning/obstacle_avoidance_planner/trajectory/debug_info&#39;</span>
-<span class="n">motion_smoother_latacc</span> <span class="o">=</span> <span class="s1">&#39;/planning/scenario_planning/motion_velocity_smoother/debug/trajectory_lateral_acc_filtered/debug_info&#39;</span>
-<span class="n">motion_smoother</span> <span class="o">=</span> <span class="s1">&#39;/planning/scenario_planning/trajectory/debug_info&#39;</span>
+<div class="highlight"><pre><span></span><code><span class="n">behavior_path</span> <span class="o">=</span> <span class="s1">'/planning/scenario_planning/lane_driving/behavior_planning/path_with_lane_id/debug_info'</span>
+<span class="n">behavior_velocity</span> <span class="o">=</span> <span class="s1">'/planning/scenario_planning/lane_driving/behavior_planning/path/debug_info'</span>
+<span class="n">motion_avoid</span> <span class="o">=</span> <span class="s1">'/planning/scenario_planning/lane_driving/motion_planning/obstacle_avoidance_planner/trajectory/debug_info'</span>
+<span class="n">motion_smoother_latacc</span> <span class="o">=</span> <span class="s1">'/planning/scenario_planning/motion_velocity_smoother/debug/trajectory_lateral_acc_filtered/debug_info'</span>
+<span class="n">motion_smoother</span> <span class="o">=</span> <span class="s1">'/planning/scenario_planning/trajectory/debug_info'</span>
 </code></pre></div>
 <p>in function(tracker_time)</p>
-<div class="highlight"><pre><span></span><code><span class="n">PlotCurvatureOverArclength</span><span class="p">(</span><span class="s1">&#39;k_behavior_path&#39;</span><span class="p">,</span> <span class="n">behavior_path</span><span class="p">,</span> <span class="n">tracker_time</span><span class="p">)</span>
-<span class="n">PlotCurvatureOverArclength</span><span class="p">(</span><span class="s1">&#39;k_behavior_velocity&#39;</span><span class="p">,</span> <span class="n">behavior_velocity</span><span class="p">,</span> <span class="n">tracker_time</span><span class="p">)</span>
-<span class="n">PlotCurvatureOverArclength</span><span class="p">(</span><span class="s1">&#39;k_motion_avoid&#39;</span><span class="p">,</span> <span class="n">motion_avoid</span><span class="p">,</span> <span class="n">tracker_time</span><span class="p">)</span>
-<span class="n">PlotCurvatureOverArclength</span><span class="p">(</span><span class="s1">&#39;k_motion_smoother&#39;</span><span class="p">,</span> <span class="n">motion_smoother</span><span class="p">,</span> <span class="n">tracker_time</span><span class="p">)</span>
+<div class="highlight"><pre><span></span><code><span class="n">PlotCurvatureOverArclength</span><span class="p">(</span><span class="s1">'k_behavior_path'</span><span class="p">,</span> <span class="n">behavior_path</span><span class="p">,</span> <span class="n">tracker_time</span><span class="p">)</span>
+<span class="n">PlotCurvatureOverArclength</span><span class="p">(</span><span class="s1">'k_behavior_velocity'</span><span class="p">,</span> <span class="n">behavior_velocity</span><span class="p">,</span> <span class="n">tracker_time</span><span class="p">)</span>
+<span class="n">PlotCurvatureOverArclength</span><span class="p">(</span><span class="s1">'k_motion_avoid'</span><span class="p">,</span> <span class="n">motion_avoid</span><span class="p">,</span> <span class="n">tracker_time</span><span class="p">)</span>
+<span class="n">PlotCurvatureOverArclength</span><span class="p">(</span><span class="s1">'k_motion_smoother'</span><span class="p">,</span> <span class="n">motion_smoother</span><span class="p">,</span> <span class="n">tracker_time</span><span class="p">)</span>
 
-<span class="n">PlotVelocityOverArclength</span><span class="p">(</span><span class="s1">&#39;v_behavior_path&#39;</span><span class="p">,</span> <span class="n">behavior_path</span><span class="p">,</span> <span class="n">tracker_time</span><span class="p">)</span>
-<span class="n">PlotVelocityOverArclength</span><span class="p">(</span><span class="s1">&#39;v_behavior_velocity&#39;</span><span class="p">,</span> <span class="n">behavior_velocity</span><span class="p">,</span> <span class="n">tracker_time</span><span class="p">)</span>
-<span class="n">PlotVelocityOverArclength</span><span class="p">(</span><span class="s1">&#39;v_motion_avoid&#39;</span><span class="p">,</span> <span class="n">motion_avoid</span><span class="p">,</span> <span class="n">tracker_time</span><span class="p">)</span>
-<span class="n">PlotVelocityOverArclength</span><span class="p">(</span><span class="s1">&#39;v_motion_smoother_latacc&#39;</span><span class="p">,</span> <span class="n">motion_smoother_latacc</span><span class="p">,</span> <span class="n">tracker_time</span><span class="p">)</span>
-<span class="n">PlotVelocityOverArclength</span><span class="p">(</span><span class="s1">&#39;v_motion_smoother&#39;</span><span class="p">,</span> <span class="n">motion_smoother</span><span class="p">,</span> <span class="n">tracker_time</span><span class="p">)</span>
+<span class="n">PlotVelocityOverArclength</span><span class="p">(</span><span class="s1">'v_behavior_path'</span><span class="p">,</span> <span class="n">behavior_path</span><span class="p">,</span> <span class="n">tracker_time</span><span class="p">)</span>
+<span class="n">PlotVelocityOverArclength</span><span class="p">(</span><span class="s1">'v_behavior_velocity'</span><span class="p">,</span> <span class="n">behavior_velocity</span><span class="p">,</span> <span class="n">tracker_time</span><span class="p">)</span>
+<span class="n">PlotVelocityOverArclength</span><span class="p">(</span><span class="s1">'v_motion_avoid'</span><span class="p">,</span> <span class="n">motion_avoid</span><span class="p">,</span> <span class="n">tracker_time</span><span class="p">)</span>
+<span class="n">PlotVelocityOverArclength</span><span class="p">(</span><span class="s1">'v_motion_smoother_latacc'</span><span class="p">,</span> <span class="n">motion_smoother_latacc</span><span class="p">,</span> <span class="n">tracker_time</span><span class="p">)</span>
+<span class="n">PlotVelocityOverArclength</span><span class="p">(</span><span class="s1">'v_motion_smoother'</span><span class="p">,</span> <span class="n">motion_smoother</span><span class="p">,</span> <span class="n">tracker_time</span><span class="p">)</span>
 
-<span class="n">PlotAccelerationOverArclength</span><span class="p">(</span><span class="s1">&#39;a_behavior_path&#39;</span><span class="p">,</span> <span class="n">behavior_path</span><span class="p">,</span> <span class="n">tracker_time</span><span class="p">)</span>
-<span class="n">PlotAccelerationOverArclength</span><span class="p">(</span><span class="s1">&#39;a_behavior_velocity&#39;</span><span class="p">,</span> <span class="n">behavior_velocity</span><span class="p">,</span> <span class="n">tracker_time</span><span class="p">)</span>
-<span class="n">PlotAccelerationOverArclength</span><span class="p">(</span><span class="s1">&#39;a_motion_avoid&#39;</span><span class="p">,</span> <span class="n">motion_avoid</span><span class="p">,</span> <span class="n">tracker_time</span><span class="p">)</span>
-<span class="n">PlotAccelerationOverArclength</span><span class="p">(</span><span class="s1">&#39;a_motion_smoother_latacc&#39;</span><span class="p">,</span> <span class="n">motion_smoother_latacc</span><span class="p">,</span> <span class="n">tracker_time</span><span class="p">)</span>
-<span class="n">PlotAccelerationOverArclength</span><span class="p">(</span><span class="s1">&#39;a_motion_smoother&#39;</span><span class="p">,</span> <span class="n">motion_smoother</span><span class="p">,</span> <span class="n">tracker_time</span><span class="p">)</span>
+<span class="n">PlotAccelerationOverArclength</span><span class="p">(</span><span class="s1">'a_behavior_path'</span><span class="p">,</span> <span class="n">behavior_path</span><span class="p">,</span> <span class="n">tracker_time</span><span class="p">)</span>
+<span class="n">PlotAccelerationOverArclength</span><span class="p">(</span><span class="s1">'a_behavior_velocity'</span><span class="p">,</span> <span class="n">behavior_velocity</span><span class="p">,</span> <span class="n">tracker_time</span><span class="p">)</span>
+<span class="n">PlotAccelerationOverArclength</span><span class="p">(</span><span class="s1">'a_motion_avoid'</span><span class="p">,</span> <span class="n">motion_avoid</span><span class="p">,</span> <span class="n">tracker_time</span><span class="p">)</span>
+<span class="n">PlotAccelerationOverArclength</span><span class="p">(</span><span class="s1">'a_motion_smoother_latacc'</span><span class="p">,</span> <span class="n">motion_smoother_latacc</span><span class="p">,</span> <span class="n">tracker_time</span><span class="p">)</span>
+<span class="n">PlotAccelerationOverArclength</span><span class="p">(</span><span class="s1">'a_motion_smoother'</span><span class="p">,</span> <span class="n">motion_smoother</span><span class="p">,</span> <span class="n">tracker_time</span><span class="p">)</span>
 
-<span class="n">PlotYawOverArclength</span><span class="p">(</span><span class="s1">&#39;yaw_behavior_path&#39;</span><span class="p">,</span> <span class="n">behavior_path</span><span class="p">,</span> <span class="n">tracker_time</span><span class="p">)</span>
-<span class="n">PlotYawOverArclength</span><span class="p">(</span><span class="s1">&#39;yaw_behavior_velocity&#39;</span><span class="p">,</span> <span class="n">behavior_velocity</span><span class="p">,</span> <span class="n">tracker_time</span><span class="p">)</span>
-<span class="n">PlotYawOverArclength</span><span class="p">(</span><span class="s1">&#39;yaw_motion_avoid&#39;</span><span class="p">,</span> <span class="n">motion_avoid</span><span class="p">,</span> <span class="n">tracker_time</span><span class="p">)</span>
-<span class="n">PlotYawOverArclength</span><span class="p">(</span><span class="s1">&#39;yaw_motion_smoother_latacc&#39;</span><span class="p">,</span> <span class="n">motion_smoother_latacc</span><span class="p">,</span> <span class="n">tracker_time</span><span class="p">)</span>
-<span class="n">PlotYawOverArclength</span><span class="p">(</span><span class="s1">&#39;yaw_motion_smoother&#39;</span><span class="p">,</span> <span class="n">motion_smoother</span><span class="p">,</span> <span class="n">tracker_time</span><span class="p">)</span>
+<span class="n">PlotYawOverArclength</span><span class="p">(</span><span class="s1">'yaw_behavior_path'</span><span class="p">,</span> <span class="n">behavior_path</span><span class="p">,</span> <span class="n">tracker_time</span><span class="p">)</span>
+<span class="n">PlotYawOverArclength</span><span class="p">(</span><span class="s1">'yaw_behavior_velocity'</span><span class="p">,</span> <span class="n">behavior_velocity</span><span class="p">,</span> <span class="n">tracker_time</span><span class="p">)</span>
+<span class="n">PlotYawOverArclength</span><span class="p">(</span><span class="s1">'yaw_motion_avoid'</span><span class="p">,</span> <span class="n">motion_avoid</span><span class="p">,</span> <span class="n">tracker_time</span><span class="p">)</span>
+<span class="n">PlotYawOverArclength</span><span class="p">(</span><span class="s1">'yaw_motion_smoother_latacc'</span><span class="p">,</span> <span class="n">motion_smoother_latacc</span><span class="p">,</span> <span class="n">tracker_time</span><span class="p">)</span>
+<span class="n">PlotYawOverArclength</span><span class="p">(</span><span class="s1">'yaw_motion_smoother'</span><span class="p">,</span> <span class="n">motion_smoother</span><span class="p">,</span> <span class="n">tracker_time</span><span class="p">)</span>
 
-<span class="n">PlotCurrentVelocity</span><span class="p">(</span><span class="s1">&#39;localization_kinematic_state&#39;</span><span class="p">,</span> <span class="s1">&#39;/localization/kinematic_state&#39;</span><span class="p">,</span> <span class="n">tracker_time</span><span class="p">)</span>
+<span class="n">PlotCurrentVelocity</span><span class="p">(</span><span class="s1">'localization_kinematic_state'</span><span class="p">,</span> <span class="s1">'/localization/kinematic_state'</span><span class="p">,</span> <span class="n">tracker_time</span><span class="p">)</span>
 </code></pre></div>
 <p>in Function Library
-<img alt="image" src="../image/script.png" /></p>
+<img alt="image" src="../image/script.png"></p>
 <!-- cspell:ignore Timeseries -->
 <!-- Ignore cspell errors caused by external factors -->
 
@@ -12344,9 +12318,9 @@
   <span class="n">new_series</span> <span class="o">=</span> <span class="n">ScatterXY</span><span class="p">.</span><span class="n">new</span><span class="p">(</span><span class="n">name</span><span class="p">)</span>
   <span class="n">index</span> <span class="o">=</span> <span class="mi">0</span>
   <span class="kr">while</span><span class="p">(</span><span class="kc">true</span><span class="p">)</span> <span class="kr">do</span>
-    <span class="n">series_k</span> <span class="o">=</span> <span class="n">TimeseriesView</span><span class="p">.</span><span class="n">find</span><span class="p">(</span> <span class="nb">string.format</span><span class="p">(</span> <span class="s2">&quot;%s/&quot;</span><span class="o">..</span><span class="n">value</span><span class="o">..</span><span class="s2">&quot;.%d&quot;</span><span class="p">,</span> <span class="n">path</span><span class="p">,</span> <span class="n">index</span><span class="p">)</span> <span class="p">)</span>
-    <span class="n">series_s</span> <span class="o">=</span> <span class="n">TimeseriesView</span><span class="p">.</span><span class="n">find</span><span class="p">(</span> <span class="nb">string.format</span><span class="p">(</span> <span class="s2">&quot;%s/arclength.%d&quot;</span><span class="p">,</span> <span class="n">path</span><span class="p">,</span> <span class="n">index</span><span class="p">)</span> <span class="p">)</span>
-    <span class="n">series_size</span> <span class="o">=</span> <span class="n">TimeseriesView</span><span class="p">.</span><span class="n">find</span><span class="p">(</span> <span class="nb">string.format</span><span class="p">(</span> <span class="s2">&quot;%s/size&quot;</span><span class="p">,</span> <span class="n">path</span><span class="p">)</span> <span class="p">)</span>
+    <span class="n">series_k</span> <span class="o">=</span> <span class="n">TimeseriesView</span><span class="p">.</span><span class="n">find</span><span class="p">(</span> <span class="nb">string.format</span><span class="p">(</span> <span class="s2">"%s/"</span><span class="o">..</span><span class="n">value</span><span class="o">..</span><span class="s2">".%d"</span><span class="p">,</span> <span class="n">path</span><span class="p">,</span> <span class="n">index</span><span class="p">)</span> <span class="p">)</span>
+    <span class="n">series_s</span> <span class="o">=</span> <span class="n">TimeseriesView</span><span class="p">.</span><span class="n">find</span><span class="p">(</span> <span class="nb">string.format</span><span class="p">(</span> <span class="s2">"%s/arclength.%d"</span><span class="p">,</span> <span class="n">path</span><span class="p">,</span> <span class="n">index</span><span class="p">)</span> <span class="p">)</span>
+    <span class="n">series_size</span> <span class="o">=</span> <span class="n">TimeseriesView</span><span class="p">.</span><span class="n">find</span><span class="p">(</span> <span class="nb">string.format</span><span class="p">(</span> <span class="s2">"%s/size"</span><span class="p">,</span> <span class="n">path</span><span class="p">)</span> <span class="p">)</span>
 
     <span class="kr">if</span> <span class="n">series_k</span> <span class="o">==</span> <span class="kc">nil</span> <span class="ow">or</span> <span class="n">series_s</span> <span class="o">==</span> <span class="kc">nil</span> <span class="kr">then</span> <span class="kr">break</span> <span class="kr">end</span>
 
@@ -12362,26 +12336,26 @@
 <span class="kr">end</span>
 
 <span class="kr">function</span> <span class="nf">PlotCurvatureOverArclength</span><span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="n">path</span><span class="p">,</span> <span class="n">timestamp</span><span class="p">)</span>
-  <span class="n">PlotValue</span><span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="n">path</span><span class="p">,</span> <span class="n">timestamp</span><span class="p">,</span><span class="s2">&quot;curvature&quot;</span><span class="p">)</span>
+  <span class="n">PlotValue</span><span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="n">path</span><span class="p">,</span> <span class="n">timestamp</span><span class="p">,</span><span class="s2">"curvature"</span><span class="p">)</span>
 <span class="kr">end</span>
 
 <span class="kr">function</span> <span class="nf">PlotVelocityOverArclength</span><span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="n">path</span><span class="p">,</span> <span class="n">timestamp</span><span class="p">)</span>
-  <span class="n">PlotValue</span><span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="n">path</span><span class="p">,</span> <span class="n">timestamp</span><span class="p">,</span><span class="s2">&quot;velocity&quot;</span><span class="p">)</span>
+  <span class="n">PlotValue</span><span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="n">path</span><span class="p">,</span> <span class="n">timestamp</span><span class="p">,</span><span class="s2">"velocity"</span><span class="p">)</span>
 <span class="kr">end</span>
 
 <span class="kr">function</span> <span class="nf">PlotAccelerationOverArclength</span><span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="n">path</span><span class="p">,</span> <span class="n">timestamp</span><span class="p">)</span>
-  <span class="n">PlotValue</span><span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="n">path</span><span class="p">,</span> <span class="n">timestamp</span><span class="p">,</span><span class="s2">&quot;acceleration&quot;</span><span class="p">)</span>
+  <span class="n">PlotValue</span><span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="n">path</span><span class="p">,</span> <span class="n">timestamp</span><span class="p">,</span><span class="s2">"acceleration"</span><span class="p">)</span>
 <span class="kr">end</span>
 
 <span class="kr">function</span> <span class="nf">PlotYawOverArclength</span><span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="n">path</span><span class="p">,</span> <span class="n">timestamp</span><span class="p">)</span>
-  <span class="n">PlotValue</span><span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="n">path</span><span class="p">,</span> <span class="n">timestamp</span><span class="p">,</span><span class="s2">&quot;yaw&quot;</span><span class="p">)</span>
+  <span class="n">PlotValue</span><span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="n">path</span><span class="p">,</span> <span class="n">timestamp</span><span class="p">,</span><span class="s2">"yaw"</span><span class="p">)</span>
 <span class="kr">end</span>
 
 <span class="kr">function</span> <span class="nf">PlotCurrentVelocity</span><span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="n">kinematics_name</span><span class="p">,</span> <span class="n">timestamp</span><span class="p">)</span>
   <span class="n">new_series</span> <span class="o">=</span> <span class="n">ScatterXY</span><span class="p">.</span><span class="n">new</span><span class="p">(</span><span class="n">name</span><span class="p">)</span>
-  <span class="n">series_v</span> <span class="o">=</span> <span class="n">TimeseriesView</span><span class="p">.</span><span class="n">find</span><span class="p">(</span> <span class="nb">string.format</span><span class="p">(</span> <span class="s2">&quot;%s/twist/twist/linear/x&quot;</span><span class="p">,</span> <span class="n">kinematics_name</span><span class="p">))</span>
+  <span class="n">series_v</span> <span class="o">=</span> <span class="n">TimeseriesView</span><span class="p">.</span><span class="n">find</span><span class="p">(</span> <span class="nb">string.format</span><span class="p">(</span> <span class="s2">"%s/twist/twist/linear/x"</span><span class="p">,</span> <span class="n">kinematics_name</span><span class="p">))</span>
   <span class="kr">if</span> <span class="n">series_v</span> <span class="o">==</span> <span class="kc">nil</span> <span class="kr">then</span>
-    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;error&quot;</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">"error"</span><span class="p">)</span>
     <span class="kr">return</span>
   <span class="kr">end</span>
   <span class="n">v</span> <span class="o">=</span> <span class="n">series_v</span><span class="p">:</span><span class="n">atTime</span><span class="p">(</span><span class="n">timestamp</span><span class="p">)</span>
@@ -12398,32 +12372,32 @@
 <p>You can launch by</p>
 <div class="highlight"><pre><span></span><code>ros2<span class="w"> </span>run<span class="w"> </span>planning_debug_tools<span class="w"> </span>closest_velocity_checker.py
 </code></pre></div>
-<p><img alt="closest-velocity-checker" src="../image/closest-velocity-checker.png" /></p>
+<p><img alt="closest-velocity-checker" src="../image/closest-velocity-checker.png"></p>
 <h2 id="trajectory-visualizer">Trajectory visualizer<a class="headerlink" href="#trajectory-visualizer" title="Permanent link">#</a></h2>
 <p>The old version of the trajectory analyzer. It is written in Python and more flexible, but very slow.</p>
 <h2 id="for-other-use-case-experimental">For other use case (experimental)<a class="headerlink" href="#for-other-use-case-experimental" title="Permanent link">#</a></h2>
 <p>To see behavior velocity planner's internal plath with lane id
 add below example value to behavior velocity analyzer and set <code>is_publish_debug_path: true</code></p>
-<div class="highlight"><pre><span></span><code><span class="n">crosswalk</span> <span class="o">=</span><span class="s1">&#39;/planning/scenario_planning/lane_driving/behavior_planning/behavior_velocity_planner/debug/path_with_lane_id/crosswalk/debug_info&#39;</span>
-<span class="n">intersection</span> <span class="o">=</span><span class="s1">&#39;/planning/scenario_planning/lane_driving/behavior_planning/behavior_velocity_planner/debug/path_with_lane_id/intersection/debug_info&#39;</span>
-<span class="n">traffic_light</span> <span class="o">=</span><span class="s1">&#39;/planning/scenario_planning/lane_driving/behavior_planning/behavior_velocity_planner/debug/path_with_lane_id/traffic_light/debug_info&#39;</span>
-<span class="n">merge_from_private</span> <span class="o">=</span><span class="s1">&#39;/planning/scenario_planning/lane_driving/behavior_planning/behavior_velocity_planner/debug/path_with_lane_id/merge_from_private/debug_info&#39;</span>
-<span class="n">occlusion_spot</span> <span class="o">=</span><span class="s1">&#39;/planning/scenario_planning/lane_driving/behavior_planning/behavior_velocity_planner/debug/path_with_lane_id/occlusion_spot/debug_info&#39;</span>
+<div class="highlight"><pre><span></span><code><span class="n">crosswalk</span> <span class="o">=</span><span class="s1">'/planning/scenario_planning/lane_driving/behavior_planning/behavior_velocity_planner/debug/path_with_lane_id/crosswalk/debug_info'</span>
+<span class="n">intersection</span> <span class="o">=</span><span class="s1">'/planning/scenario_planning/lane_driving/behavior_planning/behavior_velocity_planner/debug/path_with_lane_id/intersection/debug_info'</span>
+<span class="n">traffic_light</span> <span class="o">=</span><span class="s1">'/planning/scenario_planning/lane_driving/behavior_planning/behavior_velocity_planner/debug/path_with_lane_id/traffic_light/debug_info'</span>
+<span class="n">merge_from_private</span> <span class="o">=</span><span class="s1">'/planning/scenario_planning/lane_driving/behavior_planning/behavior_velocity_planner/debug/path_with_lane_id/merge_from_private/debug_info'</span>
+<span class="n">occlusion_spot</span> <span class="o">=</span><span class="s1">'/planning/scenario_planning/lane_driving/behavior_planning/behavior_velocity_planner/debug/path_with_lane_id/occlusion_spot/debug_info'</span>
 </code></pre></div>
-<div class="highlight"><pre><span></span><code><span class="n">PlotVelocityOverArclength</span><span class="p">(</span><span class="s1">&#39;v_crosswalk&#39;</span><span class="p">,</span> <span class="n">crosswalk</span><span class="p">,</span> <span class="n">tracker_time</span><span class="p">)</span>
-<span class="n">PlotVelocityOverArclength</span><span class="p">(</span><span class="s1">&#39;v_intersection&#39;</span><span class="p">,</span> <span class="n">intersection</span><span class="p">,</span> <span class="n">tracker_time</span><span class="p">)</span>
-<span class="n">PlotVelocityOverArclength</span><span class="p">(</span><span class="s1">&#39;v_merge_from_private&#39;</span><span class="p">,</span> <span class="n">merge_from_private</span><span class="p">,</span> <span class="n">tracker_time</span><span class="p">)</span>
-<span class="n">PlotVelocityOverArclength</span><span class="p">(</span><span class="s1">&#39;v_traffic_light&#39;</span><span class="p">,</span> <span class="n">traffic_light</span><span class="p">,</span> <span class="n">tracker_time</span><span class="p">)</span>
-<span class="n">PlotVelocityOverArclength</span><span class="p">(</span><span class="s1">&#39;v_occlusion&#39;</span><span class="p">,</span> <span class="n">occlusion_spot</span><span class="p">,</span> <span class="n">tracker_time</span><span class="p">)</span>
+<div class="highlight"><pre><span></span><code><span class="n">PlotVelocityOverArclength</span><span class="p">(</span><span class="s1">'v_crosswalk'</span><span class="p">,</span> <span class="n">crosswalk</span><span class="p">,</span> <span class="n">tracker_time</span><span class="p">)</span>
+<span class="n">PlotVelocityOverArclength</span><span class="p">(</span><span class="s1">'v_intersection'</span><span class="p">,</span> <span class="n">intersection</span><span class="p">,</span> <span class="n">tracker_time</span><span class="p">)</span>
+<span class="n">PlotVelocityOverArclength</span><span class="p">(</span><span class="s1">'v_merge_from_private'</span><span class="p">,</span> <span class="n">merge_from_private</span><span class="p">,</span> <span class="n">tracker_time</span><span class="p">)</span>
+<span class="n">PlotVelocityOverArclength</span><span class="p">(</span><span class="s1">'v_traffic_light'</span><span class="p">,</span> <span class="n">traffic_light</span><span class="p">,</span> <span class="n">tracker_time</span><span class="p">)</span>
+<span class="n">PlotVelocityOverArclength</span><span class="p">(</span><span class="s1">'v_occlusion'</span><span class="p">,</span> <span class="n">occlusion_spot</span><span class="p">,</span> <span class="n">tracker_time</span><span class="p">)</span>
 
-<span class="n">PlotYawOverArclength</span><span class="p">(</span><span class="s1">&#39;yaw_crosswalk&#39;</span><span class="p">,</span> <span class="n">crosswalk</span><span class="p">,</span> <span class="n">tracker_time</span><span class="p">)</span>
-<span class="n">PlotYawOverArclength</span><span class="p">(</span><span class="s1">&#39;yaw_intersection&#39;</span><span class="p">,</span> <span class="n">intersection</span><span class="p">,</span> <span class="n">tracker_time</span><span class="p">)</span>
-<span class="n">PlotYawOverArclength</span><span class="p">(</span><span class="s1">&#39;yaw_merge_from_private&#39;</span><span class="p">,</span> <span class="n">merge_from_private</span><span class="p">,</span> <span class="n">tracker_time</span><span class="p">)</span>
-<span class="n">PlotYawOverArclength</span><span class="p">(</span><span class="s1">&#39;yaw_traffic_light&#39;</span><span class="p">,</span> <span class="n">traffic_light</span><span class="p">,</span> <span class="n">tracker_time</span><span class="p">)</span>
-<span class="n">PlotYawOverArclength</span><span class="p">(</span><span class="s1">&#39;yaw_occlusion&#39;</span><span class="p">,</span> <span class="n">occlusion_spot</span><span class="p">,</span> <span class="n">tracker_time</span><span class="p">)</span>
+<span class="n">PlotYawOverArclength</span><span class="p">(</span><span class="s1">'yaw_crosswalk'</span><span class="p">,</span> <span class="n">crosswalk</span><span class="p">,</span> <span class="n">tracker_time</span><span class="p">)</span>
+<span class="n">PlotYawOverArclength</span><span class="p">(</span><span class="s1">'yaw_intersection'</span><span class="p">,</span> <span class="n">intersection</span><span class="p">,</span> <span class="n">tracker_time</span><span class="p">)</span>
+<span class="n">PlotYawOverArclength</span><span class="p">(</span><span class="s1">'yaw_merge_from_private'</span><span class="p">,</span> <span class="n">merge_from_private</span><span class="p">,</span> <span class="n">tracker_time</span><span class="p">)</span>
+<span class="n">PlotYawOverArclength</span><span class="p">(</span><span class="s1">'yaw_traffic_light'</span><span class="p">,</span> <span class="n">traffic_light</span><span class="p">,</span> <span class="n">tracker_time</span><span class="p">)</span>
+<span class="n">PlotYawOverArclength</span><span class="p">(</span><span class="s1">'yaw_occlusion'</span><span class="p">,</span> <span class="n">occlusion_spot</span><span class="p">,</span> <span class="n">tracker_time</span><span class="p">)</span>
 
-<span class="n">PlotCurrentVelocity</span><span class="p">(</span><span class="s1">&#39;localization_kinematic_state&#39;</span><span class="p">,</span> <span class="s1">&#39;/localization/kinematic_state&#39;</span><span class="p">,</span> <span class="n">tracker_time</span><span class="p">)</span>
-</code></pre></div>
+<span class="n">PlotCurrentVelocity</span><span class="p">(</span><span class="s1">'localization_kinematic_state'</span><span class="p">,</span> <span class="s1">'/localization/kinematic_state'</span><span class="p">,</span> <span class="n">tracker_time</span><span class="p">)</span>
+</code></pre></div></div>
 
 
 
@@ -12488,7 +12462,7 @@ add below example value to behavior velocity analyzer and set <code>is_publish_d
       <div class="md-copyright">
   
     <div class="md-copyright__highlight">
-      Copyright &copy; 2022 The Autoware Foundation
+      Copyright &copy; 2023 The Autoware Foundation
     </div>
   
   

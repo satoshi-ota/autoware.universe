@@ -7638,7 +7638,7 @@
   
     <li class="md-nav__item">
       <a href="../behavior_path_planner/docs/behavior_path_planner_interface_design/" class="md-nav__link">
-        Behavior path planner interface design
+        Interface design
       </a>
     </li>
   
@@ -12098,102 +12098,6 @@
     Flow chart
   </a>
   
-    <nav class="md-nav" aria-label="Flow chart">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#extract-trajectory" class="md-nav__link">
-    Extract trajectory
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#apply-external-velocity-limit" class="md-nav__link">
-    Apply external velocity limit
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#apply-stop-approaching-velocity" class="md-nav__link">
-    Apply stop approaching velocity
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#apply-lateral-acceleration-limit" class="md-nav__link">
-    Apply lateral acceleration limit
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#apply-steering-rate-limit" class="md-nav__link">
-    Apply steering rate limit
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#resample-trajectory" class="md-nav__link">
-    Resample trajectory
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#calculate-initial-state" class="md-nav__link">
-    Calculate initial state
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#smooth-velocity" class="md-nav__link">
-    Smooth velocity
-  </a>
-  
-    <nav class="md-nav" aria-label="Smooth velocity">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#jerkfiltered" class="md-nav__link">
-    JerkFiltered
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#l2" class="md-nav__link">
-    L2
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#linf" class="md-nav__link">
-    Linf
-  </a>
-  
-</li>
-        
-      </ul>
-    </nav>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#post-process" class="md-nav__link">
-    Post process
-  </a>
-  
-</li>
-        
-      </ul>
-    </nav>
-  
 </li>
         
       </ul>
@@ -12304,33 +12208,6 @@
     Weights for optimization
   </a>
   
-    <nav class="md-nav" aria-label="Weights for optimization">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#jerkfiltered_1" class="md-nav__link">
-    JerkFiltered
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#l2_1" class="md-nav__link">
-    L2
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#linf_1" class="md-nav__link">
-    Linf
-  </a>
-  
-</li>
-        
-      </ul>
-    </nav>
-  
 </li>
         
           <li class="md-nav__item">
@@ -12398,14 +12275,14 @@
   
 
 
-<h1 id="motion-velocity-smoother">Motion Velocity Smoother<a class="headerlink" href="#motion-velocity-smoother" title="Permanent link">#</a></h1>
+<div><h1 id="motion-velocity-smoother">Motion Velocity Smoother<a class="headerlink" href="#motion-velocity-smoother" title="Permanent link">#</a></h1>
 <h2 id="purpose">Purpose<a class="headerlink" href="#purpose" title="Permanent link">#</a></h2>
 <p><code>motion_velocity_smoother</code> outputs a desired velocity profile on a reference trajectory.
 This module plans a velocity profile within the limitations of the velocity, the acceleration and the jerk to realize both the maximization of velocity and the ride quality.
 We call this module <code>motion_velocity_smoother</code> because the limitations of the acceleration and the jerk means the smoothness of the velocity profile.</p>
 <h2 id="inner-workings-algorithms">Inner-workings / Algorithms<a class="headerlink" href="#inner-workings-algorithms" title="Permanent link">#</a></h2>
 <h3 id="flow-chart">Flow chart<a class="headerlink" href="#flow-chart" title="Permanent link">#</a></h3>
-<p><img alt="motion_velocity_smoother_flow" src="media/motion_velocity_smoother_flow.drawio.svg" /></p>
+<p><img alt="motion_velocity_smoother_flow" src="media/motion_velocity_smoother_flow.drawio.svg"></p>
 <h4 id="extract-trajectory">Extract trajectory<a class="headerlink" href="#extract-trajectory" title="Permanent link">#</a></h4>
 <p>For the point on the reference trajectory closest to the center of the rear wheel axle of the vehicle, it extracts the reference path between <code>extract_behind_dist</code> behind and <code>extract_ahead_dist</code> ahead.</p>
 <h4 id="apply-external-velocity-limit">Apply external velocity limit<a class="headerlink" href="#apply-external-velocity-limit" title="Permanent link">#</a></h4>
@@ -13096,7 +12973,7 @@ Example:
 <h2 id="optional-referencesexternal-links">(Optional) References/External links<a class="headerlink" href="#optional-referencesexternal-links" title="Permanent link">#</a></h2>
 <p>[1] B. Stellato, et al., "OSQP: an operator splitting solver for quadratic programs", Mathematical Programming Computation, 2020, <a href="https://link.springer.com/article/10.1007/s12532-020-00179-2">10.1007/s12532-020-00179-2</a>.</p>
 <p>[2] Y. Zhang, et al., "Toward a More Complete, Flexible, and Safer Speed Planning for Autonomous Driving via Convex Optimization", Sensors, vol. 18, no. 7, p. 2185, 2018, <a href="https://doi.org/10.3390/s18072185">10.3390/s18072185</a></p>
-<h2 id="optional-future-extensions-unimplemented-parts">(Optional) Future extensions / Unimplemented parts<a class="headerlink" href="#optional-future-extensions-unimplemented-parts" title="Permanent link">#</a></h2>
+<h2 id="optional-future-extensions-unimplemented-parts">(Optional) Future extensions / Unimplemented parts<a class="headerlink" href="#optional-future-extensions-unimplemented-parts" title="Permanent link">#</a></h2></div>
 
 
 
@@ -13161,7 +13038,7 @@ Example:
       <div class="md-copyright">
   
     <div class="md-copyright__highlight">
-      Copyright &copy; 2022 The Autoware Foundation
+      Copyright &copy; 2023 The Autoware Foundation
     </div>
   
   

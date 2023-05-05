@@ -7699,7 +7699,7 @@
   
     <li class="md-nav__item">
       <a href="../../../../planning/behavior_path_planner/docs/behavior_path_planner_interface_design/" class="md-nav__link">
-        Behavior path planner interface design
+        Interface design
       </a>
     </li>
   
@@ -12184,7 +12184,7 @@
   
 
 
-<h1 id="fake-test-node">Fake Test Node<a class="headerlink" href="#fake-test-node" title="Permanent link">#</a></h1>
+<div><h1 id="fake-test-node">Fake Test Node<a class="headerlink" href="#fake-test-node" title="Permanent link">#</a></h1>
 <h2 id="what-this-package-provides">What this package provides<a class="headerlink" href="#what-this-package-provides" title="Permanent link">#</a></h2>
 <p>When writing an integration test for a node in C++ using GTest, there is quite some boilerplate code
 that needs to be written to set up a fake node that would publish expected messages on an expected
@@ -12219,8 +12219,8 @@ node the following code can be used utilizing the
 <span class="w">  </span><span class="k">const</span><span class="w"> </span><span class="k">auto</span><span class="w"> </span><span class="n">node</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">make_shared</span><span class="o">&lt;</span><span class="n">NodeUnderTest</span><span class="o">&gt;</span><span class="p">();</span>
 
 <span class="w">  </span><span class="n">Bool</span><span class="o">::</span><span class="n">SharedPtr</span><span class="w"> </span><span class="n">last_received_msg</span><span class="p">{};</span>
-<span class="w">  </span><span class="k">auto</span><span class="w"> </span><span class="n">fake_odom_publisher</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">create_publisher</span><span class="o">&lt;</span><span class="n">Int32</span><span class="o">&gt;</span><span class="p">(</span><span class="s">&quot;/input_topic&quot;</span><span class="p">);</span>
-<span class="w">  </span><span class="k">auto</span><span class="w"> </span><span class="n">result_odom_subscription</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">create_subscription</span><span class="o">&lt;</span><span class="n">Bool</span><span class="o">&gt;</span><span class="p">(</span><span class="s">&quot;/output_topic&quot;</span><span class="p">,</span><span class="w"> </span><span class="o">*</span><span class="n">node</span><span class="p">,</span>
+<span class="w">  </span><span class="k">auto</span><span class="w"> </span><span class="n">fake_odom_publisher</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">create_publisher</span><span class="o">&lt;</span><span class="n">Int32</span><span class="o">&gt;</span><span class="p">(</span><span class="s">"/input_topic"</span><span class="p">);</span>
+<span class="w">  </span><span class="k">auto</span><span class="w"> </span><span class="n">result_odom_subscription</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">create_subscription</span><span class="o">&lt;</span><span class="n">Bool</span><span class="o">&gt;</span><span class="p">(</span><span class="s">"/output_topic"</span><span class="p">,</span><span class="w"> </span><span class="o">*</span><span class="n">node</span><span class="p">,</span>
 <span class="w">    </span><span class="p">[</span><span class="o">&amp;</span><span class="n">last_received_msg</span><span class="p">](</span><span class="k">const</span><span class="w"> </span><span class="n">Bool</span><span class="o">::</span><span class="n">SharedPtr</span><span class="w"> </span><span class="n">msg</span><span class="p">)</span><span class="w"> </span><span class="p">{</span><span class="n">last_received_msg</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">msg</span><span class="p">;});</span>
 
 <span class="w">  </span><span class="k">const</span><span class="w"> </span><span class="k">auto</span><span class="w"> </span><span class="n">dt</span><span class="p">{</span><span class="n">std</span><span class="o">::</span><span class="n">chrono</span><span class="o">::</span><span class="n">milliseconds</span><span class="p">{</span><span class="mf">100L</span><span class="n">L</span><span class="p">}};</span>
@@ -12233,7 +12233,7 @@ node the following code can be used utilizing the
 <span class="w">    </span><span class="n">std</span><span class="o">::</span><span class="n">this_thread</span><span class="o">::</span><span class="n">sleep_for</span><span class="p">(</span><span class="n">dt</span><span class="p">);</span>
 <span class="w">    </span><span class="n">time_passed</span><span class="w"> </span><span class="o">+=</span><span class="w"> </span><span class="n">dt</span><span class="p">;</span>
 <span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">time_passed</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="n">max_wait_time</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
-<span class="w">      </span><span class="n">FAIL</span><span class="p">()</span><span class="w"> </span><span class="o">&lt;&lt;</span><span class="w"> </span><span class="s">&quot;Did not receive a message soon enough.&quot;</span><span class="p">;</span>
+<span class="w">      </span><span class="n">FAIL</span><span class="p">()</span><span class="w"> </span><span class="o">&lt;&lt;</span><span class="w"> </span><span class="s">"Did not receive a message soon enough."</span><span class="p">;</span>
 <span class="w">    </span><span class="p">}</span>
 <span class="w">  </span><span class="p">}</span>
 <span class="w">  </span><span class="n">EXPECT_TRUE</span><span class="p">(</span><span class="n">last_received_msg</span><span class="o">-&gt;</span><span class="n">data</span><span class="p">);</span>
@@ -12241,7 +12241,7 @@ node the following code can be used utilizing the
 <span class="p">}</span>
 </code></pre></div>
 <p>Here only the <code>TEST_F</code> example is shown but a <code>TEST_P</code> usage is very similar with a little bit more
-boilerplate to set up all the parameter values, see <code>test_fake_test_node.cpp</code> for an example usage.</p>
+boilerplate to set up all the parameter values, see <code>test_fake_test_node.cpp</code> for an example usage.</p></div>
 
 
 
@@ -12306,7 +12306,7 @@ boilerplate to set up all the parameter values, see <code>test_fake_test_node.cp
       <div class="md-copyright">
   
     <div class="md-copyright__highlight">
-      Copyright &copy; 2022 The Autoware Foundation
+      Copyright &copy; 2023 The Autoware Foundation
     </div>
   
   

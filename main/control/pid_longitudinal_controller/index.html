@@ -7638,7 +7638,7 @@
   
     <li class="md-nav__item">
       <a href="../../planning/behavior_path_planner/docs/behavior_path_planner_interface_design/" class="md-nav__link">
-        Behavior path planner interface design
+        Interface design
       </a>
     </li>
   
@@ -12105,60 +12105,6 @@
     Logics
   </a>
   
-    <nav class="md-nav" aria-label="Logics">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#control-block-diagram" class="md-nav__link">
-    Control Block Diagram
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#feedforward-ff" class="md-nav__link">
-    FeedForward (FF)
-  </a>
-  
-    <nav class="md-nav" aria-label="FeedForward (FF)">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#brake-keeping" class="md-nav__link">
-    Brake keeping
-  </a>
-  
-</li>
-        
-      </ul>
-    </nav>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#slope-compensation" class="md-nav__link">
-    Slope compensation
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#pid-control" class="md-nav__link">
-    PID control
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#time-delay-compensation" class="md-nav__link">
-    Time delay compensation
-  </a>
-  
-</li>
-        
-      </ul>
-    </nav>
-  
 </li>
         
           <li class="md-nav__item">
@@ -12301,7 +12247,7 @@
   
 
 
-<h1 id="pid-longitudinal-controller">PID Longitudinal Controller<a class="headerlink" href="#pid-longitudinal-controller" title="Permanent link">#</a></h1>
+<div><h1 id="pid-longitudinal-controller">PID Longitudinal Controller<a class="headerlink" href="#pid-longitudinal-controller" title="Permanent link">#</a></h1>
 <h2 id="purpose-use-cases">Purpose / Use cases<a class="headerlink" href="#purpose-use-cases" title="Permanent link">#</a></h2>
 <p>The longitudinal_controller computes the target acceleration to achieve the target velocity set at each point of the target trajectory using a feed-forward/back control.</p>
 <p>It also contains a slope force correction that takes into account road slope information, and a delay compensation function.
@@ -12332,17 +12278,17 @@ It is assumed that the target acceleration calculated here will be properly real
 </li>
 </ul>
 <p>The state transition diagram is shown below.</p>
-<p><img alt="LongitudinalControllerStateTransition" src="media/LongitudinalControllerStateTransition.drawio.svg" /></p>
+<p><img alt="LongitudinalControllerStateTransition" src="media/LongitudinalControllerStateTransition.drawio.svg"></p>
 <h3 id="logics">Logics<a class="headerlink" href="#logics" title="Permanent link">#</a></h3>
 <h4 id="control-block-diagram">Control Block Diagram<a class="headerlink" href="#control-block-diagram" title="Permanent link">#</a></h4>
-<p><img alt="LongitudinalControllerDiagram" src="media/LongitudinalControllerDiagram.drawio.svg" /></p>
+<p><img alt="LongitudinalControllerDiagram" src="media/LongitudinalControllerDiagram.drawio.svg"></p>
 <h4 id="feedforward-ff">FeedForward (FF)<a class="headerlink" href="#feedforward-ff" title="Permanent link">#</a></h4>
 <p>The reference acceleration set in the trajectory and slope compensation terms are output as a feedforward. Under ideal conditions with no modeling error, this FF term alone should be sufficient for velocity tracking.</p>
 <p>Tracking errors causing modeling or discretization errors are removed by the feedback control (now using PID).</p>
 <h5 id="brake-keeping">Brake keeping<a class="headerlink" href="#brake-keeping" title="Permanent link">#</a></h5>
 <p>From the viewpoint of ride comfort, stopping with 0 acceleration is important because it reduces the impact of braking. However, if the target acceleration when stopping is 0, the vehicle may cross over the stop line or accelerate a little in front of the stop line due to vehicle model error or gradient estimation error.</p>
 <p>For reliable stopping, the target acceleration calculated by the FeedForward system is limited to a negative acceleration when stopping.</p>
-<p><img alt="BrakeKeepingDiagram" src="media/BrakeKeeping.drawio.svg" /></p>
+<p><img alt="BrakeKeepingDiagram" src="media/BrakeKeeping.drawio.svg"></p>
 <h4 id="slope-compensation">Slope compensation<a class="headerlink" href="#slope-compensation" title="Permanent link">#</a></h4>
 <p>Based on the slope information, a compensation term is added to the target acceleration.</p>
 <p>There are two sources of the slope information, which can be switched by a parameter.</p>
@@ -12846,7 +12792,7 @@ If the ego is still running, strong acceleration (<code>strong_stop_acc</code>) 
 </table>
 <h2 id="references-external-links">References / External links<a class="headerlink" href="#references-external-links" title="Permanent link">#</a></h2>
 <h2 id="future-extensions-unimplemented-parts">Future extensions / Unimplemented parts<a class="headerlink" href="#future-extensions-unimplemented-parts" title="Permanent link">#</a></h2>
-<h2 id="related-issues">Related issues<a class="headerlink" href="#related-issues" title="Permanent link">#</a></h2>
+<h2 id="related-issues">Related issues<a class="headerlink" href="#related-issues" title="Permanent link">#</a></h2></div>
 
 
 
@@ -12911,7 +12857,7 @@ If the ego is still running, strong acceleration (<code>strong_stop_acc</code>) 
       <div class="md-copyright">
   
     <div class="md-copyright__highlight">
-      Copyright &copy; 2022 The Autoware Foundation
+      Copyright &copy; 2023 The Autoware Foundation
     </div>
   
   

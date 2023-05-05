@@ -7788,7 +7788,7 @@
   
     <li class="md-nav__item">
       <a href="../../../planning/behavior_path_planner/docs/behavior_path_planner_interface_design/" class="md-nav__link">
-        Behavior path planner interface design
+        Interface design
       </a>
     </li>
   
@@ -12362,8 +12362,8 @@
   
 
 
-<h1 id="pointcloud-based-occupancy-grid-map">pointcloud based occupancy grid map<a class="headerlink" href="#pointcloud-based-occupancy-grid-map" title="Permanent link">#</a></h1>
-<p><img alt="pointcloud_based_occupancy_grid_map_sample_image" src="../image/pointcloud_based_occupancy_grid_map_sample_image.gif" /></p>
+<div><h1 id="pointcloud-based-occupancy-grid-map">pointcloud based occupancy grid map<a class="headerlink" href="#pointcloud-based-occupancy-grid-map" title="Permanent link">#</a></h1>
+<p><img alt="pointcloud_based_occupancy_grid_map_sample_image" src="../image/pointcloud_based_occupancy_grid_map_sample_image.gif"></p>
 <h2 id="inner-workings-algorithms">Inner-workings / Algorithms<a class="headerlink" href="#inner-workings-algorithms" title="Permanent link">#</a></h2>
 <h3 id="1st-step">1st step<a class="headerlink" href="#1st-step" title="Permanent link">#</a></h3>
 <p>First of all, obstacle and raw pointcloud as input are transformed into a polar coordinate system and divided into bin per angle_increment.
@@ -12374,23 +12374,23 @@ The bin contains the following information for each point</p>
 <li>x on map coordinate</li>
 <li>y on map coordinate</li>
 </ul>
-<p><img alt="pointcloud_based_occupancy_grid_map_bev" src="../image/pointcloud_based_occupancy_grid_map_bev.svg" /></p>
+<p><img alt="pointcloud_based_occupancy_grid_map_bev" src="../image/pointcloud_based_occupancy_grid_map_bev.svg"></p>
 <p>The following figure shows each of the bins from side view.
-<img alt="pointcloud_based_occupancy_grid_map_side_view" src="../image/pointcloud_based_occupancy_grid_map_side_view.svg" /></p>
+<img alt="pointcloud_based_occupancy_grid_map_side_view" src="../image/pointcloud_based_occupancy_grid_map_side_view.svg"></p>
 <h3 id="2nd-step">2nd step<a class="headerlink" href="#2nd-step" title="Permanent link">#</a></h3>
 <p>The ray trace is performed in three steps for each cell.
 The ray trace is done by Bresenham's line algorithm.
-<img alt="Bresenham's line algorithm" src="../image/bresenham.svg" /></p>
+<img alt="Bresenham's line algorithm" src="../image/bresenham.svg"></p>
 <ol>
 <li>
 <p>Initialize freespace to the farthest point of each bin.</p>
-<p><img alt="pointcloud_based_occupancy_grid_map_side_view_1st" src="../image/pointcloud_based_occupancy_grid_map_side_view_1st.svg" /></p>
+<p><img alt="pointcloud_based_occupancy_grid_map_side_view_1st" src="../image/pointcloud_based_occupancy_grid_map_side_view_1st.svg"></p>
 </li>
 <li>
 <p>Fill in the unknown cells.
    Assume that unknown is behind the obstacle, since the back of the obstacle is a blind spot.
    Therefore, the unknown are assumed to be the cells that are more than a distance margin from each obstacle point.</p>
-<p><img alt="pointcloud_based_occupancy_grid_map_side_view_2nd" src="../image/pointcloud_based_occupancy_grid_map_side_view_2nd.svg" /></p>
+<p><img alt="pointcloud_based_occupancy_grid_map_side_view_2nd" src="../image/pointcloud_based_occupancy_grid_map_side_view_2nd.svg"></p>
 <p>There are three reasons for setting a distance margin.</p>
 <ul>
 <li>It is unlikely that a point on the ground will be immediately behind an obstacle.</li>
@@ -12402,7 +12402,7 @@ The ray trace is done by Bresenham's line algorithm.
 <p>Fill in the occupied cells.
    Fill in the point where the obstacle point is located with occupied.
    In addition, If the distance between obstacle points is less than or equal to the distance margin, it is filled with occupied because the input may be inaccurate and obstacle points may not be determined as obstacles.</p>
-<p><img alt="pointcloud_based_occupancy_grid_map_side_view_3rd" src="../image/pointcloud_based_occupancy_grid_map_side_view_3rd.svg" /></p>
+<p><img alt="pointcloud_based_occupancy_grid_map_side_view_3rd" src="../image/pointcloud_based_occupancy_grid_map_side_view_3rd.svg"></p>
 </li>
 </ol>
 <h3 id="3rd-step">3rd step<a class="headerlink" href="#3rd-step" title="Permanent link">#</a></h3>
@@ -12503,7 +12503,7 @@ The ray trace is done by Bresenham's line algorithm.
 <ul>
 <li>The update probability of the binary Bayesian filter is currently hard-coded and requires a code change to be modified.</li>
 <li>Since there is no special support for moving objects, the probability of existence is not increased for fast objects.</li>
-</ul>
+</ul></div>
 
 
 
@@ -12568,7 +12568,7 @@ The ray trace is done by Bresenham's line algorithm.
       <div class="md-copyright">
   
     <div class="md-copyright__highlight">
-      Copyright &copy; 2022 The Autoware Foundation
+      Copyright &copy; 2023 The Autoware Foundation
     </div>
   
   

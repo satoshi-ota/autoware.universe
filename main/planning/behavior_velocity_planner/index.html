@@ -7638,7 +7638,7 @@
   
     <li class="md-nav__item">
       <a href="../behavior_path_planner/docs/behavior_path_planner_interface_design/" class="md-nav__link">
-        Behavior path planner interface design
+        Interface design
       </a>
     </li>
   
@@ -12124,11 +12124,11 @@
   
 
 
-<h1 id="behavior-velocity-planner">Behavior Velocity Planner<a class="headerlink" href="#behavior-velocity-planner" title="Permanent link">#</a></h1>
+<div><h1 id="behavior-velocity-planner">Behavior Velocity Planner<a class="headerlink" href="#behavior-velocity-planner" title="Permanent link">#</a></h1>
 <h2 id="overview">Overview<a class="headerlink" href="#overview" title="Permanent link">#</a></h2>
 <p><code>behavior_velocity_planner</code> is a planner that adjust velocity based on the traffic rules.
 It consists of several modules. Please refer to the links listed below for detail on each module.</p>
-<p><img alt="Architecture" src="docs/BehaviorVelocityPlanner-Architecture.drawio.svg" /></p>
+<p><img alt="Architecture" src="docs/BehaviorVelocityPlanner-Architecture.drawio.svg"></p>
 <ul>
 <li><a href="blind-spot-design/">Blind Spot</a></li>
 <li><a href="crosswalk-design/">Crosswalk</a></li>
@@ -12146,7 +12146,7 @@ It consists of several modules. Please refer to the links listed below for detai
 </ul>
 <p>When each module plans velocity, it considers based on <code>base_link</code>(center of rear-wheel axis) pose.
 So for example, in order to stop at a stop line with the vehicles' front on the stop line, it calculates <code>base_link</code> position from the distance between <code>base_link</code> to front and modifies path velocity from the <code>base_link</code> position.</p>
-<p><img alt="set_stop_velocity" src="docs/set_stop_velocity.drawio.svg" /></p>
+<p><img alt="set_stop_velocity" src="docs/set_stop_velocity.drawio.svg"></p>
 <h2 id="input-topics">Input topics<a class="headerlink" href="#input-topics" title="Permanent link">#</a></h2>
 <table>
 <thead>
@@ -12297,7 +12297,7 @@ So for example, in order to stop at a stop line with the vehicles' front on the 
 <td>(to be a global parameter) delay time of the vehicle's response to control commands</td>
 </tr>
 </tbody>
-</table>
+</table></div>
 
 
 
@@ -12362,7 +12362,7 @@ So for example, in order to stop at a stop line with the vehicles' front on the 
       <div class="md-copyright">
   
     <div class="md-copyright__highlight">
-      Copyright &copy; 2022 The Autoware Foundation
+      Copyright &copy; 2023 The Autoware Foundation
     </div>
   
   

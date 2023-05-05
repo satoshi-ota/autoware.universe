@@ -2222,33 +2222,6 @@
     Butterworth Low-pass Filter Design Tool Class
   </a>
   
-    <nav class="md-nav" aria-label="Butterworth Low-pass Filter Design Tool Class">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#obtaining-filter-transfer-functions" class="md-nav__link">
-    Obtaining Filter Transfer Functions
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#discrete-time-transfer-function-difference-equations" class="md-nav__link">
-    Discrete Time Transfer Function (Difference Equations)
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#calling-filter-by-a-specified-cut-off-and-sampling-frequencies-in-hz" class="md-nav__link">
-    Calling Filter by a specified cut-off and sampling frequencies [in Hz]
-  </a>
-  
-</li>
-        
-      </ul>
-    </nav>
-  
 </li>
       
     </ul>
@@ -7702,7 +7675,7 @@
   
     <li class="md-nav__item">
       <a href="../../../../planning/behavior_path_planner/docs/behavior_path_planner_interface_design/" class="md-nav__link">
-        Behavior path planner interface design
+        Interface design
       </a>
     </li>
   
@@ -12145,33 +12118,6 @@
     Butterworth Low-pass Filter Design Tool Class
   </a>
   
-    <nav class="md-nav" aria-label="Butterworth Low-pass Filter Design Tool Class">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#obtaining-filter-transfer-functions" class="md-nav__link">
-    Obtaining Filter Transfer Functions
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#discrete-time-transfer-function-difference-equations" class="md-nav__link">
-    Discrete Time Transfer Function (Difference Equations)
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#calling-filter-by-a-specified-cut-off-and-sampling-frequencies-in-hz" class="md-nav__link">
-    Calling Filter by a specified cut-off and sampling frequencies [in Hz]
-  </a>
-  
-</li>
-        
-      </ul>
-    </nav>
-  
 </li>
       
     </ul>
@@ -12194,7 +12140,7 @@
 
   <h1>ButterworthFilter</h1>
 
-<h3 id="butterworth-low-pass-filter-design-tool-class">Butterworth Low-pass Filter Design Tool Class<a class="headerlink" href="#butterworth-low-pass-filter-design-tool-class" title="Permanent link">#</a></h3>
+<div><h3 id="butterworth-low-pass-filter-design-tool-class">Butterworth Low-pass Filter Design Tool Class<a class="headerlink" href="#butterworth-low-pass-filter-design-tool-class" title="Permanent link">#</a></h3>
 <p>This Butterworth low-pass filter design tool can be used to design a Butterworth filter in continuous and discrete-time
 from the given specifications of the filter performance. The Butterworth filter is a class implementation. A default
 constructor creates the object without any argument.</p>
@@ -12202,7 +12148,7 @@ constructor creates the object without any argument.</p>
 frequencies (Wp and Ws) together with the pass-band and stop-band ripple magnitudes (Ap and As), one can call the
 filter's buttord method with these arguments to obtain the recommended filter order (N) and cut-off frequency
 (Wc_rad_sec [rad/s]).</p>
-<p><img alt="img.png" src="../img.png" />
+<p><img alt="img.png" src="../img.png">
 Figure 1. Butterworth Low-pass filter specification from [1].</p>
 <p>An example call is demonstrated below;</p>
 <div class="codehilite"><pre><span></span><code>ButterworthFilter bf();
@@ -12218,8 +12164,8 @@ bf.Buttord(Wp, Ws, Ap, As);
 // Get the computed order and Cut-Off frequency
 sOrderCutOff NWc = bf.getOrderCutOff();]
 
-cout &lt;&lt; &quot; The computed order is ;&quot; &lt;&lt; NWc.N &lt;&lt; endl;
-cout &lt;&lt; &quot; The computed cut-off frequency is ;&quot; &lt;&lt; NWc.Wc_rad_sec &lt;&lt; endl;
+cout &lt;&lt; " The computed order is ;" &lt;&lt; NWc.N &lt;&lt; endl;
+cout &lt;&lt; " The computed cut-off frequency is ;" &lt;&lt; NWc.Wc_rad_sec &lt;&lt; endl;
 </code></pre></div>
 
 <p>The filter order and cut-off frequency can be obtained in a struct using bf.getOrderCutoff() method. These specs can be
@@ -12312,7 +12258,7 @@ bf.PrintDiscreteTimeTF();
 <li>
 <p><a href="https://en.wikibooks.org/wiki/Digital_Signal_Processing/Bilinear_Transform">https://en.wikibooks.org/wiki/Digital_Signal_Processing/Bilinear_Transform</a></p>
 </li>
-</ol>
+</ol></div>
 
 
 
@@ -12377,7 +12323,7 @@ bf.PrintDiscreteTimeTF();
       <div class="md-copyright">
   
     <div class="md-copyright__highlight">
-      Copyright &copy; 2022 The Autoware Foundation
+      Copyright &copy; 2023 The Autoware Foundation
     </div>
   
   

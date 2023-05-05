@@ -7638,7 +7638,7 @@
   
     <li class="md-nav__item">
       <a href="../../../../planning/behavior_path_planner/docs/behavior_path_planner_interface_design/" class="md-nav__link">
-        Behavior path planner interface design
+        Interface design
       </a>
     </li>
   
@@ -12158,16 +12158,16 @@
   
 
 
-<h1 id="autoware-state-compatibility">Autoware state compatibility<a class="headerlink" href="#autoware-state-compatibility" title="Permanent link">#</a></h1>
+<div><h1 id="autoware-state-compatibility">Autoware state compatibility<a class="headerlink" href="#autoware-state-compatibility" title="Permanent link">#</a></h1>
 <h2 id="overview">Overview<a class="headerlink" href="#overview" title="Permanent link">#</a></h2>
 <p>Since <code>/autoware/state</code> was so widely used, default_ad_api creates it from the states of AD API for backwards compatibility.
 The diagnostic checks that ad_service_state_monitor used to perform have been replaced by component_state_monitor.
 The service <code>/autoware/shutdown</code> to change autoware state to finalizing is also supported for compatibility.</p>
-<p><img alt="autoware-state-architecture" src="../images/autoware-state-architecture.drawio.svg" /></p>
+<p><img alt="autoware-state-architecture" src="../images/autoware-state-architecture.drawio.svg"></p>
 <h2 id="conversion">Conversion<a class="headerlink" href="#conversion" title="Permanent link">#</a></h2>
 <p>This is the correspondence between AD API states and autoware states.
 The launch state is the data that default_ad_api node holds internally.</p>
-<p><img alt="autoware-state-table" src="../images/autoware-state-table.drawio.svg" /></p>
+<p><img alt="autoware-state-table" src="../images/autoware-state-table.drawio.svg"></p></div>
 
 
 
@@ -12232,7 +12232,7 @@ The launch state is the data that default_ad_api node holds internally.</p>
       <div class="md-copyright">
   
     <div class="md-copyright__highlight">
-      Copyright &copy; 2022 The Autoware Foundation
+      Copyright &copy; 2023 The Autoware Foundation
     </div>
   
   

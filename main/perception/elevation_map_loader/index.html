@@ -7638,7 +7638,7 @@
   
     <li class="md-nav__item">
       <a href="../../planning/behavior_path_planner/docs/behavior_path_planner_interface_design/" class="md-nav__link">
-        Behavior path planner interface design
+        Interface design
       </a>
     </li>
   
@@ -12146,66 +12146,12 @@
     GridMap parameters
   </a>
   
-    <nav class="md-nav" aria-label="GridMap parameters">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#general-parameters" class="md-nav__link">
-    General parameters
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#grid-map-parameters" class="md-nav__link">
-    Grid map parameters
-  </a>
-  
-</li>
-        
-      </ul>
-    </nav>
-  
 </li>
         
           <li class="md-nav__item">
   <a href="#point-cloud-pre-processing-parameters" class="md-nav__link">
     Point Cloud Pre-processing Parameters
   </a>
-  
-    <nav class="md-nav" aria-label="Point Cloud Pre-processing Parameters">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#rigid-body-transform-parameters" class="md-nav__link">
-    Rigid body transform parameters
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#cluster-extraction-parameters" class="md-nav__link">
-    Cluster extraction parameters
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#outlier-removal-parameters" class="md-nav__link">
-    Outlier removal parameters
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#subsampling-parameters" class="md-nav__link">
-    Subsampling parameters
-  </a>
-  
-</li>
-        
-      </ul>
-    </nav>
   
 </li>
         
@@ -12232,13 +12178,13 @@
   
 
 
-<h1 id="elevation_map_loader">elevation_map_loader<a class="headerlink" href="#elevation_map_loader" title="Permanent link">#</a></h1>
+<div><h1 id="elevation_map_loader">elevation_map_loader<a class="headerlink" href="#elevation_map_loader" title="Permanent link">#</a></h1>
 <h2 id="purpose">Purpose<a class="headerlink" href="#purpose" title="Permanent link">#</a></h2>
 <p>This package provides elevation map for compare_map_segmentation.</p>
 <h2 id="inner-workings-algorithms">Inner-workings / Algorithms<a class="headerlink" href="#inner-workings-algorithms" title="Permanent link">#</a></h2>
 <p>Generate elevation_map from subscribed pointcloud_map and vector_map and publish it.
 Save the generated elevation_map locally and load it from next time.</p>
-<p>The elevation value of each cell is the average value of z of the points of the lowest cluster.<br />
+<p>The elevation value of each cell is the average value of z of the points of the lowest cluster.<br>
 Cells with No elevation value can be inpainted using the values of neighboring cells.</p>
 <p align="center">
   <img src="./media/elevation_map.png" width="1500">
@@ -12567,7 +12513,7 @@ Cells with No elevation value can be inpainted using the values of neighboring c
 <td align="left">0.02</td>
 </tr>
 </tbody>
-</table>
+</table></div>
 
 
 
@@ -12632,7 +12578,7 @@ Cells with No elevation value can be inpainted using the values of neighboring c
       <div class="md-copyright">
   
     <div class="md-copyright__highlight">
-      Copyright &copy; 2022 The Autoware Foundation
+      Copyright &copy; 2023 The Autoware Foundation
     </div>
   
   

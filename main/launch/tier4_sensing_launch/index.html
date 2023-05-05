@@ -7638,7 +7638,7 @@
   
     <li class="md-nav__item">
       <a href="../../planning/behavior_path_planner/docs/behavior_path_planner_interface_design/" class="md-nav__link">
-        Behavior path planner interface design
+        Interface design
       </a>
     </li>
   
@@ -12131,18 +12131,18 @@
   
 
 
-<h1 id="tier4_sensing_launch">tier4_sensing_launch<a class="headerlink" href="#tier4_sensing_launch" title="Permanent link">#</a></h1>
+<div><h1 id="tier4_sensing_launch">tier4_sensing_launch<a class="headerlink" href="#tier4_sensing_launch" title="Permanent link">#</a></h1>
 <h2 id="structure">Structure<a class="headerlink" href="#structure" title="Permanent link">#</a></h2>
-<p><img alt="tier4_sensing_launch" src="sensing_launch.drawio.svg" /></p>
+<p><img alt="tier4_sensing_launch" src="sensing_launch.drawio.svg"></p>
 <h2 id="package-dependencies">Package Dependencies<a class="headerlink" href="#package-dependencies" title="Permanent link">#</a></h2>
 <p>Please see <code>&lt;exec_depend&gt;</code> in <code>package.xml</code>.</p>
 <h2 id="usage">Usage<a class="headerlink" href="#usage" title="Permanent link">#</a></h2>
 <p>You can include as follows in <code>*.launch.xml</code> to use <code>sensing.launch.xml</code>.</p>
-<div class="highlight"><pre><span></span><code><span class="w">  </span><span class="nt">&lt;include</span><span class="w"> </span><span class="na">file=</span><span class="s">&quot;$(find-pkg-share tier4_sensing_launch)/launch/sensing.launch.xml&quot;</span><span class="nt">&gt;</span>
-<span class="w">    </span><span class="nt">&lt;arg</span><span class="w"> </span><span class="na">name=</span><span class="s">&quot;launch_driver&quot;</span><span class="w"> </span><span class="na">value=</span><span class="s">&quot;true&quot;</span><span class="nt">/&gt;</span>
-<span class="w">    </span><span class="nt">&lt;arg</span><span class="w"> </span><span class="na">name=</span><span class="s">&quot;sensor_model&quot;</span><span class="w"> </span><span class="na">value=</span><span class="s">&quot;$(var sensor_model)&quot;</span><span class="nt">/&gt;</span>
-<span class="w">    </span><span class="nt">&lt;arg</span><span class="w"> </span><span class="na">name=</span><span class="s">&quot;vehicle_param_file&quot;</span><span class="w"> </span><span class="na">value=</span><span class="s">&quot;$(find-pkg-share $(var vehicle_model)_description)/config/vehicle_info.param.yaml&quot;</span><span class="nt">/&gt;</span>
-<span class="w">    </span><span class="nt">&lt;arg</span><span class="w"> </span><span class="na">name=</span><span class="s">&quot;vehicle_mirror_param_file&quot;</span><span class="w"> </span><span class="na">value=</span><span class="s">&quot;$(find-pkg-share $(var vehicle_model)_description)/config/mirror.param.yaml&quot;</span><span class="nt">/&gt;</span>
+<div class="highlight"><pre><span></span><code><span class="w">  </span><span class="nt">&lt;include</span><span class="w"> </span><span class="na">file=</span><span class="s">"$(find-pkg-share tier4_sensing_launch)/launch/sensing.launch.xml"</span><span class="nt">&gt;</span>
+<span class="w">    </span><span class="nt">&lt;arg</span><span class="w"> </span><span class="na">name=</span><span class="s">"launch_driver"</span><span class="w"> </span><span class="na">value=</span><span class="s">"true"</span><span class="nt">/&gt;</span>
+<span class="w">    </span><span class="nt">&lt;arg</span><span class="w"> </span><span class="na">name=</span><span class="s">"sensor_model"</span><span class="w"> </span><span class="na">value=</span><span class="s">"$(var sensor_model)"</span><span class="nt">/&gt;</span>
+<span class="w">    </span><span class="nt">&lt;arg</span><span class="w"> </span><span class="na">name=</span><span class="s">"vehicle_param_file"</span><span class="w"> </span><span class="na">value=</span><span class="s">"$(find-pkg-share $(var vehicle_model)_description)/config/vehicle_info.param.yaml"</span><span class="nt">/&gt;</span>
+<span class="w">    </span><span class="nt">&lt;arg</span><span class="w"> </span><span class="na">name=</span><span class="s">"vehicle_mirror_param_file"</span><span class="w"> </span><span class="na">value=</span><span class="s">"$(find-pkg-share $(var vehicle_model)_description)/config/mirror.param.yaml"</span><span class="nt">/&gt;</span>
 <span class="w">  </span><span class="nt">&lt;/include&gt;</span>
 </code></pre></div>
 <h2 id="launch-directory-structure">Launch Directory Structure<a class="headerlink" href="#launch-directory-structure" title="Permanent link">#</a></h2>
@@ -12159,8 +12159,8 @@
 <h2 id="notes">Notes<a class="headerlink" href="#notes" title="Permanent link">#</a></h2>
 <p>This package finds settings with variables.</p>
 <p>ex.)</p>
-<div class="highlight"><pre><span></span><code><span class="nt">&lt;include</span><span class="w"> </span><span class="na">file=</span><span class="s">&quot;$(find-pkg-share tier4_sensing_launch)/launch/$(var sensor_model)/lidar.launch.xml&quot;</span><span class="nt">&gt;</span>
-</code></pre></div>
+<div class="highlight"><pre><span></span><code><span class="nt">&lt;include</span><span class="w"> </span><span class="na">file=</span><span class="s">"$(find-pkg-share tier4_sensing_launch)/launch/$(var sensor_model)/lidar.launch.xml"</span><span class="nt">&gt;</span>
+</code></pre></div></div>
 
 
 
@@ -12225,7 +12225,7 @@
       <div class="md-copyright">
   
     <div class="md-copyright__highlight">
-      Copyright &copy; 2022 The Autoware Foundation
+      Copyright &copy; 2023 The Autoware Foundation
     </div>
   
   

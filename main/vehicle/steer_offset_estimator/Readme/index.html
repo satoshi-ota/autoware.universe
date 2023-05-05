@@ -7638,7 +7638,7 @@
   
     <li class="md-nav__item">
       <a href="../../../planning/behavior_path_planner/docs/behavior_path_planner_interface_design/" class="md-nav__link">
-        Behavior path planner interface design
+        Interface design
       </a>
     </li>
   
@@ -12254,14 +12254,14 @@
   
 
 
-<h1 id="steer_offset_estimator">steer_offset_estimator<a class="headerlink" href="#steer_offset_estimator" title="Permanent link">#</a></h1>
+<div><h1 id="steer_offset_estimator">steer_offset_estimator<a class="headerlink" href="#steer_offset_estimator" title="Permanent link">#</a></h1>
 <h2 id="purpose">Purpose<a class="headerlink" href="#purpose" title="Permanent link">#</a></h2>
 <p>The role of this node is to automatically calibrate <code>steer_offset</code> used in the <code>vehicle_interface</code> node.</p>
 <p>The base steer offset value is 0 by default, which is standard, is updated iteratively with the loaded driving data. This module is supposed to be used in below straight driving situation.
-<img alt="image" src="../image/steer_offset.png" /></p>
+<img alt="image" src="../image/steer_offset.png"></p>
 <h2 id="inner-workings-algorithms">Inner-workings / Algorithms<a class="headerlink" href="#inner-workings-algorithms" title="Permanent link">#</a></h2>
 <p>Estimates sequential steering offsets from kinematic model and state observations.
-<img alt="image2" src="../image/kinematic_constraints.png" />
+<img alt="image2" src="../image/kinematic_constraints.png">
 Calculate yaw rate error and then calculate steering error recursively by least squared method, for more details see <code>updateSteeringOffset()</code> function.</p>
 <h2 id="inputs-outputs">Inputs / Outputs<a class="headerlink" href="#inputs-outputs" title="Permanent link">#</a></h2>
 <h3 id="input">Input<a class="headerlink" href="#input" title="Permanent link">#</a></h3>
@@ -12377,7 +12377,7 @@ Diagnostic type <code>WARN</code> indicates that the current steer_offset is est
 </table>
 <p>This diagnostics status can be also checked on the following ROS topic.</p>
 <div class="highlight"><pre><span></span><code>ros2<span class="w"> </span>topic<span class="w"> </span><span class="nb">echo</span><span class="w"> </span>/vehicle/status/steering_offset
-</code></pre></div>
+</code></pre></div></div>
 
 
 
@@ -12442,7 +12442,7 @@ Diagnostic type <code>WARN</code> indicates that the current steer_offset is est
       <div class="md-copyright">
   
     <div class="md-copyright__highlight">
-      Copyright &copy; 2022 The Autoware Foundation
+      Copyright &copy; 2023 The Autoware Foundation
     </div>
   
   

@@ -7638,7 +7638,7 @@
   
     <li class="md-nav__item">
       <a href="../../../../planning/behavior_path_planner/docs/behavior_path_planner_interface_design/" class="md-nav__link">
-        Behavior path planner interface design
+        Interface design
       </a>
     </li>
   
@@ -12322,12 +12322,12 @@
   
 
 
-<h1 id="dual_return_outlier_filter">dual_return_outlier_filter<a class="headerlink" href="#dual_return_outlier_filter" title="Permanent link">#</a></h1>
+<div><h1 id="dual_return_outlier_filter">dual_return_outlier_filter<a class="headerlink" href="#dual_return_outlier_filter" title="Permanent link">#</a></h1>
 <h2 id="purpose">Purpose<a class="headerlink" href="#purpose" title="Permanent link">#</a></h2>
 <p>The purpose is to remove point cloud noise such as fog and rain and publish visibility as a diagnostic topic.</p>
 <h2 id="inner-workings-algorithms">Inner-workings / Algorithms<a class="headerlink" href="#inner-workings-algorithms" title="Permanent link">#</a></h2>
 <p>This node can remove rain and fog by considering the light reflected from the object in two stages according to the attenuation factor. The <code>dual_return_outlier_filter</code> is named because it removes noise using data that contains two types of return values separated by attenuation factor, as shown in the figure below.</p>
-<p><img alt="outlier_filter-return_type" src="../image/outlier_filter-return_type.drawio.svg" /></p>
+<p><img alt="outlier_filter-return_type" src="../image/outlier_filter-return_type.drawio.svg"></p>
 <p>Therefore, in order to use this node, the sensor driver must publish custom data including <code>return_type</code>. please refer to <a href="../../../common/autoware_point_types/include/autoware_point_types/types.hpp#L57-L76">PointXYZIRADRT</a> data structure.</p>
 <p>Another feature of this node is that it publishes visibility as a diagnostic topic. With this function, for example, in heavy rain, the sensing module can notify that the processing performance has reached its limit, which can lead to ensuring the safety of the vehicle.</p>
 <p>In some complicated road scenes where normal objects also reflect the light in two stages, for instance plants, leaves, some plastic net etc, the visibility faces some drop in fine weather condition. To deal with that, optional settings of a region of interest (ROI) are added.</p>
@@ -12336,11 +12336,11 @@
 <li><code>Fixed_azimuth_ROI</code> mode: Visibility estimation based on the weak points in a fixed surrounding region of ego-vehicle, defined by azimuth and distance of LiDAR perspective.</li>
 </ol>
 <p>When select 2 fixed ROI modes, due to the range of weak points is shrink, the sensitivity of visibility is decrease so that a trade of between <code>weak_first_local_noise_threshold</code> and <code>visibility_threshold</code> is needed.</p>
-<p><img alt="outlier_filter-dual_return_overall" src="../image/outlier_filter-dual_return_overall.drawio.svg" /></p>
+<p><img alt="outlier_filter-dual_return_overall" src="../image/outlier_filter-dual_return_overall.drawio.svg"></p>
 <p>The figure below describe how the node works.
-<img alt="outlier_filter-dual_return_detail" src="../image/outlier_filter-dual_return_detail.drawio.svg" /></p>
+<img alt="outlier_filter-dual_return_detail" src="../image/outlier_filter-dual_return_detail.drawio.svg"></p>
 <p>The below picture shows the ROI options.</p>
-<p><img alt="outlier_filter-dual_return_ROI_setting_options" src="../image/outlier_filter-dual_return_ROI_setting_options.png" /></p>
+<p><img alt="outlier_filter-dual_return_ROI_setting_options" src="../image/outlier_filter-dual_return_ROI_setting_options.png"></p>
 <h2 id="inputs-outputs">Inputs / Outputs<a class="headerlink" href="#inputs-outputs" title="Permanent link">#</a></h2>
 <p>This implementation inherits <code>pointcloud_preprocessor::Filter</code> class, please refer <a href="../../">README</a>.</p>
 <h3 id="output">Output<a class="headerlink" href="#output" title="Permanent link">#</a></h3>
@@ -12476,7 +12476,7 @@ Input data must be <code>PointXYZIRADRT</code> type data including <code>return_
 <h2 id="optional-error-detection-and-handling">(Optional) Error detection and handling<a class="headerlink" href="#optional-error-detection-and-handling" title="Permanent link">#</a></h2>
 <h2 id="optional-performance-characterization">(Optional) Performance characterization<a class="headerlink" href="#optional-performance-characterization" title="Permanent link">#</a></h2>
 <h2 id="referencesexternal-links">References/External links<a class="headerlink" href="#referencesexternal-links" title="Permanent link">#</a></h2>
-<h2 id="optional-future-extensions-unimplemented-parts">(Optional) Future extensions / Unimplemented parts<a class="headerlink" href="#optional-future-extensions-unimplemented-parts" title="Permanent link">#</a></h2>
+<h2 id="optional-future-extensions-unimplemented-parts">(Optional) Future extensions / Unimplemented parts<a class="headerlink" href="#optional-future-extensions-unimplemented-parts" title="Permanent link">#</a></h2></div>
 
 
 
@@ -12541,7 +12541,7 @@ Input data must be <code>PointXYZIRADRT</code> type data including <code>return_
       <div class="md-copyright">
   
     <div class="md-copyright__highlight">
-      Copyright &copy; 2022 The Autoware Foundation
+      Copyright &copy; 2023 The Autoware Foundation
     </div>
   
   

@@ -7638,7 +7638,7 @@
   
     <li class="md-nav__item">
       <a href="../../planning/behavior_path_planner/docs/behavior_path_planner_interface_design/" class="md-nav__link">
-        Behavior path planner interface design
+        Interface design
       </a>
     </li>
   
@@ -12139,26 +12139,6 @@
     3. Get target obstacles from the input point cloud
   </a>
   
-    <nav class="md-nav" aria-label="3. Get target obstacles from the input point cloud">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#rough-filtering" class="md-nav__link">
-    Rough filtering
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#rigorous-filtering" class="md-nav__link">
-    Rigorous filtering
-  </a>
-  
-</li>
-        
-      </ul>
-    </nav>
-  
 </li>
         
           <li class="md-nav__item">
@@ -12198,7 +12178,7 @@
   
 
 
-<h1 id="autonomous-emergency-braking-aeb">Autonomous Emergency Braking (AEB)<a class="headerlink" href="#autonomous-emergency-braking-aeb" title="Permanent link">#</a></h1>
+<div><h1 id="autonomous-emergency-braking-aeb">Autonomous Emergency Braking (AEB)<a class="headerlink" href="#autonomous-emergency-braking-aeb" title="Permanent link">#</a></h1>
 <h2 id="purpose-role">Purpose / Role<a class="headerlink" href="#purpose-role" title="Permanent link">#</a></h2>
 <p><code>autonomous_emergency_braking</code> is a module that prevents collisions with obstacles on the predicted path created by a control module or sensor values estimated from the control module.</p>
 <h3 id="assumptions">Assumptions<a class="headerlink" href="#assumptions" title="Permanent link">#</a></h3>
@@ -12212,7 +12192,7 @@
 <ul>
 <li>The current speed and angular velocity can be obtained from the sensors of the ego vehicle, and it uses point cloud as obstacles.</li>
 </ul>
-<p><img alt="aeb_range" src="image/range.drawio.svg" /></p>
+<p><img alt="aeb_range" src="image/range.drawio.svg"></p>
 <h3 id="limitations">Limitations<a class="headerlink" href="#limitations" title="Permanent link">#</a></h3>
 <ul>
 <li>AEB might not be able to react with obstacles that are close to the ground. It depends on the performance of the pre-processing methods applied to the point cloud.</li>
@@ -12382,10 +12362,10 @@ y_{k+1} = y_k + v sin(\theta_k) dt \\
 <p>After generating the ego predicted path, we select target obstacles from the input point cloud. This obstacle filtering has two major steps, which are rough filtering and rigorous filtering.</p>
 <h4 id="rough-filtering">Rough filtering<a class="headerlink" href="#rough-filtering" title="Permanent link">#</a></h4>
 <p>In rough filtering step, we select target obstacle with simple filter. Create a search area up to a certain distance (default 5[m]) away from the predicted path of the ego vehicle and ignore the point cloud (obstacles) that are not within it. The image of the rough filtering is illustrated below.</p>
-<p><img alt="rough_filtering" src="image/obstacle_filtering_1.drawio.svg" /></p>
+<p><img alt="rough_filtering" src="image/obstacle_filtering_1.drawio.svg"></p>
 <h4 id="rigorous-filtering">Rigorous filtering<a class="headerlink" href="#rigorous-filtering" title="Permanent link">#</a></h4>
 <p>After rough filtering, it performs a geometric collision check to determine whether the filtered obstacles actually have possibility to collide with the ego vehicle. In this check, the ego vehicle is represented as a rectangle, and the point cloud obstacles are represented as points.</p>
-<p><img alt="rigorous_filtering" src="image/obstacle_filtering_2.drawio.svg" /></p>
+<p><img alt="rigorous_filtering" src="image/obstacle_filtering_2.drawio.svg"></p>
 <h3 id="4-collision-check-with-target-obstacles">4. Collision check with target obstacles<a class="headerlink" href="#4-collision-check-with-target-obstacles" title="Permanent link">#</a></h3>
 <p>In the fourth step, it checks the collision with filtered obstacles using RSS distance. RSS is formulated as:</p>
 <div class="arithmatex">
@@ -12397,9 +12377,9 @@ d = v_{ego}*t_{response} + v_{ego}^2/(2*a_{min}) - v_{obj}^2/(2*a_{obj_{min}}) +
 </script>
 </div>
 <p>where <span class="arithmatex"><span class="MathJax_Preview">v_{ego}</span><script type="math/tex">v_{ego}</script></span> and <span class="arithmatex"><span class="MathJax_Preview">v_{obj}</span><script type="math/tex">v_{obj}</script></span> is current ego and obstacle velocity, <span class="arithmatex"><span class="MathJax_Preview">a_{min}</span><script type="math/tex">a_{min}</script></span> and <span class="arithmatex"><span class="MathJax_Preview">a_{obj_{min}}</span><script type="math/tex">a_{obj_{min}}</script></span> is ego and object minimum acceleration (maximum deceleration), <span class="arithmatex"><span class="MathJax_Preview">t_{response}</span><script type="math/tex">t_{response}</script></span> is response time of the ego vehicle to start deceleration. Therefore the distance from the ego vehicle to the obstacle is smaller than this RSS distance <span class="arithmatex"><span class="MathJax_Preview">d</span><script type="math/tex">d</script></span>, the ego vehicle send emergency stop signals. This is illustrated in the following picture.</p>
-<p><img alt="rss_check" src="image/rss_check.drawio.svg" /></p>
+<p><img alt="rss_check" src="image/rss_check.drawio.svg"></p>
 <h3 id="5-send-emergency-stop-signals-to-diagnostics">5. Send emergency stop signals to <code>/diagnostics</code><a class="headerlink" href="#5-send-emergency-stop-signals-to-diagnostics" title="Permanent link">#</a></h3>
-<p>If AEB detects collision with point cloud obstacles in the previous step, it sends emergency signal to <code>/diagnostics</code> in this step. Note that in order to enable emergency stop, it has to send ERROR level emergency. Moreover, AEB user should modify the setting file to keep the emergency level, otherwise Autoware does not hold the emergency state.</p>
+<p>If AEB detects collision with point cloud obstacles in the previous step, it sends emergency signal to <code>/diagnostics</code> in this step. Note that in order to enable emergency stop, it has to send ERROR level emergency. Moreover, AEB user should modify the setting file to keep the emergency level, otherwise Autoware does not hold the emergency state.</p></div>
 
 
 
@@ -12464,7 +12444,7 @@ d = v_{ego}*t_{response} + v_{ego}^2/(2*a_{min}) - v_{obj}^2/(2*a_{obj_{min}}) +
       <div class="md-copyright">
   
     <div class="md-copyright__highlight">
-      Copyright &copy; 2022 The Autoware Foundation
+      Copyright &copy; 2023 The Autoware Foundation
     </div>
   
   

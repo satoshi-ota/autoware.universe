@@ -7638,7 +7638,7 @@
   
     <li class="md-nav__item">
       <a href="../behavior_path_planner/docs/behavior_path_planner_interface_design/" class="md-nav__link">
-        Behavior path planner interface design
+        Interface design
       </a>
     </li>
   
@@ -12165,7 +12165,7 @@
   
 
 
-<h1 id="planning-interface-test-manager">Planning Interface Test Manager<a class="headerlink" href="#planning-interface-test-manager" title="Permanent link">#</a></h1>
+<div><h1 id="planning-interface-test-manager">Planning Interface Test Manager<a class="headerlink" href="#planning-interface-test-manager" title="Permanent link">#</a></h1>
 <h2 id="background">Background<a class="headerlink" href="#background" title="Permanent link">#</a></h2>
 <p>In each node of the planning module, when exceptional input, such as unusual routes or significantly deviated ego-position, is given, the node may not be prepared for such input and could crash. As a result, debugging node crashes can be time-consuming. For example, if an empty trajectory is given as input and it was not anticipated during implementation, the node might crash due to the unaddressed exceptional input when changes are merged, during scenario testing or while the system is running on an actual vehicle.</p>
 <h2 id="purpose">Purpose<a class="headerlink" href="#purpose" title="Permanent link">#</a></h2>
@@ -12186,26 +12186,26 @@
 
 <span class="w">  </span><span class="c1">// get package directories for necessary configuration files</span>
 <span class="w">  </span><span class="k">const</span><span class="w"> </span><span class="k">auto</span><span class="w"> </span><span class="n">planning_test_utils_dir</span><span class="w"> </span><span class="o">=</span>
-<span class="w">    </span><span class="n">ament_index_cpp</span><span class="o">::</span><span class="n">get_package_share_directory</span><span class="p">(</span><span class="s">&quot;planning_test_utils&quot;</span><span class="p">);</span>
+<span class="w">    </span><span class="n">ament_index_cpp</span><span class="o">::</span><span class="n">get_package_share_directory</span><span class="p">(</span><span class="s">"planning_test_utils"</span><span class="p">);</span>
 <span class="w">  </span><span class="k">const</span><span class="w"> </span><span class="k">auto</span><span class="w"> </span><span class="n">target_node_dir</span><span class="w"> </span><span class="o">=</span>
-<span class="w">    </span><span class="n">ament_index_cpp</span><span class="o">::</span><span class="n">get_package_share_directory</span><span class="p">(</span><span class="s">&quot;target_node&quot;</span><span class="p">);</span>
+<span class="w">    </span><span class="n">ament_index_cpp</span><span class="o">::</span><span class="n">get_package_share_directory</span><span class="p">(</span><span class="s">"target_node"</span><span class="p">);</span>
 
 <span class="w">  </span><span class="c1">// set arguments to get the config file</span>
 <span class="w">  </span><span class="n">node_options</span><span class="p">.</span><span class="n">arguments</span><span class="p">(</span>
-<span class="w">    </span><span class="p">{</span><span class="s">&quot;--ros-args&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;--params-file&quot;</span><span class="p">,</span>
-<span class="w">     </span><span class="n">planning_test_utils_dir</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="s">&quot;/config/test_vehicle_info.param.yaml&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;--params-file&quot;</span><span class="p">,</span>
-<span class="w">     </span><span class="n">planning_validator_dir</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="s">&quot;/config/planning_validator.param.yaml&quot;</span><span class="p">});</span>
+<span class="w">    </span><span class="p">{</span><span class="s">"--ros-args"</span><span class="p">,</span><span class="w"> </span><span class="s">"--params-file"</span><span class="p">,</span>
+<span class="w">     </span><span class="n">planning_test_utils_dir</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="s">"/config/test_vehicle_info.param.yaml"</span><span class="p">,</span><span class="w"> </span><span class="s">"--params-file"</span><span class="p">,</span>
+<span class="w">     </span><span class="n">planning_validator_dir</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="s">"/config/planning_validator.param.yaml"</span><span class="p">});</span>
 
 <span class="w">  </span><span class="c1">// instantiate the TargetNode with node_options</span>
 <span class="w">  </span><span class="k">auto</span><span class="w"> </span><span class="n">test_target_node</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">make_shared</span><span class="o">&lt;</span><span class="n">TargetNode</span><span class="o">&gt;</span><span class="p">(</span><span class="n">node_options</span><span class="p">);</span>
 
 <span class="w">  </span><span class="c1">// publish the necessary topics from test_manager second argument is topic name</span>
-<span class="w">  </span><span class="n">test_manager</span><span class="o">-&gt;</span><span class="n">publishOdometry</span><span class="p">(</span><span class="n">test_target_node</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;/localization/kinematic_state&quot;</span><span class="p">);</span>
+<span class="w">  </span><span class="n">test_manager</span><span class="o">-&gt;</span><span class="n">publishOdometry</span><span class="p">(</span><span class="n">test_target_node</span><span class="p">,</span><span class="w"> </span><span class="s">"/localization/kinematic_state"</span><span class="p">);</span>
 <span class="w">  </span><span class="n">test_manager</span><span class="o">-&gt;</span><span class="n">publishMaxVelocity</span><span class="p">(</span>
-<span class="w">    </span><span class="n">test_target_node</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;motion_velocity_smoother/input/external_velocity_limit_mps&quot;</span><span class="p">);</span>
+<span class="w">    </span><span class="n">test_target_node</span><span class="p">,</span><span class="w"> </span><span class="s">"motion_velocity_smoother/input/external_velocity_limit_mps"</span><span class="p">);</span>
 
-<span class="w">  </span><span class="c1">// set scenario_selector&#39;s input topic name(this topic is changed to test node)</span>
-<span class="w">  </span><span class="n">test_manager</span><span class="o">-&gt;</span><span class="n">setTrajectoryInputTopicName</span><span class="p">(</span><span class="s">&quot;input/parking/trajectory&quot;</span><span class="p">);</span>
+<span class="w">  </span><span class="c1">// set scenario_selector's input topic name(this topic is changed to test node)</span>
+<span class="w">  </span><span class="n">test_manager</span><span class="o">-&gt;</span><span class="n">setTrajectoryInputTopicName</span><span class="p">(</span><span class="s">"input/parking/trajectory"</span><span class="p">);</span>
 
 <span class="w">  </span><span class="c1">// test with normal trajectory</span>
 <span class="w">  </span><span class="n">ASSERT_NO_THROW</span><span class="p">(</span><span class="n">test_manager</span><span class="o">-&gt;</span><span class="n">testWithNominalTrajectory</span><span class="p">(</span><span class="n">test_target_node</span><span class="p">));</span>
@@ -12307,7 +12307,7 @@
 <h2 id="important-notes">Important Notes<a class="headerlink" href="#important-notes" title="Permanent link">#</a></h2>
 <p>During test execution, when launching a node, parameters are loaded from the parameter file within each package. Therefore, when adding parameters, it is necessary to add the required parameters to the parameter file in the target node package. This is to prevent the node from being unable to launch if there are missing parameters when retrieving them from the parameter file during node launch.</p>
 <h2 id="future-extensions-unimplemented-parts">Future extensions / Unimplemented parts<a class="headerlink" href="#future-extensions-unimplemented-parts" title="Permanent link">#</a></h2>
-<p>(WIP)</p>
+<p>(WIP)</p></div>
 
 
 
@@ -12372,7 +12372,7 @@
       <div class="md-copyright">
   
     <div class="md-copyright__highlight">
-      Copyright &copy; 2022 The Autoware Foundation
+      Copyright &copy; 2023 The Autoware Foundation
     </div>
   
   

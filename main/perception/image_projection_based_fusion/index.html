@@ -7638,7 +7638,7 @@
   
     <li class="md-nav__item">
       <a href="../../planning/behavior_path_planner/docs/behavior_path_planner_interface_design/" class="md-nav__link">
-        Behavior path planner interface design
+        Interface design
       </a>
     </li>
   
@@ -12098,33 +12098,6 @@
     Sync Algorithm
   </a>
   
-    <nav class="md-nav" aria-label="Sync Algorithm">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#matching" class="md-nav__link">
-    matching
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#fusion-and-timer" class="md-nav__link">
-    fusion and timer
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#known-limits" class="md-nav__link">
-    Known Limits
-  </a>
-  
-</li>
-        
-      </ul>
-    </nav>
-  
 </li>
         
           <li class="md-nav__item">
@@ -12157,7 +12130,7 @@
   
 
 
-<h1 id="image_projection_based_fusion">image_projection_based_fusion<a class="headerlink" href="#image_projection_based_fusion" title="Permanent link">#</a></h1>
+<div><h1 id="image_projection_based_fusion">image_projection_based_fusion<a class="headerlink" href="#image_projection_based_fusion" title="Permanent link">#</a></h1>
 <h2 id="purpose">Purpose<a class="headerlink" href="#purpose" title="Permanent link">#</a></h2>
 <p>The <code>image_projection_based_fusion</code> is a package to fuse detected obstacles (bounding box or segmentation) from image and 3d pointcloud or obstacles (bounding box, cluster or segmentation).</p>
 <h2 id="inner-workings-algorithms">Inner-workings / Algorithms<a class="headerlink" href="#inner-workings-algorithms" title="Permanent link">#</a></h2>
@@ -12165,10 +12138,10 @@
 <h4 id="matching">matching<a class="headerlink" href="#matching" title="Permanent link">#</a></h4>
 <p>The offset between each camera and the lidar is set according to their shutter timing.
 After applying the offset to the timestamp, if the interval between the timestamp of pointcloud topic and the roi message is less than the match threshold, the two messages are matched.</p>
-<p><img alt="roi_sync_image1" src="docs/images/roi_sync_1.png" /></p>
+<p><img alt="roi_sync_image1" src="docs/images/roi_sync_1.png"></p>
 <p>current default value at autoware.universe for TIER IV Robotaxi are: - input_offset_ms: [61.67, 111.67, 45.0, 28.33, 78.33, 95.0] - match_threshold_ms: 30.0</p>
 <h4 id="fusion-and-timer">fusion and timer<a class="headerlink" href="#fusion-and-timer" title="Permanent link">#</a></h4>
-<p><img alt="roi_sync_image2" src="docs/images/roi_sync_2.png" /></p>
+<p><img alt="roi_sync_image2" src="docs/images/roi_sync_2.png"></p>
 <p>The subscription status of the message is signed with 'O'.
 1.if a pointcloud message is subscribed under the below condition:
 | | pointcloud | roi msg 1 | roi msg 2 | roi msg 3 |
@@ -12218,7 +12191,7 @@ current default value at autoware.universe for XX1: - timeout_ms: 50.0</p>
 <td><a href="docs/pointpainting-fusion/">link</a></td>
 </tr>
 </tbody>
-</table>
+</table></div>
 
 
 
@@ -12283,7 +12256,7 @@ current default value at autoware.universe for XX1: - timeout_ms: 50.0</p>
       <div class="md-copyright">
   
     <div class="md-copyright__highlight">
-      Copyright &copy; 2022 The Autoware Foundation
+      Copyright &copy; 2023 The Autoware Foundation
     </div>
   
   

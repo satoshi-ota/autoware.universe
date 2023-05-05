@@ -7638,7 +7638,7 @@
   
     <li class="md-nav__item">
       <a href="docs/behavior_path_planner_interface_design/" class="md-nav__link">
-        Behavior path planner interface design
+        Interface design
       </a>
     </li>
   
@@ -12098,26 +12098,6 @@
     Scene modules design
   </a>
   
-    <nav class="md-nav" aria-label="Scene modules design">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#support-modules" class="md-nav__link">
-    Support modules
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#how-to-implement-new-module" class="md-nav__link">
-    How to implement new module?
-  </a>
-  
-</li>
-        
-      </ul>
-    </nav>
-  
 </li>
         
           <li class="md-nav__item">
@@ -12239,7 +12219,7 @@
   
 
 
-<h1 id="behavior-path-planner">Behavior Path Planner<a class="headerlink" href="#behavior-path-planner" title="Permanent link">#</a></h1>
+<div><h1 id="behavior-path-planner">Behavior Path Planner<a class="headerlink" href="#behavior-path-planner" title="Permanent link">#</a></h1>
 <h2 id="purpose-use-cases">Purpose / Use cases<a class="headerlink" href="#purpose-use-cases" title="Permanent link">#</a></h2>
 <p>The <code>behavior_path_planner</code> module is responsible to generate</p>
 <ol>
@@ -12302,11 +12282,11 @@
 </tr>
 </tbody>
 </table>
-<p><img alt="behavior_modules" src="image/behavior_modules.png" /></p>
+<p><img alt="behavior_modules" src="image/behavior_modules.png"></p>
 <p>All scene modules are implemented by inheriting base class <code>scene_module_interface.hpp</code>.</p>
 <h4 id="how-to-implement-new-module">How to implement new module?<a class="headerlink" href="#how-to-implement-new-module" title="Permanent link">#</a></h4>
 <p>WIP</p>
-<hr />
+<hr>
 <h3 id="manager-design">Manager design<a class="headerlink" href="#manager-design" title="Permanent link">#</a></h3>
 <p>The role of manager is to launch the appropriate scene module according to the situation. (e.g. if there is parked-vehicle in ego's driving lane, the manager launches the avoidance module.)</p>
 <p>Now, it is able to select two managers with different architecture.</p>
@@ -12353,7 +12333,7 @@
 <li><strong>Plan</strong>: Calculates path and set it to the output of the BehaviorTree. Until the internal status returns SUCCESS, it will be in running state and will not transit to another module.</li>
 <li><strong>ForceApproval</strong>: A lane change-specific node that overrides the result of <em>Ready</em> when a forced lane change command is given externally.</li>
 </ul>
-<p><img alt="behavior_path_planner_bt_config" src="image/behavior_path_planner_bt_config.png" /></p>
+<p><img alt="behavior_path_planner_bt_config" src="image/behavior_path_planner_bt_config.png"></p>
 <h2 id="inputs-outputs-api">Inputs / Outputs / API<a class="headerlink" href="#inputs-outputs-api" title="Permanent link">#</a></h2>
 <h3 id="output">output<a class="headerlink" href="#output" title="Permanent link">#</a></h3>
 <table>
@@ -12488,8 +12468,8 @@ Expansion parameters are defined for each module of the <code>behavior_path_plan
 <span class="w">      </span><span class="k">const</span><span class="w"> </span><span class="n">uint8</span><span class="w"> </span><span class="n">ENABLE_RIGHT</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">3</span><span class="p">;</span>
 <span class="w">    </span><span class="p">};</span>
 
-<span class="w">    </span><span class="err">@</span><span class="n">verbatim</span><span class="w"> </span><span class="p">(</span><span class="n">language</span><span class="o">=</span><span class="s">&quot;comment&quot;</span><span class="p">,</span><span class="w"> </span><span class="n">text</span><span class="o">=</span>
-<span class="w">    </span><span class="s">&quot; Command for controlling turn indicators.&quot;</span><span class="p">)</span>
+<span class="w">    </span><span class="err">@</span><span class="n">verbatim</span><span class="w"> </span><span class="p">(</span><span class="n">language</span><span class="o">=</span><span class="s">"comment"</span><span class="p">,</span><span class="w"> </span><span class="n">text</span><span class="o">=</span>
+<span class="w">    </span><span class="s">" Command for controlling turn indicators."</span><span class="p">)</span>
 
 <span class="w">    </span><span class="k">struct</span><span class="w"> </span><span class="nc">TurnIndicatorsCommand</span><span class="w"> </span><span class="p">{</span>
 <span class="w">      </span><span class="n">builtin_interfaces</span><span class="o">::</span><span class="n">msg</span><span class="o">::</span><span class="n">Time</span><span class="w"> </span><span class="n">stamp</span><span class="p">;</span>
@@ -12521,7 +12501,7 @@ Expansion parameters are defined for each module of the <code>behavior_path_plan
 <p>Click <a href="docs/behavior_path_planner_path_generation_design/">here</a> for details.</p>
 <h3 id="smooth-goal-connection">Smooth goal connection<a class="headerlink" href="#smooth-goal-connection" title="Permanent link">#</a></h3>
 <p>If the target path contains a goal, modify the points of the path so that the path and the goal are connected smoothly. This process will change the shape of the path by the distance of <code>refine_goal_search_radius_range</code> from the goal. Note that this logic depends on the interpolation algorithm that will be executed in a later module (at the moment it uses spline interpolation), so it needs to be updated in the future.</p>
-<p><img alt="path_goal_refinement" src="image/path_goal_refinement.drawio.svg" /></p>
+<p><img alt="path_goal_refinement" src="image/path_goal_refinement.drawio.svg"></p>
 <h2 id="references-external-links">References / External links<a class="headerlink" href="#references-external-links" title="Permanent link">#</a></h2>
 <p>This module depends on the external <a href="https://github.com/BehaviorTree/BehaviorTree.CPP">BehaviorTreeCpp</a> library.</p>
 <!-- cspell:ignore Vorobieva, Minoiu, Enache, Mammar, IFAC -->
@@ -12530,7 +12510,7 @@ Expansion parameters are defined for each module of the <code>behavior_path_plan
 <h2 id="future-extensions-unimplemented-parts">Future extensions / Unimplemented parts<a class="headerlink" href="#future-extensions-unimplemented-parts" title="Permanent link">#</a></h2>
 <p>-</p>
 <h2 id="related-issues">Related issues<a class="headerlink" href="#related-issues" title="Permanent link">#</a></h2>
-<p>-</p>
+<p>-</p></div>
 
 
 
@@ -12595,7 +12575,7 @@ Expansion parameters are defined for each module of the <code>behavior_path_plan
       <div class="md-copyright">
   
     <div class="md-copyright__highlight">
-      Copyright &copy; 2022 The Autoware Foundation
+      Copyright &copy; 2023 The Autoware Foundation
     </div>
   
   

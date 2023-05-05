@@ -7638,7 +7638,7 @@
   
     <li class="md-nav__item">
       <a href="../../planning/behavior_path_planner/docs/behavior_path_planner_interface_design/" class="md-nav__link">
-        Behavior path planner interface design
+        Interface design
       </a>
     </li>
   
@@ -12098,26 +12098,6 @@
     API
   </a>
   
-    <nav class="md-nav" aria-label="API">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#version-checking" class="md-nav__link">
-    Version checking
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#models" class="md-nav__link">
-    Models
-  </a>
-  
-</li>
-        
-      </ul>
-    </nav>
-  
 </li>
         
           <li class="md-nav__item">
@@ -12131,26 +12111,6 @@
   <a href="#neural-networks-provider" class="md-nav__link">
     Neural Networks Provider
   </a>
-  
-    <nav class="md-nav" aria-label="Neural Networks Provider">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#assumptions-known-limits" class="md-nav__link">
-    Assumptions / Known limits
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#inputs-outputs" class="md-nav__link">
-    Inputs / Outputs
-  </a>
-  
-</li>
-        
-      </ul>
-    </nav>
   
 </li>
         
@@ -12218,7 +12178,7 @@
   
 
 
-<h1 id="tvm-utility">TVM Utility<a class="headerlink" href="#tvm-utility" title="Permanent link">#</a></h1>
+<div><h1 id="tvm-utility">TVM Utility<a class="headerlink" href="#tvm-utility" title="Permanent link">#</a></h1>
 <p>This is the design document for the <code>tvm_utility</code> package. For instructions on how to build the tests for YOLOv2 Tiny,
 see the <a href="tvm-utility-yolo-v2-tiny-tests/">YOLOv2 Tiny Example Pipeline</a>.
 For information about where to store test artifacts see the <a href="artifacts/">TVM Utility Artifacts</a>.</p>
@@ -12235,7 +12195,7 @@ usage in the example pipeline at <code>test/yolo_v2_tiny</code>.</p>
 <p>Each stage in the pipeline has a <code>schedule</code> function which takes input data as a parameter and return the output data.
 Once the pipeline object is created, <code>pipeline.schedule</code> is called to run the pipeline.</p>
 <div class="highlight"><pre><span></span><code>int main() {
-   create_subscription&lt;sensor_msgs::msg::PointCloud2&gt;(&quot;points_raw&quot;,
+   create_subscription&lt;sensor_msgs::msg::PointCloud2&gt;("points_raw",
    rclcpp::QoS{1}, [this](const sensor_msgs::msg::PointCloud2::SharedPtr msg)
    {pipeline.schedule(msg);});
 }
@@ -12330,7 +12290,7 @@ The user is in charge of securing the files they provide with regard to informat
 <h2 id="future-extensions-unimplemented-parts">Future extensions / Unimplemented parts<a class="headerlink" href="#future-extensions-unimplemented-parts" title="Permanent link">#</a></h2>
 <p>Future packages will use tvm_utility as part of the perception stack to run machine learning workloads.</p>
 <h2 id="related-issues">Related issues<a class="headerlink" href="#related-issues" title="Permanent link">#</a></h2>
-<p><a href="https://github.com/autowarefoundation/autoware/discussions/2557">https://github.com/autowarefoundation/autoware/discussions/2557</a></p>
+<p><a href="https://github.com/autowarefoundation/autoware/discussions/2557">https://github.com/autowarefoundation/autoware/discussions/2557</a></p></div>
 
 
 
@@ -12395,7 +12355,7 @@ The user is in charge of securing the files they provide with regard to informat
       <div class="md-copyright">
   
     <div class="md-copyright__highlight">
-      Copyright &copy; 2022 The Autoware Foundation
+      Copyright &copy; 2023 The Autoware Foundation
     </div>
   
   

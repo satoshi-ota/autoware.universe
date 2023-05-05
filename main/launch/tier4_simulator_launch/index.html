@@ -7638,7 +7638,7 @@
   
     <li class="md-nav__item">
       <a href="../../planning/behavior_path_planner/docs/behavior_path_planner_interface_design/" class="md-nav__link">
-        Behavior path planner interface design
+        Interface design
       </a>
     </li>
   
@@ -12117,18 +12117,18 @@
   
 
 
-<h1 id="tier4_simulator_launch">tier4_simulator_launch<a class="headerlink" href="#tier4_simulator_launch" title="Permanent link">#</a></h1>
+<div><h1 id="tier4_simulator_launch">tier4_simulator_launch<a class="headerlink" href="#tier4_simulator_launch" title="Permanent link">#</a></h1>
 <h2 id="structure">Structure<a class="headerlink" href="#structure" title="Permanent link">#</a></h2>
-<p><img alt="tier4_simulator_launch" src="simulator_launch.drawio.svg" /></p>
+<p><img alt="tier4_simulator_launch" src="simulator_launch.drawio.svg"></p>
 <h2 id="package-dependencies">Package Dependencies<a class="headerlink" href="#package-dependencies" title="Permanent link">#</a></h2>
 <p>Please see <code>&lt;exec_depend&gt;</code> in <code>package.xml</code>.</p>
 <h2 id="usage">Usage<a class="headerlink" href="#usage" title="Permanent link">#</a></h2>
-<div class="highlight"><pre><span></span><code><span class="w">  </span><span class="nt">&lt;include</span><span class="w"> </span><span class="na">file=</span><span class="s">&quot;$(find-pkg-share tier4_simulator_launch)/launch/simulator.launch.xml&quot;</span><span class="nt">&gt;</span>
-<span class="w">    </span><span class="nt">&lt;arg</span><span class="w"> </span><span class="na">name=</span><span class="s">&quot;vehicle_info_param_file&quot;</span><span class="w"> </span><span class="na">value=</span><span class="s">&quot;VEHICLE_INFO_PARAM_FILE&quot;</span><span class="w"> </span><span class="nt">/&gt;</span>
-<span class="w">    </span><span class="nt">&lt;arg</span><span class="w"> </span><span class="na">name=</span><span class="s">&quot;vehicle_model&quot;</span><span class="w"> </span><span class="na">value=</span><span class="s">&quot;VEHICLE_MODEL&quot;</span><span class="nt">/&gt;</span>
+<div class="highlight"><pre><span></span><code><span class="w">  </span><span class="nt">&lt;include</span><span class="w"> </span><span class="na">file=</span><span class="s">"$(find-pkg-share tier4_simulator_launch)/launch/simulator.launch.xml"</span><span class="nt">&gt;</span>
+<span class="w">    </span><span class="nt">&lt;arg</span><span class="w"> </span><span class="na">name=</span><span class="s">"vehicle_info_param_file"</span><span class="w"> </span><span class="na">value=</span><span class="s">"VEHICLE_INFO_PARAM_FILE"</span><span class="w"> </span><span class="nt">/&gt;</span>
+<span class="w">    </span><span class="nt">&lt;arg</span><span class="w"> </span><span class="na">name=</span><span class="s">"vehicle_model"</span><span class="w"> </span><span class="na">value=</span><span class="s">"VEHICLE_MODEL"</span><span class="nt">/&gt;</span>
 <span class="w">  </span><span class="nt">&lt;/include&gt;</span>
 </code></pre></div>
-<p>The simulator model used in simple_planning_simulator is loaded from "config/simulator_model.param.yaml" in the "<code>VEHICLE_MODEL</code>_description" package.</p>
+<p>The simulator model used in simple_planning_simulator is loaded from "config/simulator_model.param.yaml" in the "<code>VEHICLE_MODEL</code>_description" package.</p></div>
 
 
 
@@ -12193,7 +12193,7 @@
       <div class="md-copyright">
   
     <div class="md-copyright__highlight">
-      Copyright &copy; 2022 The Autoware Foundation
+      Copyright &copy; 2023 The Autoware Foundation
     </div>
   
   

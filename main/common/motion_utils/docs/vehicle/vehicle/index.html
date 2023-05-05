@@ -1863,80 +1863,12 @@
     vehicle_stop_checker
   </a>
   
-    <nav class="md-nav" aria-label="vehicle_stop_checker">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#subscribed-topics" class="md-nav__link">
-    Subscribed Topics
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#parameters" class="md-nav__link">
-    Parameters
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#member-functions" class="md-nav__link">
-    Member functions
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#example-usage" class="md-nav__link">
-    Example Usage
-  </a>
-  
-</li>
-        
-      </ul>
-    </nav>
-  
 </li>
         
           <li class="md-nav__item">
   <a href="#vehicle_arrival_checker" class="md-nav__link">
     vehicle_arrival_checker
   </a>
-  
-    <nav class="md-nav" aria-label="vehicle_arrival_checker">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#subscribed-topics_1" class="md-nav__link">
-    Subscribed Topics
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#parameters_1" class="md-nav__link">
-    Parameters
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#member-functions_1" class="md-nav__link">
-    Member functions
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#example-usage_1" class="md-nav__link">
-    Example Usage
-  </a>
-  
-</li>
-        
-      </ul>
-    </nav>
   
 </li>
         
@@ -7774,7 +7706,7 @@
   
     <li class="md-nav__item">
       <a href="../../../../../planning/behavior_path_planner/docs/behavior_path_planner_interface_design/" class="md-nav__link">
-        Behavior path planner interface design
+        Interface design
       </a>
     </li>
   
@@ -12227,80 +12159,12 @@
     vehicle_stop_checker
   </a>
   
-    <nav class="md-nav" aria-label="vehicle_stop_checker">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#subscribed-topics" class="md-nav__link">
-    Subscribed Topics
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#parameters" class="md-nav__link">
-    Parameters
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#member-functions" class="md-nav__link">
-    Member functions
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#example-usage" class="md-nav__link">
-    Example Usage
-  </a>
-  
-</li>
-        
-      </ul>
-    </nav>
-  
 </li>
         
           <li class="md-nav__item">
   <a href="#vehicle_arrival_checker" class="md-nav__link">
     vehicle_arrival_checker
   </a>
-  
-    <nav class="md-nav" aria-label="vehicle_arrival_checker">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#subscribed-topics_1" class="md-nav__link">
-    Subscribed Topics
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#parameters_1" class="md-nav__link">
-    Parameters
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#member-functions_1" class="md-nav__link">
-    Member functions
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#example-usage_1" class="md-nav__link">
-    Example Usage
-  </a>
-  
-</li>
-        
-      </ul>
-    </nav>
   
 </li>
         
@@ -12334,7 +12198,7 @@
   
 
 
-<h1 id="vehicle-utils">vehicle utils<a class="headerlink" href="#vehicle-utils" title="Permanent link">#</a></h1>
+<div><h1 id="vehicle-utils">vehicle utils<a class="headerlink" href="#vehicle-utils" title="Permanent link">#</a></h1>
 <p>Vehicle utils provides a convenient library used to check vehicle status.</p>
 <h2 id="feature">Feature<a class="headerlink" href="#feature" title="Permanent link">#</a></h2>
 <p>The library contains following classes.</p>
@@ -12391,7 +12255,7 @@
 <div class="highlight"><pre><span></span><code><span class="k">class</span><span class="w"> </span><span class="nc">SampleNode</span><span class="w"> </span><span class="o">:</span><span class="w"> </span><span class="k">public</span><span class="w"> </span><span class="n">rclcpp</span><span class="o">::</span><span class="n">Node</span>
 <span class="p">{</span>
 <span class="k">public</span><span class="o">:</span>
-<span class="w">  </span><span class="n">SampleNode</span><span class="p">()</span><span class="w"> </span><span class="o">:</span><span class="w"> </span><span class="n">Node</span><span class="p">(</span><span class="s">&quot;sample_node&quot;</span><span class="p">)</span>
+<span class="w">  </span><span class="n">SampleNode</span><span class="p">()</span><span class="w"> </span><span class="o">:</span><span class="w"> </span><span class="n">Node</span><span class="p">(</span><span class="s">"sample_node"</span><span class="p">)</span>
 <span class="w">  </span><span class="p">{</span>
 <span class="w">    </span><span class="n">vehicle_stop_checker_</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">make_unique</span><span class="o">&lt;</span><span class="n">VehicleStopChecker</span><span class="o">&gt;</span><span class="p">(</span><span class="k">this</span><span class="p">);</span>
 <span class="w">  </span><span class="p">}</span>
@@ -12487,7 +12351,7 @@
 <div class="highlight"><pre><span></span><code><span class="k">class</span><span class="w"> </span><span class="nc">SampleNode</span><span class="w"> </span><span class="o">:</span><span class="w"> </span><span class="k">public</span><span class="w"> </span><span class="n">rclcpp</span><span class="o">::</span><span class="n">Node</span>
 <span class="p">{</span>
 <span class="k">public</span><span class="o">:</span>
-<span class="w">  </span><span class="n">SampleNode</span><span class="p">()</span><span class="w"> </span><span class="o">:</span><span class="w"> </span><span class="n">Node</span><span class="p">(</span><span class="s">&quot;sample_node&quot;</span><span class="p">)</span>
+<span class="w">  </span><span class="n">SampleNode</span><span class="p">()</span><span class="w"> </span><span class="o">:</span><span class="w"> </span><span class="n">Node</span><span class="p">(</span><span class="s">"sample_node"</span><span class="p">)</span>
 <span class="w">  </span><span class="p">{</span>
 <span class="w">    </span><span class="n">vehicle_arrival_checker_</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">make_unique</span><span class="o">&lt;</span><span class="n">VehicleArrivalChecker</span><span class="o">&gt;</span><span class="p">(</span><span class="k">this</span><span class="p">);</span>
 <span class="w">  </span><span class="p">}</span>
@@ -12522,7 +12386,7 @@
 <span class="p">}</span>
 </code></pre></div>
 <h2 id="assumptions-known-limits">Assumptions / Known limits<a class="headerlink" href="#assumptions-known-limits" title="Permanent link">#</a></h2>
-<p><code>vehicle_stop_checker</code> and <code>vehicle_arrival_checker</code> cannot check whether the vehicle is stopped more than <code>velocity_buffer_time_sec</code> second.</p>
+<p><code>vehicle_stop_checker</code> and <code>vehicle_arrival_checker</code> cannot check whether the vehicle is stopped more than <code>velocity_buffer_time_sec</code> second.</p></div>
 
 
 
@@ -12587,7 +12451,7 @@
       <div class="md-copyright">
   
     <div class="md-copyright__highlight">
-      Copyright &copy; 2022 The Autoware Foundation
+      Copyright &copy; 2023 The Autoware Foundation
     </div>
   
   

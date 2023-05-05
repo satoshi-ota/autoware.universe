@@ -7638,7 +7638,7 @@
   
     <li class="md-nav__item">
       <a href="../../planning/behavior_path_planner/docs/behavior_path_planner_interface_design/" class="md-nav__link">
-        Behavior path planner interface design
+        Interface design
       </a>
     </li>
   
@@ -12205,7 +12205,7 @@
   
 
 
-<h1 id="heatmap_visualizer">heatmap_visualizer<a class="headerlink" href="#heatmap_visualizer" title="Permanent link">#</a></h1>
+<div><h1 id="heatmap_visualizer">heatmap_visualizer<a class="headerlink" href="#heatmap_visualizer" title="Permanent link">#</a></h1>
 <h2 id="purpose">Purpose<a class="headerlink" href="#purpose" title="Permanent link">#</a></h2>
 <p>heatmap_visualizer is a package for visualizing heatmap of detected 3D objects' positions on the BEV space.</p>
 <p>This package is used for qualitative evaluation and trend analysis of the detector, it means, for instance, the heatmap shows "This detector performs good for near around of our vehicle, but far is bad".</p>
@@ -12214,9 +12214,9 @@
 </code></pre></div>
 <h2 id="inner-workings-algorithms">Inner-workings / Algorithms<a class="headerlink" href="#inner-workings-algorithms" title="Permanent link">#</a></h2>
 <p>In this implementation, create heatmap of the center position of detected objects for each classes, for instance, CAR, PEDESTRIAN, etc, and publish them as occupancy grid maps.</p>
-<p><img alt="heatmap_visualizer_sample" src="image/heatmap_sample.png" /></p>
+<p><img alt="heatmap_visualizer_sample" src="image/heatmap_sample.png"></p>
 <p>In the above figure, the pink represents high detection frequency area and blue one is low, or black represents there is no detection.</p>
-<p><img alt="heatmap_visualizer" src="image/heatmap_visualizer.png" /></p>
+<p><img alt="heatmap_visualizer" src="image/heatmap_visualizer.png"></p>
 <p>As inner-workings, add center positions of detected objects to index of each corresponding grid map cell in a buffer.
 The created heatmap will be published by each specific frame, which can be specified with <code>frame_count</code>. Note that the buffer to be add the positions is not reset per publishing.
 When publishing, firstly these values are normalized to [0, 1] using maximum and minimum values in the buffer. Secondly, they are scaled to integer in [0, 100] because <code>nav_msgs::msg::OccupancyGrid</code> only allow the value in [0, 100].</p>
@@ -12334,7 +12334,7 @@ Example:
 Example:
   Currently, this package can't handle the chattering obstacles well. We plan to add some probabilistic filters in the perception layer to improve it.
   Also, there are some parameters that should be global(e.g. vehicle size, max steering, etc.). These will be refactored and defined as global parameters so that we can share the same parameters between different nodes.
--->
+--></div>
 
 
 
@@ -12399,7 +12399,7 @@ Example:
       <div class="md-copyright">
   
     <div class="md-copyright__highlight">
-      Copyright &copy; 2022 The Autoware Foundation
+      Copyright &copy; 2023 The Autoware Foundation
     </div>
   
   

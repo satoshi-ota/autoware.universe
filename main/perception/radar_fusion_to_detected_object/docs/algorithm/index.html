@@ -7716,7 +7716,7 @@
   
     <li class="md-nav__item">
       <a href="../../../../planning/behavior_path_planner/docs/behavior_path_planner_interface_design/" class="md-nav__link">
-        Behavior path planner interface design
+        Interface design
       </a>
     </li>
   
@@ -12222,15 +12222,15 @@
 
   <h1>Algorithm</h1>
 
-<h2 id="common-algorithm">Common Algorithm<a class="headerlink" href="#common-algorithm" title="Permanent link">#</a></h2>
+<div><h2 id="common-algorithm">Common Algorithm<a class="headerlink" href="#common-algorithm" title="Permanent link">#</a></h2>
 <h3 id="1-link-between-3d-bounding-box-and-radar-data">1. Link between 3d bounding box and radar data<a class="headerlink" href="#1-link-between-3d-bounding-box-and-radar-data" title="Permanent link">#</a></h3>
 <p>Choose radar pointcloud/objects within 3D bounding box from lidar-base detection with margin space from bird's-eye view.</p>
-<p><img alt="choose_radar" src="../radar_fusion_to_detected_object_1.drawio.svg" /></p>
+<p><img alt="choose_radar" src="../radar_fusion_to_detected_object_1.drawio.svg"></p>
 <h3 id="2-feature-support-split-the-object-going-in-a-different-direction">2. [Feature support] Split the object going in a different direction<a class="headerlink" href="#2-feature-support-split-the-object-going-in-a-different-direction" title="Permanent link">#</a></h3>
 <ul>
 <li>Split two object for the low confidence object that can be estimated to derive two object.</li>
 </ul>
-<p><img alt="process_low_confidence" src="../radar_fusion_to_detected_object_4.drawio.svg" /></p>
+<p><img alt="process_low_confidence" src="../radar_fusion_to_detected_object_4.drawio.svg"></p>
 <h3 id="3-estimate-twist-of-object">3. Estimate twist of object<a class="headerlink" href="#3-estimate-twist-of-object" title="Permanent link">#</a></h3>
 <p>Estimate twist from chosen radar pointcloud/objects using twist and target value (Target value is amplitude if using radar pointcloud. Target value is probability if using radar objects).
 First, the estimation function calculate</p>
@@ -12243,17 +12243,17 @@ First, the estimation function calculate</p>
 </ul>
 <p>Second, the estimation function calculate weighted average of these list.
 Third, twist information of estimated twist is attached to an object.</p>
-<p><img alt="estimate_doppler_velocity" src="../radar_fusion_to_detected_object_2.drawio.svg" /></p>
+<p><img alt="estimate_doppler_velocity" src="../radar_fusion_to_detected_object_2.drawio.svg"></p>
 <h3 id="4-feature-support-option-convert-doppler-velocity-to-twist">4. [Feature support] [Option] Convert doppler velocity to twist<a class="headerlink" href="#4-feature-support-option-convert-doppler-velocity-to-twist" title="Permanent link">#</a></h3>
 <p>If the twist information of radars is doppler velocity, convert from doppler velocity to twist using yaw angle of DetectedObject.
 Because radar pointcloud has only doppler velocity information, radar pointcloud fusion should use this feature.
 On the other hand, because radar objects have twist information, radar object fusion should not use this feature.</p>
-<p><img alt="process_high_confidence" src="../radar_fusion_to_detected_object_3.drawio.svg" /></p>
+<p><img alt="process_high_confidence" src="../radar_fusion_to_detected_object_3.drawio.svg"></p>
 <h3 id="5-delete-objects-with-low-probability">5. Delete objects with low probability<a class="headerlink" href="#5-delete-objects-with-low-probability" title="Permanent link">#</a></h3>
 <ul>
 <li>Delete low confidence objects that do not have some radar points/objects.</li>
 </ul>
-<p><img alt="process_low_confidence" src="../radar_fusion_to_detected_object_5.drawio.svg" /></p>
+<p><img alt="process_low_confidence" src="../radar_fusion_to_detected_object_5.drawio.svg"></p></div>
 
 
 
@@ -12318,7 +12318,7 @@ On the other hand, because radar objects have twist information, radar object fu
       <div class="md-copyright">
   
     <div class="md-copyright__highlight">
-      Copyright &copy; 2022 The Autoware Foundation
+      Copyright &copy; 2023 The Autoware Foundation
     </div>
   
   

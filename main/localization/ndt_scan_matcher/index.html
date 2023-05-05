@@ -7638,7 +7638,7 @@
   
     <li class="md-nav__item">
       <a href="../../planning/behavior_path_planner/docs/behavior_path_planner_interface_design/" class="md-nav__link">
-        Behavior path planner interface design
+        Interface design
       </a>
     </li>
   
@@ -12152,33 +12152,6 @@
     Abstract
   </a>
   
-    <nav class="md-nav" aria-label="Abstract">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#where-is-regularization-available" class="md-nav__link">
-    Where is regularization available
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#using-other-base-position" class="md-nav__link">
-    Using other base position
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#limitations" class="md-nav__link">
-    Limitations
-  </a>
-  
-</li>
-        
-      </ul>
-    </nav>
-  
 </li>
         
           <li class="md-nav__item">
@@ -12212,33 +12185,6 @@
   <a href="#additional-interfaces" class="md-nav__link">
     Additional interfaces
   </a>
-  
-    <nav class="md-nav" aria-label="Additional interfaces">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#additional-inputs" class="md-nav__link">
-    Additional inputs
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#additional-outputs" class="md-nav__link">
-    Additional outputs
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#additional-client" class="md-nav__link">
-    Additional client
-  </a>
-  
-</li>
-        
-      </ul>
-    </nav>
   
 </li>
         
@@ -12306,7 +12252,7 @@
   
 
 
-<h1 id="ndt_scan_matcher">ndt_scan_matcher<a class="headerlink" href="#ndt_scan_matcher" title="Permanent link">#</a></h1>
+<div><h1 id="ndt_scan_matcher">ndt_scan_matcher<a class="headerlink" href="#ndt_scan_matcher" title="Permanent link">#</a></h1>
 <h2 id="purpose">Purpose<a class="headerlink" href="#purpose" title="Permanent link">#</a></h2>
 <p>ndt_scan_matcher is a package for position estimation using the NDT scan matching method.</p>
 <p>There are two main functions in this package:</p>
@@ -12634,18 +12580,18 @@ Conversely, if it is too small, the regularization benefit will be lost.</p>
 <li>The left is a map with enough features that NDT can successfully localize.</li>
 <li>The right is a map with so few features that the NDT cannot localize well.</li>
 </ul>
-<p><img src="./media/bridge_map.jpg" alt="drawing" width="300"/> <img src="./media/bridge_map_less_feature.jpg" alt="drawing" width="300"/></p>
+<p><img src="./media/bridge_map.jpg" alt="drawing" width="300"> <img src="./media/bridge_map_less_feature.jpg" alt="drawing" width="300"></p>
 <p>The following figures show the trajectories estimated on the feature-less map with standard NDT and regularization-enabled NDT, respectively.
 The color of the trajectory indicates the error (meter) from the reference trajectory, which is computed with the feature-rich map.</p>
 <ul>
 <li>The left figure shows that the pure NDT causes a longitudinal error in the bridge and is not able to recover.</li>
 <li>The right figure shows that the regularization suppresses the longitudinal error.</li>
 </ul>
-<p><img src="./media/trajectory_without_regularization.png" alt="drawing" width="300"/> <img src="./media/trajectory_with_regularization.png" alt="drawing" width="300"/></p>
+<p><img src="./media/trajectory_without_regularization.png" alt="drawing" width="300"> <img src="./media/trajectory_with_regularization.png" alt="drawing" width="300"></p>
 <h2 id="dynamic-map-loading">Dynamic map loading<a class="headerlink" href="#dynamic-map-loading" title="Permanent link">#</a></h2>
 <p>Autoware supports dynamic map loading feature for <code>ndt_scan_matcher</code>. Using this feature, NDT dynamically requests for the surrounding pointcloud map to <code>pointcloud_map_loader</code>, and then receive and preprocess the map in an online fashion.</p>
 <p>Using the feature, <code>ndt_scan_matcher</code> can theoretically handle any large size maps in terms of memory usage. (Note that it is still possible that there exists a limitation due to other factors, e.g. floating-point error)</p>
-<p><img src="./media/differential_area_loading.gif" alt="drawing" width="400"/></p>
+<p><img src="./media/differential_area_loading.gif" alt="drawing" width="400"></p>
 <h3 id="additional-interfaces">Additional interfaces<a class="headerlink" href="#additional-interfaces" title="Permanent link">#</a></h3>
 <h4 id="additional-inputs">Additional inputs<a class="headerlink" href="#additional-inputs" title="Permanent link">#</a></h4>
 <table>
@@ -12818,7 +12764,7 @@ Follow the next two instructions.</p>
 <td>Z-value margin for removal ground points</td>
 </tr>
 </tbody>
-</table>
+</table></div>
 
 
 
@@ -12883,7 +12829,7 @@ Follow the next two instructions.</p>
       <div class="md-copyright">
   
     <div class="md-copyright__highlight">
-      Copyright &copy; 2022 The Autoware Foundation
+      Copyright &copy; 2023 The Autoware Foundation
     </div>
   
   

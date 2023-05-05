@@ -7638,7 +7638,7 @@
   
     <li class="md-nav__item">
       <a href="../../behavior_path_planner/docs/behavior_path_planner_interface_design/" class="md-nav__link">
-        Behavior path planner interface design
+        Interface design
       </a>
     </li>
   
@@ -8015,19 +8015,6 @@
   <a href="#module-parameters" class="md-nav__link">
     Module Parameters
   </a>
-  
-    <nav class="md-nav" aria-label="Module Parameters">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#speed-calculation" class="md-nav__link">
-    Speed Calculation
-  </a>
-  
-</li>
-        
-      </ul>
-    </nav>
   
 </li>
         
@@ -12194,19 +12181,6 @@
     Module Parameters
   </a>
   
-    <nav class="md-nav" aria-label="Module Parameters">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#speed-calculation" class="md-nav__link">
-    Speed Calculation
-  </a>
-  
-</li>
-        
-      </ul>
-    </nav>
-  
 </li>
         
           <li class="md-nav__item">
@@ -12248,11 +12222,11 @@
 
   <h1>Speed bump design</h1>
 
-<h2 id="speed-bump">Speed Bump<a class="headerlink" href="#speed-bump" title="Permanent link">#</a></h2>
+<div><h2 id="speed-bump">Speed Bump<a class="headerlink" href="#speed-bump" title="Permanent link">#</a></h2>
 <h3 id="role">Role<a class="headerlink" href="#role" title="Permanent link">#</a></h3>
 <p>This module plans the velocity of the related part of the path in case there is speed bump
 regulatory element referring to it.</p>
-<p><img alt="speed_bump_design.svg" src="../docs/speed_bump/speed_bump_design.svg" /></p>
+<p><img alt="speed_bump_design.svg" src="../docs/speed_bump/speed_bump_design.svg"></p>
 <h3 id="activation-timing">Activation Timing<a class="headerlink" href="#activation-timing" title="Permanent link">#</a></h3>
 <p>The manager launch speed bump scene module when there is speed bump regulatory element referring to
 the reference path.</p>
@@ -12324,7 +12298,7 @@ the reference path.</p>
 <li>Calculate <code>slow_down_speed</code> wrt to <code>speed_bump_height</code> specified in regulatory element or
   read <code>slow_down_speed</code> tag from speed bump annotation if available</li>
 </ul>
-<p><img alt="speed_bump_vel_calc" src="../docs/speed_bump/speed_bump_vel_calc.png" /></p>
+<p><img alt="speed_bump_vel_calc" src="../docs/speed_bump/speed_bump_vel_calc.png"></p>
 <p><strong>Note:</strong> If in speed bump annotation <code>slow_down_speed</code> tag is used then calculating the speed wrt
 the speed bump height will be ignored. In such case, specified <code>slow_down_speed</code> value in <strong>[kph]</strong>
 is being used.</p>
@@ -12335,7 +12309,7 @@ is being used.</p>
 <li>If <code>slow_start_point</code> or <code>slow_end_point</code> can not be inserted with given/calculated offset values
   check if any path point can be virtually assigned as <code>slow_start_point</code> or <code>slow_end_point</code></li>
 </ul>
-<p><img alt="speed_bump_scenarios.svg" src="../docs/speed_bump/speed_bump_scenarios.svg" /></p>
+<p><img alt="speed_bump_scenarios.svg" src="../docs/speed_bump/speed_bump_scenarios.svg"></p>
 <ul>
 <li>Assign <code>slow_down_speed</code> to the path points between <code>slow_start_point</code> or <code>slow_end_point</code></li>
 </ul>
@@ -12346,7 +12320,7 @@ is being used.</p>
   with it. Although the velocity calculation is based on just the height of the bump in the recent
   implementation, applying this method is intended in the future which will yield more realistic
   results.</li>
-</ul>
+</ul></div>
 
 
 
@@ -12411,7 +12385,7 @@ is being used.</p>
       <div class="md-copyright">
   
     <div class="md-copyright__highlight">
-      Copyright &copy; 2022 The Autoware Foundation
+      Copyright &copy; 2023 The Autoware Foundation
     </div>
   
   

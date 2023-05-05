@@ -7638,7 +7638,7 @@
   
     <li class="md-nav__item">
       <a href="../../planning/behavior_path_planner/docs/behavior_path_planner_interface_design/" class="md-nav__link">
-        Behavior path planner interface design
+        Interface design
       </a>
     </li>
   
@@ -12124,17 +12124,17 @@
   
 
 
-<h1 id="tier4_autoware_api_launch">tier4_autoware_api_launch<a class="headerlink" href="#tier4_autoware_api_launch" title="Permanent link">#</a></h1>
+<div><h1 id="tier4_autoware_api_launch">tier4_autoware_api_launch<a class="headerlink" href="#tier4_autoware_api_launch" title="Permanent link">#</a></h1>
 <h2 id="description">Description<a class="headerlink" href="#description" title="Permanent link">#</a></h2>
 <p>This package contains launch files that run nodes to convert Autoware internal topics into consistent API used by external software (e.g., fleet management system, simulator).</p>
 <h2 id="package-dependencies">Package Dependencies<a class="headerlink" href="#package-dependencies" title="Permanent link">#</a></h2>
 <p>Please see <code>&lt;exec_depend&gt;</code> in <code>package.xml</code>.</p>
 <h2 id="usage">Usage<a class="headerlink" href="#usage" title="Permanent link">#</a></h2>
 <p>You can include as follows in <code>*.launch.xml</code> to use <code>autoware_api.launch.xml</code>.</p>
-<div class="highlight"><pre><span></span><code><span class="w">  </span><span class="nt">&lt;include</span><span class="w"> </span><span class="na">file=</span><span class="s">&quot;$(find-pkg-share tier4_autoware_api_launch)/launch/autoware_api.launch.xml&quot;</span><span class="nt">/&gt;</span>
+<div class="highlight"><pre><span></span><code><span class="w">  </span><span class="nt">&lt;include</span><span class="w"> </span><span class="na">file=</span><span class="s">"$(find-pkg-share tier4_autoware_api_launch)/launch/autoware_api.launch.xml"</span><span class="nt">/&gt;</span>
 </code></pre></div>
 <h2 id="notes">Notes<a class="headerlink" href="#notes" title="Permanent link">#</a></h2>
-<p>For reducing processing load, we use the <a href="https://docs.ros.org/en/galactic/Concepts/About-Composition.html">Component</a> feature in ROS 2 (similar to Nodelet in ROS 1 )</p>
+<p>For reducing processing load, we use the <a href="https://docs.ros.org/en/galactic/Concepts/About-Composition.html">Component</a> feature in ROS 2 (similar to Nodelet in ROS 1 )</p></div>
 
 
 
@@ -12199,7 +12199,7 @@
       <div class="md-copyright">
   
     <div class="md-copyright__highlight">
-      Copyright &copy; 2022 The Autoware Foundation
+      Copyright &copy; 2023 The Autoware Foundation
     </div>
   
   

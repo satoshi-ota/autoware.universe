@@ -7734,7 +7734,7 @@
   
     <li class="md-nav__item">
       <a href="../../../../planning/behavior_path_planner/docs/behavior_path_planner_interface_design/" class="md-nav__link">
-        Behavior path planner interface design
+        Interface design
       </a>
     </li>
   
@@ -12254,7 +12254,7 @@
   
 
 
-<h1 id="spatial-hash">Spatial Hash<a class="headerlink" href="#spatial-hash" title="Permanent link">#</a></h1>
+<div><h1 id="spatial-hash">Spatial Hash<a class="headerlink" href="#spatial-hash" title="Permanent link">#</a></h1>
 <p>The spatial hash is a data structure designed for efficient fixed-radius near-neighbor queries in
 low dimensions.</p>
 <p>The fixed-radius near-neighbors problem is defined as follows:</p>
@@ -12314,17 +12314,17 @@ example, but in practice <code>O(k)</code>.</p>
 <h2 id="states">States<a class="headerlink" href="#states" title="Permanent link">#</a></h2>
 <p>The spatial hash's state is dictated by the status of the underlying unordered_multimap.</p>
 <p>The data structure is wholly configured by a
-<a href="@ref autoware::common::geometry::spatial_hash::Config">config</a> class. The constructor
+<a href="@ref%20autoware::common::geometry::spatial_hash::Config">config</a> class. The constructor
 of the class determines in the data structure accepts strictly 2D or strictly 3D queries.</p>
 <h2 id="inputs">Inputs<a class="headerlink" href="#inputs" title="Permanent link">#</a></h2>
 <p>The primary method of introducing data into the data structure is via the
-<a href="@ref autoware::common::geometry::spatial_hash::SpatialHashBase::insert">insert</a> method.</p>
+<a href="@ref%20autoware::common::geometry::spatial_hash::SpatialHashBase::insert">insert</a> method.</p>
 <h2 id="outputs">Outputs<a class="headerlink" href="#outputs" title="Permanent link">#</a></h2>
 <p>The primary method of retrieving data from the data structure is via the
-<a href="@ref autoware::common::geometry::spatial_hash::SpatialHash&lt;PointT, Config2d&gt;::near">near</a><span class="arithmatex"><span class="MathJax_Preview">2D
+<a href="@ref%20autoware::common::geometry::spatial_hash::SpatialHash&lt;PointT,%20Config2d&gt;::near">near</a><span class="arithmatex"><span class="MathJax_Preview">2D
 configuration</span><script type="math/tex">2D
 configuration</script></span>
-or <a href="@ref autoware::common::geometry::spatial_hash::SpatialHash&lt;PointT, Config3d&gt;::near">near</a>
+or <a href="@ref%20autoware::common::geometry::spatial_hash::SpatialHash&lt;PointT,%20Config3d&gt;::near">near</a>
 <span class="arithmatex"><span class="MathJax_Preview">3D configuration</span><script type="math/tex">3D configuration</script></span> method.</p>
 <p>The whole data structure can also be traversed using standard constant iterators.</p>
 <h2 id="future-work">Future Work<a class="headerlink" href="#future-work" title="Permanent link">#</a></h2>
@@ -12336,7 +12336,7 @@ or <a href="@ref autoware::common::geometry::spatial_hash::SpatialHash&lt;PointT
 <li>
 <h1 id="28-port-to-autowareauto">28: Port to autoware.Auto<a class="headerlink" href="#28-port-to-autowareauto" title="Permanent link">#</a></h1>
 </li>
-</ul>
+</ul></div>
 
 
 
@@ -12401,7 +12401,7 @@ or <a href="@ref autoware::common::geometry::spatial_hash::SpatialHash&lt;PointT
       <div class="md-copyright">
   
     <div class="md-copyright__highlight">
-      Copyright &copy; 2022 The Autoware Foundation
+      Copyright &copy; 2023 The Autoware Foundation
     </div>
   
   

@@ -7638,7 +7638,7 @@
   
     <li class="md-nav__item">
       <a href="../../planning/behavior_path_planner/docs/behavior_path_planner_interface_design/" class="md-nav__link">
-        Behavior path planner interface design
+        Interface design
       </a>
     </li>
   
@@ -12199,16 +12199,16 @@
   
 
 
-<h1 id="detection_by_tracker">detection_by_tracker<a class="headerlink" href="#detection_by_tracker" title="Permanent link">#</a></h1>
+<div><h1 id="detection_by_tracker">detection_by_tracker<a class="headerlink" href="#detection_by_tracker" title="Permanent link">#</a></h1>
 <h2 id="purpose">Purpose<a class="headerlink" href="#purpose" title="Permanent link">#</a></h2>
 <p>This package feeds back the tracked objects to the detection module to keep it stable and keep detecting objects.
-<img alt="purpose" src="image/purpose.svg" /></p>
+<img alt="purpose" src="image/purpose.svg"></p>
 <p>The detection by tracker takes as input an unknown object containing a cluster of points and a tracker.
 The unknown object is optimized to fit the size of the tracker so that it can continue to be detected.</p>
 <h2 id="inner-workings-algorithms">Inner-workings / Algorithms<a class="headerlink" href="#inner-workings-algorithms" title="Permanent link">#</a></h2>
 <p>The detection by tracker receives an unknown object containing a point cloud and a tracker, where the unknown object is mainly shape-fitted using euclidean clustering.
 Shape fitting using euclidean clustering and other methods has a problem called under segmentation and over segmentation.</p>
-<p><a href="https://www.researchgate.net/figure/Examples-of-an-undersegmentation-error-top-and-an-oversegmentation-error-bottom-Each_fig1_304533062"><img alt="segmentation_fail" src="image/segmentation_fail.png" /></a>
+<p><a href="https://www.researchgate.net/figure/Examples-of-an-undersegmentation-error-top-and-an-oversegmentation-error-bottom-Each_fig1_304533062"><img alt="segmentation_fail" src="image/segmentation_fail.png"></a>
 <em>Adapted from [3]</em></p>
 <p>Simply looking at the overlap between the unknown object and the tracker does not work. We need to take measures for under segmentation and over segmentation.</p>
 <h3 id="policy-for-dealing-with-over-segmentation">Policy for dealing with over segmentation<a class="headerlink" href="#policy-for-dealing-with-over-segmentation" title="Permanent link">#</a></h3>
@@ -12270,7 +12270,7 @@ Shape fitting using euclidean clustering and other methods has a problem called 
 <p>[1] M. Himmelsbach, et al. "Tracking and classification of arbitrary objects with bottom-up/top-down detection." (2012).</p>
 <p>[2] Arya Senna Abdul Rachman, Arya. "3D-LIDAR Multi Object Tracking for Autonomous Driving: Multi-target Detection and Tracking under Urban Road Uncertainties." (2017).</p>
 <p>[3] David Held, et al. "A Probabilistic Framework for Real-time 3D Segmentation using Spatial, Temporal, and Semantic Cues." (2016).</p>
-<h2 id="optional-future-extensions-unimplemented-parts">(Optional) Future extensions / Unimplemented parts<a class="headerlink" href="#optional-future-extensions-unimplemented-parts" title="Permanent link">#</a></h2>
+<h2 id="optional-future-extensions-unimplemented-parts">(Optional) Future extensions / Unimplemented parts<a class="headerlink" href="#optional-future-extensions-unimplemented-parts" title="Permanent link">#</a></h2></div>
 
 
 
@@ -12335,7 +12335,7 @@ Shape fitting using euclidean clustering and other methods has a problem called 
       <div class="md-copyright">
   
     <div class="md-copyright__highlight">
-      Copyright &copy; 2022 The Autoware Foundation
+      Copyright &copy; 2023 The Autoware Foundation
     </div>
   
   

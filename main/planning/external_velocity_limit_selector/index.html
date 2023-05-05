@@ -7638,7 +7638,7 @@
   
     <li class="md-nav__item">
       <a href="../behavior_path_planner/docs/behavior_path_planner_interface_design/" class="md-nav__link">
-        Behavior path planner interface design
+        Interface design
       </a>
     </li>
   
@@ -12166,7 +12166,7 @@
   
 
 
-<h1 id="external-velocity-limit-selector">External Velocity Limit Selector<a class="headerlink" href="#external-velocity-limit-selector" title="Permanent link">#</a></h1>
+<div><h1 id="external-velocity-limit-selector">External Velocity Limit Selector<a class="headerlink" href="#external-velocity-limit-selector" title="Permanent link">#</a></h1>
 <h2 id="purpose">Purpose<a class="headerlink" href="#purpose" title="Permanent link">#</a></h2>
 <p>The <code>external_velocity_limit_selector_node</code> is a node that keeps consistency of external velocity limits. This module subscribes</p>
 <ol>
@@ -12174,7 +12174,7 @@
 <li>velocity limit command sent by <strong>Autoware internal modules</strong>.</li>
 </ol>
 <p>VelocityLimit.msg contains not only <strong>max velocity</strong> but also information about the <strong>acceleration/jerk constraints</strong> on deceleration. The <code>external_velocity_limit_selector_node</code> integrates the lowest velocity limit and the highest jerk constraint to calculate the <strong>hardest velocity limit</strong> that protects all the deceleration points and max velocities sent by API and Autoware internal modules.</p>
-<p><img alt="selector algorithm" src="image/external_velocity_limit_selector.png" /></p>
+<p><img alt="selector algorithm" src="image/external_velocity_limit_selector.png"></p>
 <h2 id="inner-workings-algorithms">Inner-workings / Algorithms<a class="headerlink" href="#inner-workings-algorithms" title="Permanent link">#</a></h2>
 <p>WIP</p>
 <!-- Write how this package works. Flowcharts and figures are great. Add sub-sections as you like.
@@ -12340,7 +12340,7 @@ Example:
 Example:
   Currently, this package can't handle the chattering obstacles well. We plan to add some probabilistic filters in the perception layer to improve it.
   Also, there are some parameters that should be global(e.g. vehicle size, max steering, etc.). These will be refactored and defined as global parameters so that we can share the same parameters between different nodes.
--->
+--></div>
 
 
 
@@ -12405,7 +12405,7 @@ Example:
       <div class="md-copyright">
   
     <div class="md-copyright__highlight">
-      Copyright &copy; 2022 The Autoware Foundation
+      Copyright &copy; 2023 The Autoware Foundation
     </div>
   
   

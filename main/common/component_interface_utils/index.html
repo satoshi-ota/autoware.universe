@@ -7638,7 +7638,7 @@
   
     <li class="md-nav__item">
       <a href="../../planning/behavior_path_planner/docs/behavior_path_planner_interface_design/" class="md-nav__link">
-        Behavior path planner interface design
+        Interface design
       </a>
     </li>
   
@@ -12138,7 +12138,7 @@
   
 
 
-<h1 id="component_interface_utils">component_interface_utils<a class="headerlink" href="#component_interface_utils" title="Permanent link">#</a></h1>
+<div><h1 id="component_interface_utils">component_interface_utils<a class="headerlink" href="#component_interface_utils" title="Permanent link">#</a></h1>
 <h2 id="features">Features<a class="headerlink" href="#features" title="Permanent link">#</a></h2>
 <p>This is a utility package that provides the following features:</p>
 <ul>
@@ -12156,13 +12156,13 @@ Do not inherit the class of rclcpp, and forward or wrap the member function that
 <div class="highlight"><pre><span></span><code><span class="k">struct</span><span class="w"> </span><span class="nc">SampleService</span>
 <span class="p">{</span>
 <span class="w">  </span><span class="k">using</span><span class="w"> </span><span class="n">Service</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">sample_msgs</span><span class="o">::</span><span class="n">srv</span><span class="o">::</span><span class="n">ServiceType</span><span class="p">;</span>
-<span class="w">  </span><span class="k">static</span><span class="w"> </span><span class="k">constexpr</span><span class="w"> </span><span class="kt">char</span><span class="w"> </span><span class="n">name</span><span class="p">[]</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">&quot;/sample/service&quot;</span><span class="p">;</span>
+<span class="w">  </span><span class="k">static</span><span class="w"> </span><span class="k">constexpr</span><span class="w"> </span><span class="kt">char</span><span class="w"> </span><span class="n">name</span><span class="p">[]</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">"/sample/service"</span><span class="p">;</span>
 <span class="p">};</span>
 
 <span class="k">struct</span><span class="w"> </span><span class="nc">SampleMessage</span>
 <span class="p">{</span>
 <span class="w">  </span><span class="k">using</span><span class="w"> </span><span class="n">Message</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">sample_msgs</span><span class="o">::</span><span class="n">msg</span><span class="o">::</span><span class="n">MessageType</span><span class="p">;</span>
-<span class="w">  </span><span class="k">static</span><span class="w"> </span><span class="k">constexpr</span><span class="w"> </span><span class="kt">char</span><span class="w"> </span><span class="n">name</span><span class="p">[]</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">&quot;/sample/message&quot;</span><span class="p">;</span>
+<span class="w">  </span><span class="k">static</span><span class="w"> </span><span class="k">constexpr</span><span class="w"> </span><span class="kt">char</span><span class="w"> </span><span class="n">name</span><span class="p">[]</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">"/sample/message"</span><span class="p">;</span>
 <span class="w">  </span><span class="k">static</span><span class="w"> </span><span class="k">constexpr</span><span class="w"> </span><span class="kt">size_t</span><span class="w"> </span><span class="n">depth</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">3</span><span class="p">;</span>
 <span class="w">  </span><span class="k">static</span><span class="w"> </span><span class="k">constexpr</span><span class="w"> </span><span class="k">auto</span><span class="w"> </span><span class="n">reliability</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">RMW_QOS_POLICY_RELIABILITY_RELIABLE</span><span class="p">;</span>
 <span class="w">  </span><span class="k">static</span><span class="w"> </span><span class="k">constexpr</span><span class="w"> </span><span class="k">auto</span><span class="w"> </span><span class="n">durability</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">RMW_QOS_POLICY_DURABILITY_TRANSIENT_LOCAL</span><span class="p">;</span>
@@ -12195,7 +12195,7 @@ This is useful when returning an error from a function called from the service c
 
 <span class="kt">void</span><span class="w"> </span><span class="nf">function</span><span class="p">()</span>
 <span class="p">{</span>
-<span class="w">   </span><span class="k">throw</span><span class="w"> </span><span class="n">ServiceException</span><span class="p">(</span><span class="n">ERROR_CODE</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;message&quot;</span><span class="p">);</span>
+<span class="w">   </span><span class="k">throw</span><span class="w"> </span><span class="n">ServiceException</span><span class="p">(</span><span class="n">ERROR_CODE</span><span class="p">,</span><span class="w"> </span><span class="s">"message"</span><span class="p">);</span>
 <span class="p">}</span>
 </code></pre></div>
 <p>If the wrapper class is not used or the service response has no status, manually catch the <code>ServiceException</code> as follows.</p>
@@ -12215,7 +12215,7 @@ This is useful when returning an error from a function called from the service c
 <span class="n">service_callback_group_</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">create_callback_group</span><span class="p">(</span><span class="n">rclcpp</span><span class="o">::</span><span class="n">CallbackGroupType</span><span class="o">::</span><span class="n">MutuallyExclusive</span><span class="p">);</span>
 <span class="n">node</span><span class="p">.</span><span class="n">relay_message</span><span class="p">(</span><span class="n">pub_</span><span class="p">,</span><span class="w"> </span><span class="n">sub_</span><span class="p">);</span>
 <span class="n">node</span><span class="p">.</span><span class="n">relay_service</span><span class="p">(</span><span class="n">cli_</span><span class="p">,</span><span class="w"> </span><span class="n">srv_</span><span class="p">,</span><span class="w"> </span><span class="n">service_callback_group_</span><span class="p">);</span><span class="w">  </span><span class="c1">// group is for avoiding deadlocks</span>
-</code></pre></div>
+</code></pre></div></div>
 
 
 
@@ -12280,7 +12280,7 @@ This is useful when returning an error from a function called from the service c
       <div class="md-copyright">
   
     <div class="md-copyright__highlight">
-      Copyright &copy; 2022 The Autoware Foundation
+      Copyright &copy; 2023 The Autoware Foundation
     </div>
   
   

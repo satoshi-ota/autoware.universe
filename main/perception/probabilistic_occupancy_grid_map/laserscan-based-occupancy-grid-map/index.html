@@ -7761,7 +7761,7 @@
   
     <li class="md-nav__item">
       <a href="../../../planning/behavior_path_planner/docs/behavior_path_planner_interface_design/" class="md-nav__link">
-        Behavior path planner interface design
+        Interface design
       </a>
     </li>
   
@@ -12308,17 +12308,17 @@
   
 
 
-<h1 id="laserscan-based-occupancy-grid-map">laserscan based occupancy grid map<a class="headerlink" href="#laserscan-based-occupancy-grid-map" title="Permanent link">#</a></h1>
-<p><img alt="laserscan_based_occupancy_grid_map_sample_image" src="../image/laserscan_based_occupancy_grid_map_sample_image.png" /></p>
+<div><h1 id="laserscan-based-occupancy-grid-map">laserscan based occupancy grid map<a class="headerlink" href="#laserscan-based-occupancy-grid-map" title="Permanent link">#</a></h1>
+<p><img alt="laserscan_based_occupancy_grid_map_sample_image" src="../image/laserscan_based_occupancy_grid_map_sample_image.png"></p>
 <h2 id="inner-workings-algorithms">Inner-workings / Algorithms<a class="headerlink" href="#inner-workings-algorithms" title="Permanent link">#</a></h2>
 <p>The basic idea is to take a 2D laserscan and ray trace it to create a time-series processed occupancy grid map.</p>
 <ol>
 <li>the node take a laserscan and make an occupancy grid map with one frame. ray trace is done by Bresenham's line algorithm.
-   <img alt="Bresenham's line algorithm" src="../image/bresenham.svg" /></li>
+   <img alt="Bresenham's line algorithm" src="../image/bresenham.svg"></li>
 <li>
 <p>Optionally, obstacle point clouds and raw point clouds can be received and reflected in the occupancy grid map. The reason is that laserscan only uses the most foreground point in the polar coordinate system, so it throws away a lot of information. As a result, the occupancy grid map is almost an UNKNOWN cell.
    Therefore, the obstacle point cloud and the raw point cloud are used to reflect what is judged to be the ground and what is judged to be an obstacle in the occupancy grid map.
-   <img alt="Bresenham's line algorithm" src="../image/update_with_pointcloud.svg" />
+   <img alt="Bresenham's line algorithm" src="../image/update_with_pointcloud.svg">
    The black and red dots represent raw point clouds, and the red dots represent obstacle point clouds. In other words, the black points are determined as the ground, and the red point cloud is the points determined as obstacles. The gray cells are represented as UNKNOWN cells.</p>
 </li>
 <li>
@@ -12441,7 +12441,7 @@
 <ul>
 <li>The update probability of the binary Bayesian filter is currently hard-coded and requires a code change to be modified.</li>
 <li>Since there is no special support for moving objects, the probability of existence is not increased for fast objects.</li>
-</ul>
+</ul></div>
 
 
 
@@ -12506,7 +12506,7 @@
       <div class="md-copyright">
   
     <div class="md-copyright__highlight">
-      Copyright &copy; 2022 The Autoware Foundation
+      Copyright &copy; 2023 The Autoware Foundation
     </div>
   
   

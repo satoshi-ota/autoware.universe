@@ -7768,7 +7768,7 @@
   
     <li class="md-nav__item">
       <a href="../../../../planning/behavior_path_planner/docs/behavior_path_planner_interface_design/" class="md-nav__link">
-        Behavior path planner interface design
+        Interface design
       </a>
     </li>
   
@@ -12322,12 +12322,12 @@
   
 
 
-<h1 id="pointpainting_fusion">pointpainting_fusion<a class="headerlink" href="#pointpainting_fusion" title="Permanent link">#</a></h1>
+<div><h1 id="pointpainting_fusion">pointpainting_fusion<a class="headerlink" href="#pointpainting_fusion" title="Permanent link">#</a></h1>
 <h2 id="purpose">Purpose<a class="headerlink" href="#purpose" title="Permanent link">#</a></h2>
 <p>The <code>pointpainting_fusion</code> is a package for utilizing the class information detected by a 2D object detection in 3D object detection.</p>
 <h2 id="inner-workings-algorithms">Inner-workings / Algorithms<a class="headerlink" href="#inner-workings-algorithms" title="Permanent link">#</a></h2>
 <p>The lidar points are projected onto the output of an image-only 2d object detection network and the class scores are appended to each point. The painted point cloud can then be fed to the centerpoint network.</p>
-<p><img alt="pointpainting_fusion_image" src="../images/pointpainting_fusion.jpg" /></p>
+<p><img alt="pointpainting_fusion_image" src="../images/pointpainting_fusion.jpg"></p>
 <h2 id="inputs-outputs">Inputs / Outputs<a class="headerlink" href="#inputs-outputs" title="Permanent link">#</a></h2>
 <h3 id="input">Input<a class="headerlink" href="#input" title="Permanent link">#</a></h3>
 <table>
@@ -12488,7 +12488,7 @@ Ding, Zhuangzhuang, et al. "1st Place Solution for Waymo Open Dataset Challenge-
 Example:
   Currently, this package can't handle the chattering obstacles well. We plan to add some probabilistic filters in the perception layer to improve it.
   Also, there are some parameters that should be global(e.g. vehicle size, max steering, etc.). These will be refactored and defined as global parameters so that we can share the same parameters between different nodes.
--->
+--></div>
 
 
 
@@ -12553,7 +12553,7 @@ Example:
       <div class="md-copyright">
   
     <div class="md-copyright__highlight">
-      Copyright &copy; 2022 The Autoware Foundation
+      Copyright &copy; 2023 The Autoware Foundation
     </div>
   
   

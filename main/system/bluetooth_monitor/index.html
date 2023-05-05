@@ -7638,7 +7638,7 @@
   
     <li class="md-nav__item">
       <a href="../../planning/behavior_path_planner/docs/behavior_path_planner_interface_design/" class="md-nav__link">
-        Behavior path planner interface design
+        Interface design
       </a>
     </li>
   
@@ -12151,7 +12151,7 @@
   
 
 
-<h1 id="bluetooth_monitor">bluetooth_monitor<a class="headerlink" href="#bluetooth_monitor" title="Permanent link">#</a></h1>
+<div><h1 id="bluetooth_monitor">bluetooth_monitor<a class="headerlink" href="#bluetooth_monitor" title="Permanent link">#</a></h1>
 <h2 id="description">Description<a class="headerlink" href="#description" title="Permanent link">#</a></h2>
 <p>This node monitors a Bluetooth connection to a wireless device by using L2ping.<br>
 L2ping generates PING echo command on Bluetooth L2CAP layer, and it is able to receive and check echo response from a wireless device.</p>
@@ -12161,7 +12161,7 @@ L2ping generates PING echo command on Bluetooth L2CAP layer, and it is able to r
 <li>Provide a small program named <code>l2ping_service</code> which performs L2ping and provides wireless device information to <code>bluetooth_monitor</code> by using socket programming.</li>
 <li><code>bluetooth_monitor</code> is able to know wireless device information and L2ping status as an unprivileged user since those information are sent by socket communication.</li>
 </ul>
-<p><img alt="block_diagram" src="docs/block_diagram.drawio.svg" /></p>
+<p><img alt="block_diagram" src="docs/block_diagram.drawio.svg"></p>
 <h2 id="output">Output<a class="headerlink" href="#output" title="Permanent link">#</a></h2>
 <h3 id="bluetooth_monitor-bluetooth_connection"><u>bluetooth_monitor: bluetooth_connection</u><a class="headerlink" href="#bluetooth_monitor-bluetooth_connection" title="Permanent link">#</a></h3>
 <p><b>[summary]</b></p>
@@ -12300,7 +12300,7 @@ L2ping generates PING echo command on Bluetooth L2CAP layer, and it is able to r
 <ol>
 <li>
 <p>Assign capability to <code>l2ping_service</code> since L2ping requires <code>cap_net_raw+eip</code> capability.</p>
-<div class="highlight"><pre><span></span><code>sudo<span class="w"> </span>setcap<span class="w"> </span><span class="s1">&#39;cap_net_raw+eip&#39;</span><span class="w"> </span>./build/bluetooth_monitor/l2ping_service
+<div class="highlight"><pre><span></span><code>sudo<span class="w"> </span>setcap<span class="w"> </span><span class="s1">'cap_net_raw+eip'</span><span class="w"> </span>./build/bluetooth_monitor/l2ping_service
 </code></pre></div>
 </li>
 <li>
@@ -12311,7 +12311,7 @@ ros2<span class="w"> </span>launch<span class="w"> </span>bluetooth_monitor<span
 </li>
 </ol>
 <h2 id="known-limitations-and-issues">Known limitations and issues<a class="headerlink" href="#known-limitations-and-issues" title="Permanent link">#</a></h2>
-<p>None.</p>
+<p>None.</p></div>
 
 
 
@@ -12376,7 +12376,7 @@ ros2<span class="w"> </span>launch<span class="w"> </span>bluetooth_monitor<span
       <div class="md-copyright">
   
     <div class="md-copyright__highlight">
-      Copyright &copy; 2022 The Autoware Foundation
+      Copyright &copy; 2023 The Autoware Foundation
     </div>
   
   

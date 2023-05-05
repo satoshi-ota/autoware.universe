@@ -7638,7 +7638,7 @@
   
     <li class="md-nav__item">
       <a href="../../../../planning/behavior_path_planner/docs/behavior_path_planner_interface_design/" class="md-nav__link">
-        Behavior path planner interface design
+        Interface design
       </a>
     </li>
   
@@ -12266,13 +12266,13 @@
   
 
 
-<h1 id="concatenate_data">concatenate_data<a class="headerlink" href="#concatenate_data" title="Permanent link">#</a></h1>
+<div><h1 id="concatenate_data">concatenate_data<a class="headerlink" href="#concatenate_data" title="Permanent link">#</a></h1>
 <h2 id="purpose">Purpose<a class="headerlink" href="#purpose" title="Permanent link">#</a></h2>
 <p>Many self-driving cars combine multiple LiDARs to expand the sensing range. Therefore, a function to combine a plurality of point clouds is required.</p>
 <p>To combine multiple sensor data with a similar timestamp, the <a href="https://github.com/ros2/message_filters">message_filters</a> is often used in the ROS-based system, but this requires the assumption that all inputs can be received. Since safety must be strongly considered in autonomous driving, the point clouds concatenate node must be designed so that even if one sensor fails, the remaining sensor information can be output.</p>
 <h2 id="inner-workings-algorithms">Inner-workings / Algorithms<a class="headerlink" href="#inner-workings-algorithms" title="Permanent link">#</a></h2>
 <p>The figure below represents the reception time of each sensor data and how it is combined in the case.</p>
-<p><img alt="concatenate_data_timing_chart" src="../image/concatenate_data.drawio.svg" /></p>
+<p><img alt="concatenate_data_timing_chart" src="../image/concatenate_data.drawio.svg"></p>
 <h2 id="inputs-outputs">Inputs / Outputs<a class="headerlink" href="#inputs-outputs" title="Permanent link">#</a></h2>
 <h3 id="input">Input<a class="headerlink" href="#input" title="Permanent link">#</a></h3>
 <table>
@@ -12365,7 +12365,7 @@
 </tbody>
 </table>
 <h2 id="assumptions-known-limits">Assumptions / Known limits<a class="headerlink" href="#assumptions-known-limits" title="Permanent link">#</a></h2>
-<p>It is necessary to assume that the vehicle odometry value exists, the sensor data and odometry timestamp are correct, and the TF from <code>base_link</code> to <code>sensor_frame</code> is also correct.</p>
+<p>It is necessary to assume that the vehicle odometry value exists, the sensor data and odometry timestamp are correct, and the TF from <code>base_link</code> to <code>sensor_frame</code> is also correct.</p></div>
 
 
 
@@ -12430,7 +12430,7 @@
       <div class="md-copyright">
   
     <div class="md-copyright__highlight">
-      Copyright &copy; 2022 The Autoware Foundation
+      Copyright &copy; 2023 The Autoware Foundation
     </div>
   
   

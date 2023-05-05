@@ -7638,7 +7638,7 @@
   
     <li class="md-nav__item">
       <a href="../../planning/behavior_path_planner/docs/behavior_path_planner_interface_design/" class="md-nav__link">
-        Behavior path planner interface design
+        Interface design
       </a>
     </li>
   
@@ -12117,21 +12117,21 @@
   
 
 
-<h1 id="tier4_localization_launch">tier4_localization_launch<a class="headerlink" href="#tier4_localization_launch" title="Permanent link">#</a></h1>
+<div><h1 id="tier4_localization_launch">tier4_localization_launch<a class="headerlink" href="#tier4_localization_launch" title="Permanent link">#</a></h1>
 <h2 id="structure">Structure<a class="headerlink" href="#structure" title="Permanent link">#</a></h2>
-<p><img alt="tier4_localization_launch" src="localization_launch.drawio.svg" /></p>
+<p><img alt="tier4_localization_launch" src="localization_launch.drawio.svg"></p>
 <h2 id="package-dependencies">Package Dependencies<a class="headerlink" href="#package-dependencies" title="Permanent link">#</a></h2>
 <p>Please see <code>&lt;exec_depend&gt;</code> in <code>package.xml</code>.</p>
 <h2 id="usage">Usage<a class="headerlink" href="#usage" title="Permanent link">#</a></h2>
 <p>Include <code>localization.launch.xml</code> in other launch files as follows.</p>
 <p>Note that you should provide parameter paths as <code>PACKAGE_param_path</code>. The list of parameter paths you should provide is written at the top of <code>localization.launch.xml</code>.</p>
-<div class="highlight"><pre><span></span><code><span class="w">  </span><span class="nt">&lt;include</span><span class="w"> </span><span class="na">file=</span><span class="s">&quot;$(find-pkg-share tier4_localization_launch)/launch/localization.launch.xml&quot;</span><span class="nt">&gt;</span>
+<div class="highlight"><pre><span></span><code><span class="w">  </span><span class="nt">&lt;include</span><span class="w"> </span><span class="na">file=</span><span class="s">"$(find-pkg-share tier4_localization_launch)/launch/localization.launch.xml"</span><span class="nt">&gt;</span>
 <span class="w">    </span><span class="cm">&lt;!-- Parameter files --&gt;</span>
-<span class="w">    </span><span class="nt">&lt;arg</span><span class="w"> </span><span class="na">name=</span><span class="s">&quot;FOO_param_path&quot;</span><span class="w"> </span><span class="na">value=</span><span class="s">&quot;...&quot;</span><span class="nt">/&gt;</span>
-<span class="w">    </span><span class="nt">&lt;arg</span><span class="w"> </span><span class="na">name=</span><span class="s">&quot;BAR_param_path&quot;</span><span class="w"> </span><span class="na">value=</span><span class="s">&quot;...&quot;</span><span class="nt">/&gt;</span>
+<span class="w">    </span><span class="nt">&lt;arg</span><span class="w"> </span><span class="na">name=</span><span class="s">"FOO_param_path"</span><span class="w"> </span><span class="na">value=</span><span class="s">"..."</span><span class="nt">/&gt;</span>
+<span class="w">    </span><span class="nt">&lt;arg</span><span class="w"> </span><span class="na">name=</span><span class="s">"BAR_param_path"</span><span class="w"> </span><span class="na">value=</span><span class="s">"..."</span><span class="nt">/&gt;</span>
 <span class="w">    </span>...
 <span class="w">  </span><span class="nt">&lt;/include&gt;</span>
-</code></pre></div>
+</code></pre></div></div>
 
 
 
@@ -12196,7 +12196,7 @@
       <div class="md-copyright">
   
     <div class="md-copyright__highlight">
-      Copyright &copy; 2022 The Autoware Foundation
+      Copyright &copy; 2023 The Autoware Foundation
     </div>
   
   

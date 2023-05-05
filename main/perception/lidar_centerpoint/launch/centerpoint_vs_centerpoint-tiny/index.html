@@ -7638,7 +7638,7 @@
   
     <li class="md-nav__item">
       <a href="../../../../planning/behavior_path_planner/docs/behavior_path_planner_interface_design/" class="md-nav__link">
-        Behavior path planner interface design
+        Interface design
       </a>
     </li>
   
@@ -12164,7 +12164,7 @@
   
 
 
-<h1 id="run-lidar_centerpoint-and-lidar_centerpoint-tiny-simultaneously">Run lidar_centerpoint and lidar_centerpoint-tiny simultaneously<a class="headerlink" href="#run-lidar_centerpoint-and-lidar_centerpoint-tiny-simultaneously" title="Permanent link">#</a></h1>
+<div><h1 id="run-lidar_centerpoint-and-lidar_centerpoint-tiny-simultaneously">Run lidar_centerpoint and lidar_centerpoint-tiny simultaneously<a class="headerlink" href="#run-lidar_centerpoint-and-lidar_centerpoint-tiny-simultaneously" title="Permanent link">#</a></h1>
 <p>This tutorial is for showing <code>centerpoint</code> and <code>centerpoint_tiny</code>models’ results simultaneously, making it easier to visualize and compare the performance.</p>
 <h2 id="setup-development-environment">Setup Development Environment<a class="headerlink" href="#setup-development-environment" title="Permanent link">#</a></h2>
 <p>Follow the steps in the Source Installation (<a href="https://autowarefoundation.github.io/autoware-documentation/main/installation/autoware/source-installation/">link</a>) in Autoware doc.</p>
@@ -12176,7 +12176,7 @@
 <div class="highlight"><pre><span></span><code>colcon<span class="w"> </span>build<span class="w"> </span>--symlink-install<span class="w"> </span>--cmake-args<span class="w"> </span>-DCMAKE_BUILD_TYPE<span class="o">=</span>Release<span class="w"> </span>--parallel-workers<span class="o">=</span><span class="m">1</span>
 </code></pre></div>
 <p>Or you can use a constrained number of CPU to build only one package.</p>
-<div class="highlight"><pre><span></span><code><span class="nb">export</span><span class="w"> </span><span class="nv">MAKEFLAGS</span><span class="o">=</span><span class="s2">&quot;-j 4&quot;</span><span class="w"> </span><span class="o">&amp;&amp;</span><span class="w"> </span><span class="nv">MAKE_JOBS</span><span class="o">=</span><span class="m">4</span><span class="w"> </span>colcon<span class="w"> </span>build<span class="w"> </span>--symlink-install<span class="w"> </span>--cmake-args<span class="w"> </span>-DCMAKE_BUILD_TYPE<span class="o">=</span>Release<span class="w"> </span>--parallel-workers<span class="w"> </span><span class="m">1</span><span class="w"> </span>--packages-select<span class="w"> </span>PACKAGE_NAME
+<div class="highlight"><pre><span></span><code><span class="nb">export</span><span class="w"> </span><span class="nv">MAKEFLAGS</span><span class="o">=</span><span class="s2">"-j 4"</span><span class="w"> </span><span class="o">&amp;&amp;</span><span class="w"> </span><span class="nv">MAKE_JOBS</span><span class="o">=</span><span class="m">4</span><span class="w"> </span>colcon<span class="w"> </span>build<span class="w"> </span>--symlink-install<span class="w"> </span>--cmake-args<span class="w"> </span>-DCMAKE_BUILD_TYPE<span class="o">=</span>Release<span class="w"> </span>--parallel-workers<span class="w"> </span><span class="m">1</span><span class="w"> </span>--packages-select<span class="w"> </span>PACKAGE_NAME
 </code></pre></div>
 <p>Source the package.</p>
 <div class="highlight"><pre><span></span><code><span class="nb">source</span><span class="w"> </span>install/setup.bash
@@ -12238,7 +12238,7 @@ ros2<span class="w"> </span>launch<span class="w"> </span>velodyne_pointcloud<sp
 <div class="highlight"><pre><span></span><code>ros2<span class="w"> </span>launch<span class="w"> </span>lidar_centerpoint<span class="w"> </span>centerpoint_vs_centerpoint-tiny.launch.xml
 </code></pre></div>
 <p>Then you will see two rviz window show immediately. On the left is the result for lidar centerpoint tiny, and on the right is the result for lidar centerpoint.</p>
-<p><img alt="two rviz2 display centerpoint and centerpoint_tiny" src="https://i.imgur.com/YAYehrf.jpg" /></p>
+<p><img alt="two rviz2 display centerpoint and centerpoint_tiny" src="https://i.imgur.com/YAYehrf.jpg"></p>
 <h2 id="troubleshooting">Troubleshooting<a class="headerlink" href="#troubleshooting" title="Permanent link">#</a></h2>
 <h3 id="bounding-box-blink-on-rviz">Bounding Box blink on rviz<a class="headerlink" href="#bounding-box-blink-on-rviz" title="Permanent link">#</a></h3>
 <p>To avoid Bounding Boxes blinking on rviz, you can extend bbox marker lifetime.</p>
@@ -12247,7 +12247,7 @@ ros2<span class="w"> </span>launch<span class="w"> </span>velodyne_pointcloud<sp
 <li><code>marker_ptr-&gt;lifetime</code> are in <code>PATH/autoware/src/universe/autoware.universe/common/autoware_auto_perception_rviz_plugin/src/object_detection/object_polygon_detail.cpp</code></li>
 <li><code>marker.lifetime</code> are in <code>PATH/autoware/src/universe/autoware.universe/common/tier4_autoware_utils/include/tier4_autoware_utils/ros/marker_helper.hpp</code></li>
 </ul>
-<p>Make sure to rebuild packages after any change.</p>
+<p>Make sure to rebuild packages after any change.</p></div>
 
 
 
@@ -12312,7 +12312,7 @@ ros2<span class="w"> </span>launch<span class="w"> </span>velodyne_pointcloud<sp
       <div class="md-copyright">
   
     <div class="md-copyright__highlight">
-      Copyright &copy; 2022 The Autoware Foundation
+      Copyright &copy; 2023 The Autoware Foundation
     </div>
   
   

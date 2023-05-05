@@ -7638,7 +7638,7 @@
   
     <li class="md-nav__item">
       <a href="../../behavior_path_planner/docs/behavior_path_planner_interface_design/" class="md-nav__link">
-        Behavior path planner interface design
+        Interface design
       </a>
     </li>
   
@@ -7987,101 +7987,6 @@
   <a href="#inner-workings-algorithms" class="md-nav__link">
     Inner-workings / Algorithms
   </a>
-  
-    <nav class="md-nav" aria-label="Inner-workings / Algorithms">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#1-ego-path-footprints" class="md-nav__link">
-    1. Ego Path Footprints
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#2-other-lanes" class="md-nav__link">
-    2. Other lanes
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#3-overlapping-ranges" class="md-nav__link">
-    3. Overlapping ranges
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#4-decisions" class="md-nav__link">
-    4. Decisions
-  </a>
-  
-    <nav class="md-nav" aria-label="4. Decisions">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#threshold" class="md-nav__link">
-    Threshold
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#ttc-time-to-collision" class="md-nav__link">
-    TTC (time to collision)
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#intervals" class="md-nav__link">
-    Intervals
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#time-estimates" class="md-nav__link">
-    Time estimates
-  </a>
-  
-    <nav class="md-nav" aria-label="Time estimates">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#ego" class="md-nav__link">
-    Ego
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#dynamic-objects" class="md-nav__link">
-    Dynamic objects
-  </a>
-  
-</li>
-        
-      </ul>
-    </nav>
-  
-</li>
-        
-      </ul>
-    </nav>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#5-path-update" class="md-nav__link">
-    5. Path update
-  </a>
-  
-</li>
-        
-      </ul>
-    </nav>
   
 </li>
         
@@ -12269,101 +12174,6 @@
     Inner-workings / Algorithms
   </a>
   
-    <nav class="md-nav" aria-label="Inner-workings / Algorithms">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#1-ego-path-footprints" class="md-nav__link">
-    1. Ego Path Footprints
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#2-other-lanes" class="md-nav__link">
-    2. Other lanes
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#3-overlapping-ranges" class="md-nav__link">
-    3. Overlapping ranges
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#4-decisions" class="md-nav__link">
-    4. Decisions
-  </a>
-  
-    <nav class="md-nav" aria-label="4. Decisions">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#threshold" class="md-nav__link">
-    Threshold
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#ttc-time-to-collision" class="md-nav__link">
-    TTC (time to collision)
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#intervals" class="md-nav__link">
-    Intervals
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#time-estimates" class="md-nav__link">
-    Time estimates
-  </a>
-  
-    <nav class="md-nav" aria-label="Time estimates">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#ego" class="md-nav__link">
-    Ego
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#dynamic-objects" class="md-nav__link">
-    Dynamic objects
-  </a>
-  
-</li>
-        
-      </ul>
-    </nav>
-  
-</li>
-        
-      </ul>
-    </nav>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#5-path-update" class="md-nav__link">
-    5. Path update
-  </a>
-  
-</li>
-        
-      </ul>
-    </nav>
-  
 </li>
         
           <li class="md-nav__item">
@@ -12398,7 +12208,7 @@
 
   <h1>Out of lane design</h1>
 
-<h2 id="out-of-lane">Out of Lane<a class="headerlink" href="#out-of-lane" title="Permanent link">#</a></h2>
+<div><h2 id="out-of-lane">Out of Lane<a class="headerlink" href="#out-of-lane" title="Permanent link">#</a></h2>
 <h3 id="role">Role<a class="headerlink" href="#role" title="Permanent link">#</a></h3>
 <p><code>out_of_lane</code> is the module that decelerates and stops to prevent the ego vehicle from entering another lane with incoming dynamic objects.</p>
 <h3 id="activation-timing">Activation Timing<a class="headerlink" href="#activation-timing" title="Permanent link">#</a></h3>
@@ -12412,7 +12222,7 @@
 <li>For each overlapping range, decide if a stop or slow down action must be taken.</li>
 <li>For each action, insert the corresponding stop or slow down point in the path.</li>
 </ol>
-<p><img alt="overview" src="../docs/out_of_lane/out_of_lane-footprints_other_lanes_overlaps_ranges.png" /></p>
+<p><img alt="overview" src="../docs/out_of_lane/out_of_lane-footprints_other_lanes_overlaps_ranges.png"></p>
 <h4 id="1-ego-path-footprints">1. Ego Path Footprints<a class="headerlink" href="#1-ego-path-footprints" title="Permanent link">#</a></h4>
 <p>In this first step, the ego footprint is projected at each path point and are eventually inflated based on the <code>extra_..._offset</code> parameters.</p>
 <h4 id="2-other-lanes">2. Other lanes<a class="headerlink" href="#2-other-lanes" title="Permanent link">#</a></h4>
@@ -12446,10 +12256,10 @@ If the distance is bellow the <code>actions.stop.threshold</code>, a velocity of
 <table width="100%">
   <tr>
   <td>
-    <img src="./docs/out_of_lane/out_of_lane_slow.png" width="550px"/>
+    <img src="./docs/out_of_lane/out_of_lane_slow.png" width="550px">
   </td>
   <td>
-    <img src="./docs/out_of_lane/out_of_lane_stop.png" width="550px"/>
+    <img src="./docs/out_of_lane/out_of_lane_stop.png" width="550px">
   </td>
   </tr>
 </table>
@@ -12676,7 +12486,7 @@ it is skipped.</p>
 <td>[m] extra right distance to add to the ego footprint</td>
 </tr>
 </tbody>
-</table>
+</table></div>
 
 
 
@@ -12741,7 +12551,7 @@ it is skipped.</p>
       <div class="md-copyright">
   
     <div class="md-copyright__highlight">
-      Copyright &copy; 2022 The Autoware Foundation
+      Copyright &copy; 2023 The Autoware Foundation
     </div>
   
   

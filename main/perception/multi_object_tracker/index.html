@@ -7638,7 +7638,7 @@
   
     <li class="md-nav__item">
       <a href="../../planning/behavior_path_planner/docs/behavior_path_planner_interface_design/" class="md-nav__link">
-        Behavior path planner interface design
+        Interface design
       </a>
     </li>
   
@@ -12225,12 +12225,12 @@
   
 
 
-<h1 id="multi_object_tracker">multi_object_tracker<a class="headerlink" href="#multi_object_tracker" title="Permanent link">#</a></h1>
+<div><h1 id="multi_object_tracker">multi_object_tracker<a class="headerlink" href="#multi_object_tracker" title="Permanent link">#</a></h1>
 <h2 id="purpose">Purpose<a class="headerlink" href="#purpose" title="Permanent link">#</a></h2>
 <p>The results of the detection are processed by a time series. The main purpose is to give ID and estimate velocity.</p>
 <h2 id="inner-workings-algorithms">Inner-workings / Algorithms<a class="headerlink" href="#inner-workings-algorithms" title="Permanent link">#</a></h2>
 <p>This multi object tracker consists of data association and EKF.</p>
-<p><img alt="multi_object_tracker_overview" src="image/multi_object_tracker_overview.svg" /></p>
+<p><img alt="multi_object_tracker_overview" src="image/multi_object_tracker_overview.svg"></p>
 <h3 id="data-association">Data association<a class="headerlink" href="#data-association" title="Permanent link">#</a></h3>
 <p>The data association performs maximum score matching, called min cost max flow problem.
 In this package, mussp[1] is used as solver.
@@ -12376,9 +12376,9 @@ Example:
 <h3 id="evaluation-of-mussp">Evaluation of muSSP<a class="headerlink" href="#evaluation-of-mussp" title="Permanent link">#</a></h3>
 <p>According to our evaluation, muSSP is faster than normal <a href="src/data_association/successive_shortest_path">SSP</a> when the matrix size is more than 100.</p>
 <p>Execution time for varying matrix size at 95% sparsity. In real data, the sparsity was often around 95%.
-<img alt="mussp_evaluation1" src="image/mussp_evaluation1.png" /></p>
+<img alt="mussp_evaluation1" src="image/mussp_evaluation1.png"></p>
 <p>Execution time for varying the sparsity with matrix size 100.
-<img alt="mussp_evaluation2" src="image/mussp_evaluation2.png" /></p>
+<img alt="mussp_evaluation2" src="image/mussp_evaluation2.png"></p>
 <h2 id="optional-referencesexternal-links">(Optional) References/External links<a class="headerlink" href="#optional-referencesexternal-links" title="Permanent link">#</a></h2>
 <p>This package makes use of external code.</p>
 <table>
@@ -12405,7 +12405,7 @@ Min-cost Flow Algorithm for Multi-object Tracking,” NeurIPS, 2019</p>
 Example:
   Currently, this package can't handle the chattering obstacles well. We plan to add some probabilistic filters in the perception layer to improve it.
   Also, there are some parameters that should be global(e.g. vehicle size, max steering, etc.). These will be refactored and defined as global parameters so that we can share the same parameters between different nodes.
--->
+--></div>
 
 
 
@@ -12470,7 +12470,7 @@ Example:
       <div class="md-copyright">
   
     <div class="md-copyright__highlight">
-      Copyright &copy; 2022 The Autoware Foundation
+      Copyright &copy; 2023 The Autoware Foundation
     </div>
   
   

@@ -7638,7 +7638,7 @@
   
     <li class="md-nav__item">
       <a href="../../../planning/behavior_path_planner/docs/behavior_path_planner_interface_design/" class="md-nav__link">
-        Behavior path planner interface design
+        Interface design
       </a>
     </li>
   
@@ -12119,26 +12119,6 @@
     How to visualize calibration data
   </a>
   
-    <nav class="md-nav" aria-label="How to visualize calibration data">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#visualize-plot-of-relation-between-acceleration-and-pedal" class="md-nav__link">
-    Visualize plot of relation between acceleration and pedal
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#visualize-statistics-about-accelerationvelocitypedal-data" class="md-nav__link">
-    Visualize statistics about acceleration/velocity/pedal data
-  </a>
-  
-</li>
-        
-      </ul>
-    </nav>
-  
 </li>
         
           <li class="md-nav__item">
@@ -12207,19 +12187,6 @@
     Data Preprocessing
   </a>
   
-    <nav class="md-nav" aria-label="Data Preprocessing">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#parameters_1" class="md-nav__link">
-    Parameters
-  </a>
-  
-</li>
-        
-      </ul>
-    </nav>
-  
 </li>
         
           <li class="md-nav__item">
@@ -12227,52 +12194,12 @@
     update_offset_each_cell
   </a>
   
-    <nav class="md-nav" aria-label="update_offset_each_cell">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#parameters_2" class="md-nav__link">
-    Parameters
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#update-formula" class="md-nav__link">
-    Update formula
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#variables" class="md-nav__link">
-    Variables
-  </a>
-  
-</li>
-        
-      </ul>
-    </nav>
-  
 </li>
         
           <li class="md-nav__item">
   <a href="#update_offset_four_cell_around-1" class="md-nav__link">
     update_offset_four_cell_around [1]
   </a>
-  
-    <nav class="md-nav" aria-label="update_offset_four_cell_around [1]">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#implementation" class="md-nav__link">
-    Implementation
-  </a>
-  
-</li>
-        
-      </ul>
-    </nav>
   
 </li>
         
@@ -12306,7 +12233,7 @@
   
 
 
-<h1 id="accel_brake_map_calibrator">accel_brake_map_calibrator<a class="headerlink" href="#accel_brake_map_calibrator" title="Permanent link">#</a></h1>
+<div><h1 id="accel_brake_map_calibrator">accel_brake_map_calibrator<a class="headerlink" href="#accel_brake_map_calibrator" title="Permanent link">#</a></h1>
 <p>The role of this node is to automatically calibrate <code>accel_map.csv</code> / <code>brake_map.csv</code> used in the <code>raw_vehicle_cmd_converter</code> node.</p>
 <p>The base map, which is lexus's one by default, is updated iteratively with the loaded driving data.</p>
 <h2 id="how-to-calibrate">How to calibrate<a class="headerlink" href="#how-to-calibrate" title="Permanent link">#</a></h2>
@@ -12386,7 +12313,7 @@ Diagnostic type <code>WARN</code> indicates that the current accel/brake map is 
 <p>The following command shows the plot of used data in the calibration. In each plot of velocity ranges, you can see the distribution of the relationship between pedal and acceleration, and raw data points with colors according to their pitch angles.</p>
 <div class="highlight"><pre><span></span><code>ros2<span class="w"> </span>run<span class="w"> </span>accel_brake_map_calibrator<span class="w"> </span>view_plot.py
 </code></pre></div>
-<p><img alt="sample pic" src="media/log_sample.png" /></p>
+<p><img alt="sample pic" src="media/log_sample.png"></p>
 <h4 id="visualize-statistics-about-accelerationvelocitypedal-data">Visualize statistics about acceleration/velocity/pedal data<a class="headerlink" href="#visualize-statistics-about-accelerationvelocitypedal-data" title="Permanent link">#</a></h4>
 <p>The following command shows the statistics of the calibration:</p>
 <ul>
@@ -12397,25 +12324,25 @@ Diagnostic type <code>WARN</code> indicates that the current accel/brake map is 
 <p>of all data in each map cell.</p>
 <div class="highlight"><pre><span></span><code>ros2<span class="w"> </span>run<span class="w"> </span>accel_brake_map_calibrator<span class="w"> </span>view_statistics.py
 </code></pre></div>
-<p><img alt="sample pic2" src="media/statistics_sample.png" /></p>
+<p><img alt="sample pic2" src="media/statistics_sample.png"></p>
 <h3 id="how-to-save-the-calibrated-accel-brake-map-anytime-you-want">How to save the calibrated accel / brake map anytime you want<a class="headerlink" href="#how-to-save-the-calibrated-accel-brake-map-anytime-you-want" title="Permanent link">#</a></h3>
 <p>You can save accel and brake map anytime with the following command.</p>
-<div class="highlight"><pre><span></span><code>ros2<span class="w"> </span>service<span class="w"> </span>call<span class="w"> </span>/accel_brake_map_calibrator/update_map_dir<span class="w"> </span>tier4_vehicle_msgs/srv/UpdateAccelBrakeMap<span class="w"> </span><span class="s2">&quot;path: &#39;&lt;accel/brake map directory&gt;&#39;&quot;</span>
+<div class="highlight"><pre><span></span><code>ros2<span class="w"> </span>service<span class="w"> </span>call<span class="w"> </span>/accel_brake_map_calibrator/update_map_dir<span class="w"> </span>tier4_vehicle_msgs/srv/UpdateAccelBrakeMap<span class="w"> </span><span class="s2">"path: '&lt;accel/brake map directory&gt;'"</span>
 </code></pre></div>
 <p>You can also save accel and brake map in the default directory where Autoware reads accel_map.csv/brake_map.csv using the RViz plugin (AccelBrakeMapCalibratorButtonPanel) as following.</p>
 <ol>
 <li>
 <p>Click <em>Panels</em> tab, and select AccelBrakeMapCalibratorButtonPanel.</p>
-<p><img alt="add_panel" src="media/add_panel.png" /></p>
+<p><img alt="add_panel" src="media/add_panel.png"></p>
 </li>
 <li>
 <p>Select the panel, and the button will appear at the bottom of RViz.</p>
-<p><img alt="calibrator_button_panel" src="media/calibrator_button_panel.png" /></p>
+<p><img alt="calibrator_button_panel" src="media/calibrator_button_panel.png"></p>
 </li>
 <li>
 <p>Press the button, and the accel / brake map will be saved.
    (The button cannot be pressed in certain situations, such as when the calibrator node is not running.)</p>
-<p><img alt="push_calibration_button" src="media/push_calibration_button.png" /></p>
+<p><img alt="push_calibration_button" src="media/push_calibration_button.png"></p>
 </li>
 </ol>
 <h2 id="parameters">Parameters<a class="headerlink" href="#parameters" title="Permanent link">#</a></h2>
@@ -12584,7 +12511,7 @@ Diagnostic type <code>WARN</code> indicates that the current accel/brake map is 
 ros2<span class="w"> </span>run<span class="w"> </span>accel_brake_map_calibrator<span class="w"> </span>brake_tester.py
 ros2<span class="w"> </span>run<span class="w"> </span>accel_brake_map_calibrator<span class="w"> </span>actuation_cmd_publisher.py
 </code></pre></div>
-<p><img alt="actuation_cmd_publisher_util" src="media/actuation_cmd_publisher_util.png" /></p>
+<p><img alt="actuation_cmd_publisher_util" src="media/actuation_cmd_publisher_util.png"></p>
 <h2 id="calibration-method">Calibration Method<a class="headerlink" href="#calibration-method" title="Permanent link">#</a></h2>
 <p>Two algorithms are selectable for the acceleration map update, <a href="#update_offset_four_cell_around-1">update_offset_four_cell_around</a> and <a href="#update_offset_each_cell">update_offset_each_cell</a>. Please see the link for details.</p>
 <h3 id="data-preprocessing">Data Preprocessing<a class="headerlink" href="#data-preprocessing" title="Permanent link">#</a></h3>
@@ -12698,7 +12625,7 @@ ros2<span class="w"> </span>run<span class="w"> </span>accel_brake_map_calibrato
 <h3 id="references">References<a class="headerlink" href="#references" title="Permanent link">#</a></h3>
 <!-- cspell: ignore Lochrie, Doljevic, Yongsoon, Yoon, IFAC -->
 
-<p>[1] <a href="https://www.sciencedirect.com/science/article/pii/S240589632102320X">Gabrielle Lochrie, Michael Doljevic, Mario Nona, Yongsoon Yoon, Anti-Windup Recursive Least Squares Method for Adaptive Lookup Tables with Application to Automotive Powertrain Control Systems, IFAC-PapersOnLine, Volume 54, Issue 20, 2021, Pages 840-845</a></p>
+<p>[1] <a href="https://www.sciencedirect.com/science/article/pii/S240589632102320X">Gabrielle Lochrie, Michael Doljevic, Mario Nona, Yongsoon Yoon, Anti-Windup Recursive Least Squares Method for Adaptive Lookup Tables with Application to Automotive Powertrain Control Systems, IFAC-PapersOnLine, Volume 54, Issue 20, 2021, Pages 840-845</a></p></div>
 
 
 
@@ -12763,7 +12690,7 @@ ros2<span class="w"> </span>run<span class="w"> </span>accel_brake_map_calibrato
       <div class="md-copyright">
   
     <div class="md-copyright__highlight">
-      Copyright &copy; 2022 The Autoware Foundation
+      Copyright &copy; 2023 The Autoware Foundation
     </div>
   
   

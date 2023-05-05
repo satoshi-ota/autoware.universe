@@ -7638,7 +7638,7 @@
   
     <li class="md-nav__item">
       <a href="../../planning/behavior_path_planner/docs/behavior_path_planner_interface_design/" class="md-nav__link">
-        Behavior path planner interface design
+        Interface design
       </a>
     </li>
   
@@ -12111,33 +12111,6 @@
     Application to various object
   </a>
   
-    <nav class="md-nav" aria-label="Application to various object">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#nearest-index-for-the-ego" class="md-nav__link">
-    Nearest index for the ego
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#nearest-index-for-dynamic-objects" class="md-nav__link">
-    Nearest index for dynamic objects
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#nearest-index-for-traffic-objects" class="md-nav__link">
-    Nearest index for traffic objects
-  </a>
-  
-</li>
-        
-      </ul>
-    </nav>
-  
 </li>
         
       </ul>
@@ -12170,11 +12143,11 @@
   
 
 
-<h1 id="motion-utils-package">Motion Utils package<a class="headerlink" href="#motion-utils-package" title="Permanent link">#</a></h1>
+<div><h1 id="motion-utils-package">Motion Utils package<a class="headerlink" href="#motion-utils-package" title="Permanent link">#</a></h1>
 <h2 id="definition-of-terms">Definition of terms<a class="headerlink" href="#definition-of-terms" title="Permanent link">#</a></h2>
 <h3 id="segment">Segment<a class="headerlink" href="#segment" title="Permanent link">#</a></h3>
 <p><code>Segment</code> in Autoware is the line segment between two successive points as follows.</p>
-<p><img alt="segment" src="media/segment.svg" style="width:600px" /></p>
+<p><img alt="segment" src="media/segment.svg" style="width:600px"></p>
 <p>The nearest segment index and nearest point index to a certain position is not always th same.
 Therefore, we prepare two different utility functions to calculate a nearest index for points and segments.</p>
 <h2 id="nearest-index-search">Nearest index search<a class="headerlink" href="#nearest-index-search" title="Permanent link">#</a></h2>
@@ -12220,7 +12193,7 @@ We will explain the recommended method to calculate it.</p>
 <p>Assuming that the path length before the ego is short enough, we expect to find the correct nearest index in the following edge cases by <code>findFirstNearestIndexWithSoftConstraints</code> with both distance and yaw thresholds.
 Blue circles describes the distance threshold from the base link position and two blue lines describe the yaw threshold against the base link orientation.
 Among points in these cases, the correct nearest point which is red can be found.</p>
-<p><img alt="ego_nearest_search" src="media/ego_nearest_search.svg" /></p>
+<p><img alt="ego_nearest_search" src="media/ego_nearest_search.svg"></p>
 <p>Therefore, the implementation is as follows.</p>
 <div class="highlight"><pre><span></span><code><span class="k">const</span><span class="w"> </span><span class="kt">size_t</span><span class="w"> </span><span class="n">ego_nearest_idx</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">findFirstNearestIndexWithSoftConstraints</span><span class="p">(</span><span class="n">points</span><span class="p">,</span><span class="w"> </span><span class="n">ego_pose</span><span class="p">,</span><span class="w"> </span><span class="n">ego_nearest_dist_threshold</span><span class="p">,</span><span class="w"> </span><span class="n">ego_nearest_yaw_threshold</span><span class="p">);</span>
 <span class="k">const</span><span class="w"> </span><span class="kt">size_t</span><span class="w"> </span><span class="n">ego_nearest_seg_idx</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">findFirstNearestIndexWithSoftConstraints</span><span class="p">(</span><span class="n">points</span><span class="p">,</span><span class="w"> </span><span class="n">ego_pose</span><span class="p">,</span><span class="w"> </span><span class="n">ego_nearest_dist_threshold</span><span class="p">,</span><span class="w"> </span><span class="n">ego_nearest_yaw_threshold</span><span class="p">);</span>
@@ -12248,7 +12221,7 @@ Therefore, we recommended using the wrapper utility functions which require the 
 <div class="highlight"><pre><span></span><code><span class="k">const</span><span class="w"> </span><span class="kt">size_t</span><span class="w"> </span><span class="n">ego_nearest_seg_idx</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">findFirstNearestSegmentIndex</span><span class="p">(</span><span class="n">points</span><span class="p">,</span><span class="w"> </span><span class="n">ego_pose</span><span class="p">,</span><span class="w"> </span><span class="n">ego_nearest_dist_threshold</span><span class="p">,</span><span class="w"> </span><span class="n">ego_nearest_yaw_threshold</span><span class="p">);</span>
 <span class="k">const</span><span class="w"> </span><span class="kt">size_t</span><span class="w"> </span><span class="n">dyn_obj_nearest_seg_idx</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">findFirstNearestSegmentIndex</span><span class="p">(</span><span class="n">points</span><span class="p">,</span><span class="w"> </span><span class="n">dyn_obj_pose</span><span class="p">,</span><span class="w"> </span><span class="n">dyn_obj_nearest_dist_threshold</span><span class="p">);</span>
 <span class="k">const</span><span class="w"> </span><span class="kt">double</span><span class="w"> </span><span class="n">length_from_ego_to_obj</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">calcSignedArcLength</span><span class="p">(</span><span class="n">points</span><span class="p">,</span><span class="w"> </span><span class="n">ego_pose</span><span class="p">,</span><span class="w"> </span><span class="n">ego_nearest_seg_idx</span><span class="p">,</span><span class="w"> </span><span class="n">dyn_obj_pose</span><span class="p">,</span><span class="w"> </span><span class="n">dyn_obj_nearest_seg_idx</span><span class="p">);</span>
-</code></pre></div>
+</code></pre></div></div>
 
 
 
@@ -12313,7 +12286,7 @@ Therefore, we recommended using the wrapper utility functions which require the 
       <div class="md-copyright">
   
     <div class="md-copyright__highlight">
-      Copyright &copy; 2022 The Autoware Foundation
+      Copyright &copy; 2023 The Autoware Foundation
     </div>
   
   
