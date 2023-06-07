@@ -5392,6 +5392,8 @@
         
           
         
+          
+        
       
       
         <label class="md-nav__link" for="__nav_7" id="__nav_7_label" tabindex="0">
@@ -7218,14 +7220,14 @@
         
         
         <div class="md-nav__link md-nav__link--index ">
-          <a href="../../perception/traffic_light_classifier/">Traffic light classifier</a>
+          <a href="../../perception/traffic_light_arbiter/">Traffic light arbiter</a>
           
         </div>
       
       <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_7_29_label" aria-expanded="false">
         <label class="md-nav__title" for="__nav_7_29">
           <span class="md-nav__icon md-icon"></span>
-          Traffic light classifier
+          Traffic light arbiter
         </label>
         <ul class="md-nav__list" data-md-scrollfix>
           
@@ -7266,14 +7268,14 @@
         
         
         <div class="md-nav__link md-nav__link--index ">
-          <a href="../../perception/traffic_light_map_based_detector/">Traffic light map based detector</a>
+          <a href="../../perception/traffic_light_classifier/">Traffic light classifier</a>
           
         </div>
       
       <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_7_30_label" aria-expanded="false">
         <label class="md-nav__title" for="__nav_7_30">
           <span class="md-nav__icon md-icon"></span>
-          Traffic light map based detector
+          Traffic light classifier
         </label>
         <ul class="md-nav__list" data-md-scrollfix>
           
@@ -7314,14 +7316,14 @@
         
         
         <div class="md-nav__link md-nav__link--index ">
-          <a href="../../perception/traffic_light_selector/">Traffic light selector</a>
+          <a href="../../perception/traffic_light_map_based_detector/">Traffic light map based detector</a>
           
         </div>
       
       <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_7_31_label" aria-expanded="false">
         <label class="md-nav__title" for="__nav_7_31">
           <span class="md-nav__icon md-icon"></span>
-          Traffic light selector
+          Traffic light map based detector
         </label>
         <ul class="md-nav__list" data-md-scrollfix>
           
@@ -7362,14 +7364,14 @@
         
         
         <div class="md-nav__link md-nav__link--index ">
-          <a href="../../perception/traffic_light_ssd_fine_detector/">Traffic light ssd fine detector</a>
+          <a href="../../perception/traffic_light_selector/">Traffic light selector</a>
           
         </div>
       
       <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_7_32_label" aria-expanded="false">
         <label class="md-nav__title" for="__nav_7_32">
           <span class="md-nav__icon md-icon"></span>
-          Traffic light ssd fine detector
+          Traffic light selector
         </label>
         <ul class="md-nav__list" data-md-scrollfix>
           
@@ -7410,12 +7412,60 @@
         
         
         <div class="md-nav__link md-nav__link--index ">
-          <a href="../../perception/traffic_light_visualization/">Traffic light visualization</a>
+          <a href="../../perception/traffic_light_ssd_fine_detector/">Traffic light ssd fine detector</a>
           
         </div>
       
       <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_7_33_label" aria-expanded="false">
         <label class="md-nav__title" for="__nav_7_33">
+          <span class="md-nav__icon md-icon"></span>
+          Traffic light ssd fine detector
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+          
+        </ul>
+      </nav>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    
+      
+    
+    <li class="md-nav__item md-nav__item--section md-nav__item--nested">
+      
+      
+      
+      
+        
+      
+      <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_7_34" >
+      
+      
+        
+          
+            
+          
+        
+      
+      
+        
+        
+        <div class="md-nav__link md-nav__link--index ">
+          <a href="../../perception/traffic_light_visualization/">Traffic light visualization</a>
+          
+        </div>
+      
+      <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_7_34_label" aria-expanded="false">
+        <label class="md-nav__title" for="__nav_7_34">
           <span class="md-nav__icon md-icon"></span>
           Traffic light visualization
         </label>
@@ -13636,11 +13686,14 @@ The optimization of the control command is formulated as a Quadratic Program (QP
 
 <ul>
 <li>unconstraint_fast : use least square method to solve unconstraint QP with eigen.</li>
-<li><a href="https://osqp.org/">osqp</a>: run the <a href="https://web.stanford.edu/~boyd/papers/admm_distr_stats.html">following ADMM</a> algorithm (for more details see the related papers at the <a href="https://web.stanford.edu/~boyd/papers/admm_distr_stats.html">Citing OSQP</a> section):</li>
+<li><a href="https://osqp.org/">osqp</a>: run the <a href="https://web.stanford.edu/~boyd/papers/admm_distr_stats.html">following ADMM</a>
+  algorithm (for more details see the related papers at
+  the <a href="https://web.stanford.edu/~boyd/papers/admm_distr_stats.html">Citing OSQP</a> section):</li>
 </ul>
 <h3 id="filtering">Filtering<a class="headerlink" href="#filtering" title="Permanent link">#</a></h3>
 <p>Filtering is required for good noise reduction.
-A <a href="https://en.wikipedia.org/wiki/Butterworth_filter">Butterworth filter</a> is used for the yaw and lateral errors used as input of the MPC as well as for
+A <a href="https://en.wikipedia.org/wiki/Butterworth_filter">Butterworth filter</a> is used for the yaw and lateral errors used as
+input of the MPC as well as for
 the output steering angle.
 Other filtering methods can be considered as long as the noise reduction performances are good
 enough.
@@ -13789,6 +13842,12 @@ AutonomouStuff Lexus RX 450h for under 40 km/h driving.</p>
 <td align="left">new_traj_end_dist</td>
 <td align="left">double</td>
 <td align="left">threshold value of the distance between trajectory ends to be considered as new trajectory</td>
+<td align="left">0.3</td>
+</tr>
+<tr>
+<td align="left">mpc_converged_threshold_rps</td>
+<td align="left">double</td>
+<td align="left">threshold value to be sure output of the optimization is converged, it is used in stopped state</td>
 <td align="left">0.3</td>
 </tr>
 </tbody>
@@ -13956,12 +14015,14 @@ AutonomouStuff Lexus RX 450h for under 40 km/h driving.</p>
 <ol>
 <li>
 <p>Set appropriate vehicle kinematics parameters for distance to front and rear axle and max steer angle.
-   Also check that the input <code>VehicleKinematicState</code> has appropriate values (speed: vehicle rear-wheels-center velocity [km/h], angle: steering (tire) angle [rad]).
+   Also check that the input <code>VehicleKinematicState</code> has appropriate values (speed: vehicle rear-wheels-center
+   velocity [km/h], angle: steering (tire) angle [rad]).
    These values give a vehicle information to the controller for path following.
    Errors in these values cause fundamental tracking error.</p>
 </li>
 <li>
-<p>Set appropriate vehicle dynamics parameters of <code>steering_tau</code>, which is the approximated delay from steering angle command to actual steering angle.</p>
+<p>Set appropriate vehicle dynamics parameters of <code>steering_tau</code>, which is the approximated delay from steering angle
+   command to actual steering angle.</p>
 </li>
 <li>
 <p>Set <code>weight_steering_input</code> = 1.0, <code>weight_lat_error</code> = 0.1, and other weights to 0.
@@ -13972,7 +14033,8 @@ AutonomouStuff Lexus RX 450h for under 40 km/h driving.</p>
    One of the simple way for tuning is to increase <code>weight_lat_error</code> until oscillation occurs.
    If the vehicle is unstable with very small <code>weight_lat_error</code>, increase terminal weight :
    <code>weight_terminal_lat_error</code> and <code>weight_terminal_heading_error</code> to improve tracking stability.
-   Larger <code>prediction_horizon</code> and smaller <code>prediction_sampling_time</code> is effective for tracking performance, but it is a trade-off between computational costs.
+   Larger <code>prediction_horizon</code> and smaller <code>prediction_sampling_time</code> is effective for tracking performance, but it is a
+   trade-off between computational costs.
    Other parameters can be adjusted like below.</p>
 </li>
 </ol>
@@ -13983,8 +14045,10 @@ AutonomouStuff Lexus RX 450h for under 40 km/h driving.</p>
 <li><code>weight_steering_input</code>: Reduce oscillation of tracking.</li>
 <li><code>weight_steering_input_squared_vel_coeff</code>: Reduce oscillation of tracking in high speed range.</li>
 <li><code>weight_lat_jerk</code>: Reduce lateral jerk.</li>
-<li><code>weight_terminal_lat_error</code>: Preferable to set a higher value than normal lateral weight <code>weight_lat_error</code> for stability.</li>
-<li><code>weight_terminal_heading_error</code>: Preferable to set a higher value than normal heading weight <code>weight_heading_error</code> for stability.</li>
+<li><code>weight_terminal_lat_error</code>: Preferable to set a higher value than normal lateral weight <code>weight_lat_error</code> for
+  stability.</li>
+<li><code>weight_terminal_heading_error</code>: Preferable to set a higher value than normal heading weight <code>weight_heading_error</code>
+  for stability.</li>
 </ul>
 <h2 id="references-external-links">References / External links<a class="headerlink" href="#references-external-links" title="Permanent link">#</a></h2>
 <!-- Optional -->
