@@ -13235,10 +13235,12 @@ The ray trace is done by Bresenham's line algorithm.
 </ol>
 <h3 id="3rd-step">3rd step<a class="headerlink" href="#3rd-step" title="Permanent link">#</a></h3>
 <p>Using the previous occupancy grid map, update the existence probability using a binary Bayesian filter (1). Also, the unobserved cells are time-decayed like the system noise of the Kalman filter (2).</p>
-<div class="highlight"><pre><span></span><code>    \hat{P_{o}} = \frac{(P_{o} * P_{z})}{(P_{o} * P_{z} + (1 - P_{o}) * \bar{P_{z}})} \tag{1}
-</code></pre></div>
-<div class="highlight"><pre><span></span><code>    \hat{P_{o}} = \frac{(P_{o} + 0.5 * \frac{1}{ratio})}{(\frac{1}{ratio} + 1)} \tag{2}
-</code></pre></div>
+<div class="arithmatex">\[
+\hat{P_{o}} = \frac{(P_{o} *P_{z})}{(P_{o}* P_{z} + (1 - P_{o}) * \bar{P_{z}})} \tag{1}
+\]</div>
+<div class="arithmatex">\[
+\hat{P_{o}} = \frac{(P_{o} + 0.5 * \frac{1}{ratio})}{(\frac{1}{ratio} + 1)} \tag{2}
+\]</div>
 <h2 id="inputs-outputs">Inputs / Outputs<a class="headerlink" href="#inputs-outputs" title="Permanent link">#</a></h2>
 <h3 id="input">Input<a class="headerlink" href="#input" title="Permanent link">#</a></h3>
 <table>
