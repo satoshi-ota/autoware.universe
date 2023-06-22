@@ -421,6 +421,31 @@
          <changefreq>daily</changefreq>
     </url>
     <url>
+         <loc>https://autowarefoundation.github.io/autoware.universe/main/localization/yabloc/</loc>
+         <lastmod>2023-06-22</lastmod>
+         <changefreq>daily</changefreq>
+    </url>
+    <url>
+         <loc>https://autowarefoundation.github.io/autoware.universe/main/localization/yabloc/yabloc_common/</loc>
+         <lastmod>2023-06-22</lastmod>
+         <changefreq>daily</changefreq>
+    </url>
+    <url>
+         <loc>https://autowarefoundation.github.io/autoware.universe/main/localization/yabloc/yabloc_image_processing/</loc>
+         <lastmod>2023-06-22</lastmod>
+         <changefreq>daily</changefreq>
+    </url>
+    <url>
+         <loc>https://autowarefoundation.github.io/autoware.universe/main/localization/yabloc/yabloc_particle_filter/</loc>
+         <lastmod>2023-06-22</lastmod>
+         <changefreq>daily</changefreq>
+    </url>
+    <url>
+         <loc>https://autowarefoundation.github.io/autoware.universe/main/localization/yabloc/yabloc_pose_initializer/</loc>
+         <lastmod>2023-06-22</lastmod>
+         <changefreq>daily</changefreq>
+    </url>
+    <url>
          <loc>https://autowarefoundation.github.io/autoware.universe/main/map/map_height_fitter/</loc>
          <lastmod>2023-06-22</lastmod>
          <changefreq>daily</changefreq>
