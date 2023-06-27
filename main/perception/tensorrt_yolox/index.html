@@ -17,7 +17,7 @@
         <link rel="next" href="../traffic_light_arbiter/">
       
       <link rel="icon" href="../../docs/assets/images/autoware-foundation.png">
-      <meta name="generator" content="mkdocs-1.4.3, mkdocs-material-9.1.16">
+      <meta name="generator" content="mkdocs-1.4.3, mkdocs-material-9.1.17">
     
     
       
@@ -13471,11 +13471,16 @@ To accelerate Non-maximum-suppression (NMS), which is one of the common post-pro
 The <code>EfficientNMS_TRT</code> module contains fixed values for <code>score_threshold</code> and <code>nms_threshold</code> in it,
 hence these parameters are ignored when users specify ONNX models including this module.</p>
 <p>This package accepts both <code>EfficientNMS_TRT</code> attached ONNXs and <a href="https://github.com/Megvii-BaseDetection/YOLOX/tree/main/demo/ONNXRuntime#download-onnx-models">models published from the official YOLOX repository</a> (we referred to them as "plain" models).</p>
+<p>In addition to <code>yolox-tiny.onnx</code>, a custom model named <code>yolox-sPlus-opt.onnx</code> is either available.
+This model is based on YOLOX-s and tuned to perform more accurate detection with almost comparable execution speed with <code>yolox-tiny</code>.
+To get better results with this model, users are recommended to use some specific running arguments
+such as <code>precision:=int8</code>, <code>calibration_algorithm:=Entropy</code>, <code>clip_value:=6.0</code>.
+Users can refer <code>launch/yolox_sPlus_opt.launch.xml</code> to see how this model can be used.</p>
 <p>All models are automatically converted to TensorRT format.
 These converted files will be saved in the same directory as specified ONNX files
 with <code>.engine</code> filename extension and reused from the next run.
-The conversion process may take a while (typically a few minutes) and the inference process is blocked
-until complete the conversion, so it will take some time until detection results are published on the first run.</p>
+The conversion process may take a while (<strong>typically 10 to 20 minutes</strong>) and the inference process is blocked
+until complete the conversion, so it will take some time until detection results are published (<strong>even until appearing in the topic list</strong>) on the first run</p>
 <h3 id="package-acceptable-model-generation">Package acceptable model generation<a class="headerlink" href="#package-acceptable-model-generation" title="Permanent link">#</a></h3>
 <p>To convert users' own model that saved in PyTorch's <code>pth</code> format into ONNX,
 users can exploit the converter offered by the official repository.
@@ -13622,7 +13627,7 @@ with labels according to the order in this file.</p>
     <script id="__config" type="application/json">{"base": "../..", "features": ["navigation.expand", "navigation.indexes", "navigation.instant", "navigation.sections", "navigation.tabs", "navigation.tabs.sticky", "navigation.top", "navigation.footer"], "search": "../../assets/javascripts/workers/search.208ed371.min.js", "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": {"provider": "mike"}}</script>
     
     
-      <script src="../../assets/javascripts/bundle.a51614de.min.js"></script>
+      <script src="../../assets/javascripts/bundle.b425cdc4.min.js"></script>
       
         
           <script src="../../docs/assets/js/mathjax.js"></script>
