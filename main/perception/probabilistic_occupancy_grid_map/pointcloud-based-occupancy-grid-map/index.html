@@ -17,7 +17,7 @@
         <link rel="next" href="../../radar_crossing_objects_noise_filter/">
       
       <link rel="icon" href="../../../docs/assets/images/autoware-foundation.png">
-      <meta name="generator" content="mkdocs-1.4.3, mkdocs-material-9.1.19">
+      <meta name="generator" content="mkdocs-1.4.3, mkdocs-material-9.1.20">
     
     
       
@@ -14711,8 +14711,8 @@
 <p><img alt="pointcloud_based_occupancy_grid_map_sample_image" src="../image/pointcloud_based_occupancy_grid_map_sample_image.gif"></p>
 <h2 id="inner-workings-algorithms">Inner-workings / Algorithms<a class="headerlink" href="#inner-workings-algorithms" title="Permanent link">#</a></h2>
 <h3 id="1st-step">1st step<a class="headerlink" href="#1st-step" title="Permanent link">#</a></h3>
-<p>First of all, input obstacle/raw pointcloud are transformed into the polar coordinate centered around <code>scan_origin</code> and divided int ocircular bins per angle_increment respectively.
-At this time, each point belonging to each bin is stored as range data. In addition, the x,y information in the map coordinate is also stored for raytracing on the map coordinate.
+<p>First of all, input obstacle/raw pointcloud are transformed into the polar coordinate centered around <code>scan_origin</code> and divided int circular bins per angle_increment respectively.
+At this time, each point belonging to each bin is stored as range data. In addition, the x,y information in the map coordinate is also stored for ray-tracing on the map coordinate.
 The bin contains the following information for each point</p>
 <ul>
 <li>range data from origin of raytrace</li>
@@ -14733,7 +14733,7 @@ The ray trace is done by Bresenham's line algorithm.
 </li>
 <li>
 <p>Fill in the unknown cells.
-   Based on the assumption that <code>UNKNOWN</code> is behind the obstacle, the cells that are more than a distance margin from each obstacle point are filled with <code>UNKOWN</code></p>
+   Based on the assumption that <code>UNKNOWN</code> is behind the obstacle, the cells that are more than a distance margin from each obstacle point are filled with <code>UNKNOWN</code></p>
 <p><img alt="pointcloud_based_occupancy_grid_map_side_view_2nd" src="../image/pointcloud_based_occupancy_grid_map_side_view_2nd.svg"></p>
 <p>There are three reasons for setting a distance margin.</p>
 <ul>

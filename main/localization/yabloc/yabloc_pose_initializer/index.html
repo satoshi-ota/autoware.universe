@@ -17,7 +17,7 @@
         <link rel="next" href="../../../map/map_height_fitter/">
       
       <link rel="icon" href="../../../docs/assets/images/autoware-foundation.png">
-      <meta name="generator" content="mkdocs-1.4.3, mkdocs-material-9.1.19">
+      <meta name="generator" content="mkdocs-1.4.3, mkdocs-material-9.1.20">
     
     
       
@@ -14515,6 +14515,15 @@
 <li><a href="#camera_pose_initializer">camera_pose_initializer</a></li>
 <li><a href="#semantic_segmentation_server">semantic_segmentation_server</a></li>
 </ul>
+<p>Ideally, this package downloads a pre-trained semantic segmentation model during the build and loads it at runtime for initialization.
+However, to handle cases where network connectivity is not available at build time, <strong>the default behavior is not to download the model during build.</strong>
+Even if the model is not downloaded, initialization will still complete, but the accuracy may be compromised.</p>
+<!-- cspell: ignore DDOWNLOAD_ARTIFACTS -->
+
+<p>To download the model, please specify <code>--cmake-args -DDOWNLOAD_ARTIFACTS=ON</code> to the build command.</p>
+<div class="highlight"><pre><span></span><code>colcon<span class="w"> </span>build<span class="w"> </span>--symlink-install<span class="w"> </span>--cmake-args<span class="w"> </span>-DCMAKE_BUILD_TYPE<span class="o">=</span>Release<span class="w"> </span>-DDOWNLOAD_ARTIFACTS<span class="o">=</span>ON<span class="w"> </span>--packages-select<span class="w"> </span>yabloc_pose_initializer
+</code></pre></div>
+<p>For detailed information about the downloaded contents, please consult the <code>download.cmake</code> file in this package.</p>
 <h2 id="note">Note<a class="headerlink" href="#note" title="Permanent link">#</a></h2>
 <p>This package makes use of external code. The trained files are provided by apollo. The trained files are automatically downloaded when you build.</p>
 <p>Original model URL</p>
