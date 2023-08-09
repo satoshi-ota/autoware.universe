@@ -15392,13 +15392,13 @@ SHIFT_{current} &gt; L_{threshold}
 <p><img alt="fig1" src="../../image/avoidance/yield_maneuver_flowchart.svg"></p>
 <hr>
 <h3 id="avoidance-cancelling-maneuver">Avoidance cancelling maneuver<a class="headerlink" href="#avoidance-cancelling-maneuver" title="Permanent link">#</a></h3>
-<p>If <code>enable_update_path_when_object_is_gone</code> parameter is true, Avoidance Module takes different actions according to the situations as follows:</p>
+<p>If <code>enable_cancel_maneuver</code> parameter is true, Avoidance Module takes different actions according to the situations as follows:</p>
 <ul>
 <li>If vehicle stops: If there is any object in the path of the vehicle, the avoidance path is generated. If this object goes away while the vehicle is stopping, the avoidance path will cancelled.</li>
 <li>If vehicle is in motion, but avoidance maneuver doesn't started: If there is any object in the path of the vehicle, the avoidance path is generated. If this object goes away while the vehicle is not started avoidance maneuver, the avoidance path will cancelled.</li>
 <li>If vehicle is in motion, avoidance maneuver started: If there is any object in the path of the vehicle, the avoidance path is generated,but if this object goes away while the vehicle is started avoidance maneuver, the avoidance path will not cancelled.</li>
 </ul>
-<p>If <code>enable_update_path_when_object_is_gone</code> parameter is false, Avoidance Module doesn't revert generated avoidance path even if path objects are gone.</p>
+<p>If <code>enable_cancel_maneuver</code> parameter is false, Avoidance Module doesn't revert generated avoidance path even if path objects are gone.</p>
 <h2 id="how-to-keep-the-consistency-of-the-optimize-base-path-generation-logic">How to keep the consistency of the optimize-base path generation logic<a class="headerlink" href="#how-to-keep-the-consistency-of-the-optimize-base-path-generation-logic" title="Permanent link">#</a></h2>
 <p>WIP</p>
 <h2 id="parameters">Parameters<a class="headerlink" href="#parameters" title="Permanent link">#</a></h2>
@@ -15445,7 +15445,7 @@ SHIFT_{current} &gt; L_{threshold}
 <td align="left">1.0</td>
 </tr>
 <tr>
-<td align="left">enable_update_path_when_object_is_gone</td>
+<td align="left">enable_cancel_maneuver</td>
 <td align="left">[-]</td>
 <td align="left">bool</td>
 <td align="left">Reset trajectory when avoided objects are gone. If false, shifted path points remain same even though the avoided objects are gone.</td>
