@@ -189,6 +189,8 @@ AvoidanceModuleManager::AvoidanceModuleManager(
       getOrDeclareParameter<double>(*node, ns + "lateral_avoid_check_threshold");
     p.max_right_shift_length = getOrDeclareParameter<double>(*node, ns + "max_right_shift_length");
     p.max_left_shift_length = getOrDeclareParameter<double>(*node, ns + "max_left_shift_length");
+    p.max_departure_from_lane =
+      getOrDeclareParameter<double>(*node, ns + "max_departure_from_lane");
   }
 
   // avoidance maneuver (longitudinal)
