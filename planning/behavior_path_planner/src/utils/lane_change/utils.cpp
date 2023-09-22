@@ -22,13 +22,18 @@
 #include "behavior_path_planner/utils/path_utils.hpp"
 #include "behavior_path_planner/utils/utils.hpp"
 
-#include <lanelet2_extension/utility/message_conversion.hpp>
 #include <lanelet2_extension/utility/query.hpp>
 #include <lanelet2_extension/utility/utilities.hpp>
+#include <motion_utils/trajectory/interpolation.hpp>
+#include <motion_utils/trajectory/path_with_lane_id.hpp>
 #include <motion_utils/trajectory/trajectory.hpp>
 #include <rclcpp/rclcpp.hpp>
+#include <tier4_autoware_utils/geometry/boost_polygon_utils.hpp>
 
 #include <lanelet2_core/LaneletMap.h>
+#include <lanelet2_core/geometry/LineString.h>
+#include <lanelet2_core/geometry/Point.h>
+#include <lanelet2_core/geometry/Polygon.h>
 #include <tf2/utils.h>
 #include <tf2_ros/transform_listener.h>
 
@@ -234,6 +239,18 @@ lanelet::ConstLanelets getTargetNeighborLanes(
   }
 
   return neighbor_lanes;
+}
+
+lanelet::BasicPolygon2d getTargetNeighborLanesPolygon(
+  const RouteHandler & route_handler, const lanelet::ConstLanelets & current_lanes,
+  const LaneChangeModuleType & type)
+{
+  const auto target_neighbor_lanelets =
+    utils::lane_change::getTargetNeighborLanes(route_handler, current_lanes, type);
+  const auto target_neighbor_preferred_lane_poly = lanelet::utils::getPolygonFromArcLength(
+    target_neighbor_lanelets, 0, std::numeric_limits<double>::max());
+
+  return lanelet::utils::to2D(target_neighbor_preferred_lane_poly).basicPolygon();
 }
 
 bool isPathInLanelets(
@@ -640,22 +657,6 @@ lanelet::ConstLanelets getBackwardLanelets(
   return backward_lanes;
 }
 
-bool isTargetObjectType(const PredictedObject & object, const LaneChangeParameters & parameters)
-{
-  using autoware_auto_perception_msgs::msg::ObjectClassification;
-  const auto t = utils::getHighestProbLabel(object.classification);
-  const auto is_object_type =
-    ((t == ObjectClassification::CAR && parameters.check_car) ||
-     (t == ObjectClassification::TRUCK && parameters.check_truck) ||
-     (t == ObjectClassification::BUS && parameters.check_bus) ||
-     (t == ObjectClassification::TRAILER && parameters.check_trailer) ||
-     (t == ObjectClassification::UNKNOWN && parameters.check_unknown) ||
-     (t == ObjectClassification::BICYCLE && parameters.check_bicycle) ||
-     (t == ObjectClassification::MOTORCYCLE && parameters.check_motorcycle) ||
-     (t == ObjectClassification::PEDESTRIAN && parameters.check_pedestrian));
-  return is_object_type;
-}
-
 double calcLateralBufferForFiltering(const double vehicle_width, const double lateral_buffer)
 {
   return lateral_buffer + 0.5 * vehicle_width;
@@ -673,9 +674,12 @@ std::string getStrDirection(const std::string & name, const Direction direction)
 }
 
 std::vector<std::vector<int64_t>> getSortedLaneIds(
-  const RouteHandler & route_handler, const lanelet::ConstLanelets & current_lanes,
-  const lanelet::ConstLanelets & target_lanes, const double rough_shift_length)
+  const RouteHandler & route_handler, const Pose & current_pose,
+  const lanelet::ConstLanelets & current_lanes, const lanelet::ConstLanelets & target_lanes)
 {
+  const auto rough_shift_length =
+    lanelet::utils::getArcCoordinates(target_lanes, current_pose).distance;
+
   std::vector<std::vector<int64_t>> sorted_lane_ids{};
   sorted_lane_ids.reserve(target_lanes.size());
   const auto get_sorted_lane_ids = [&](const lanelet::ConstLanelet & target_lane) {
@@ -809,19 +813,6 @@ std::vector<PoseWithVelocityStamped> convertToPredictedPath(
   return predicted_path;
 }
 
-PredictedPath convertToPredictedPath(
-  const std::vector<PoseWithVelocityStamped> & path, const double time_resolution)
-{
-  PredictedPath predicted_path;
-  predicted_path.time_step = rclcpp::Duration::from_seconds(time_resolution);
-  predicted_path.path.resize(path.size());
-
-  for (size_t i = 0; i < path.size(); ++i) {
-    predicted_path.path.at(i) = path.at(i).pose;
-  }
-  return predicted_path;
-}
-
 bool isParkedObject(
   const PathWithLaneId & path, const RouteHandler & route_handler,
   const ExtendedPredictedObject & object, const double object_check_min_road_shoulder_width,
@@ -840,7 +831,9 @@ bool isParkedObject(
   using lanelet::geometry::distance2d;
   using lanelet::geometry::toArcCoordinates;
 
-  if (object.initial_twist.twist.linear.x > static_object_velocity_threshold) {
+  const double object_vel_norm =
+    std::hypot(object.initial_twist.twist.linear.x, object.initial_twist.twist.linear.y);
+  if (object_vel_norm > static_object_velocity_threshold) {
     return false;
   }
 
@@ -1019,7 +1012,9 @@ boost::optional<size_t> getLeadingStaticObjectIdx(
 
     // ignore non-static object
     // TODO(shimizu): parametrize threshold
-    if (obj.initial_twist.twist.linear.x > 1.0) {
+    const double obj_vel_norm =
+      std::hypot(obj.initial_twist.twist.linear.x, obj.initial_twist.twist.linear.y);
+    if (obj_vel_norm > 1.0) {
       continue;
     }
 
@@ -1063,88 +1058,6 @@ std::optional<lanelet::BasicPolygon2d> createPolygon(
   return lanelet::utils::to2D(polygon_3d).basicPolygon();
 }
 
-LaneChangeTargetObjectIndices filterObject(
-  const PredictedObjects & objects, const lanelet::ConstLanelets & current_lanes,
-  const lanelet::ConstLanelets & target_lanes, const lanelet::ConstLanelets & target_backward_lanes,
-  const Pose & current_pose, const RouteHandler & route_handler,
-  const LaneChangeParameters & lane_change_parameter)
-{
-  // Guard
-  if (objects.objects.empty()) {
-    return {};
-  }
-
-  // Get path
-  const auto path =
-    route_handler.getCenterLinePath(current_lanes, 0.0, std::numeric_limits<double>::max());
-
-  const auto current_polygon =
-    createPolygon(current_lanes, 0.0, std::numeric_limits<double>::max());
-  const auto target_polygon = createPolygon(target_lanes, 0.0, std::numeric_limits<double>::max());
-  const auto target_backward_polygon =
-    createPolygon(target_backward_lanes, 0.0, std::numeric_limits<double>::max());
-
-  LaneChangeTargetObjectIndices filtered_obj_indices;
-  for (size_t i = 0; i < objects.objects.size(); ++i) {
-    const auto & object = objects.objects.at(i);
-    const auto & obj_velocity = object.kinematics.initial_twist_with_covariance.twist.linear.x;
-
-    // ignore specific object types
-    if (!isTargetObjectType(object, lane_change_parameter)) {
-      continue;
-    }
-
-    const auto obj_polygon = tier4_autoware_utils::toPolygon2d(object);
-
-    // calc distance from the current ego position
-    double max_dist_ego_to_obj = std::numeric_limits<double>::lowest();
-    for (const auto & polygon_p : obj_polygon.outer()) {
-      const auto obj_p = tier4_autoware_utils::createPoint(polygon_p.x(), polygon_p.y(), 0.0);
-      const double dist_ego_to_obj =
-        motion_utils::calcSignedArcLength(path.points, current_pose.position, obj_p);
-      max_dist_ego_to_obj = std::max(dist_ego_to_obj, max_dist_ego_to_obj);
-    }
-
-    // ignore static object that are behind the ego vehicle
-    if (obj_velocity < 1.0 && max_dist_ego_to_obj < 0.0) {
-      continue;
-    }
-
-    // check if the object intersects with target lanes
-    if (target_polygon && boost::geometry::intersects(target_polygon.value(), obj_polygon)) {
-      filtered_obj_indices.target_lane.push_back(i);
-      continue;
-    }
-
-    // check if the object intersects with target backward lanes
-    if (
-      target_backward_polygon &&
-      boost::geometry::intersects(target_backward_polygon.value(), obj_polygon)) {
-      filtered_obj_indices.target_lane.push_back(i);
-      continue;
-    }
-
-    // check if the object intersects with current lanes
-    if (
-      current_polygon && boost::geometry::intersects(current_polygon.value(), obj_polygon) &&
-      max_dist_ego_to_obj >= 0.0) {
-      // check only the objects that are in front of the ego vehicle
-      filtered_obj_indices.current_lane.push_back(i);
-      continue;
-    }
-
-    // ignore all objects that are behind the ego vehicle and not on the current and target
-    // lanes
-    if (max_dist_ego_to_obj < 0.0) {
-      continue;
-    }
-
-    filtered_obj_indices.other_lane.push_back(i);
-  }
-
-  return filtered_obj_indices;
-}
-
 ExtendedPredictedObject transform(
   const PredictedObject & object, const BehaviorPathPlannerParameters & common_parameters,
   const LaneChangeParameters & lane_change_parameters)
@@ -1162,9 +1075,9 @@ ExtendedPredictedObject transform(
   const auto & prepare_duration = common_parameters.lane_change_prepare_duration;
   const auto & velocity_threshold =
     lane_change_parameters.prepare_segment_ignore_object_velocity_thresh;
-  const auto & obj_vel = extended_object.initial_twist.twist.linear.x;
   const auto start_time = check_at_prepare_phase ? 0.0 : prepare_duration;
-  const double obj_velocity = extended_object.initial_twist.twist.linear.x;
+  const double obj_vel_norm = std::hypot(
+    extended_object.initial_twist.twist.linear.x, extended_object.initial_twist.twist.linear.y);
 
   extended_object.predicted_paths.resize(object.kinematics.predicted_paths.size());
   for (size_t i = 0; i < object.kinematics.predicted_paths.size(); ++i) {
@@ -1176,14 +1089,14 @@ ExtendedPredictedObject transform(
     // create path
     for (double t = start_time; t < end_time + std::numeric_limits<double>::epsilon();
          t += time_resolution) {
-      if (t < prepare_duration && obj_vel < velocity_threshold) {
+      if (t < prepare_duration && obj_vel_norm < velocity_threshold) {
         continue;
       }
       const auto obj_pose = object_recognition_utils::calcInterpolatedPose(path, t);
       if (obj_pose) {
         const auto obj_polygon = tier4_autoware_utils::toPolygon2d(*obj_pose, object.shape);
         extended_object.predicted_paths.at(i).path.emplace_back(
-          t, *obj_pose, obj_velocity, obj_polygon);
+          t, *obj_pose, obj_vel_norm, obj_polygon);
       }
     }
   }

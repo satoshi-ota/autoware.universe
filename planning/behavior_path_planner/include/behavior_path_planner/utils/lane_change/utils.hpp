@@ -30,7 +30,7 @@
 #include <geometry_msgs/msg/pose_stamped.hpp>
 #include <geometry_msgs/msg/twist_stamped.hpp>
 
-#include <lanelet2_core/primitives/Primitive.h>
+#include <lanelet2_core/Forward.h>
 
 #include <memory>
 #include <string>
@@ -85,8 +85,8 @@ std::vector<int64_t> replaceWithSortedIds(
   const std::vector<std::vector<int64_t>> & sorted_lane_ids);
 
 std::vector<std::vector<int64_t>> getSortedLaneIds(
-  const RouteHandler & route_handler, const lanelet::ConstLanelets & current_lanes,
-  const lanelet::ConstLanelets & target_lanes, const double rough_shift_length);
+  const RouteHandler & route_handler, const Pose & current_pose,
+  const lanelet::ConstLanelets & current_lanes, const lanelet::ConstLanelets & target_lanes);
 
 PathWithLaneId combineReferencePath(const PathWithLaneId & path1, const PathWithLaneId & path2);
 
@@ -97,6 +97,10 @@ lanelet::ConstLanelets getTargetPreferredLanes(
 
 lanelet::ConstLanelets getTargetNeighborLanes(
   const RouteHandler & route_handler, const lanelet::ConstLanelets & target_lanes,
+  const LaneChangeModuleType & type);
+
+lanelet::BasicPolygon2d getTargetNeighborLanesPolygon(
+  const RouteHandler & route_handler, const lanelet::ConstLanelets & current_lanes,
   const LaneChangeModuleType & type);
 
 bool isPathInLanelets(
@@ -138,8 +142,6 @@ lanelet::ConstLanelets getBackwardLanelets(
   const RouteHandler & route_handler, const lanelet::ConstLanelets & target_lanes,
   const Pose & current_pose, const double backward_length);
 
-bool isTargetObjectType(const PredictedObject & object, const LaneChangeParameters & parameters);
-
 double calcLateralBufferForFiltering(const double vehicle_width, const double lateral_buffer = 0.0);
 
 double calcLateralBufferForFiltering(const double vehicle_width, const double lateral_buffer);
@@ -155,9 +157,6 @@ boost::optional<lanelet::ConstLanelet> getLaneChangeTargetLane(
 std::vector<PoseWithVelocityStamped> convertToPredictedPath(
   const LaneChangePath & lane_change_path, const Twist & vehicle_twist, const Pose & pose,
   const BehaviorPathPlannerParameters & common_parameters, const double resolution);
-
-PredictedPath convertToPredictedPath(
-  const std::vector<PoseWithVelocityStamped> & path, const double time_resolution);
 
 bool isParkedObject(
   const PathWithLaneId & path, const RouteHandler & route_handler,
@@ -182,12 +181,6 @@ boost::optional<size_t> getLeadingStaticObjectIdx(
 
 std::optional<lanelet::BasicPolygon2d> createPolygon(
   const lanelet::ConstLanelets & lanes, const double start_dist, const double end_dist);
-
-LaneChangeTargetObjectIndices filterObject(
-  const PredictedObjects & objects, const lanelet::ConstLanelets & current_lanes,
-  const lanelet::ConstLanelets & target_lanes, const lanelet::ConstLanelets & target_backward_lanes,
-  const Pose & current_pose, const RouteHandler & route_handler,
-  const LaneChangeParameters & lane_change_parameters);
 
 ExtendedPredictedObject transform(
   const PredictedObject & object, const BehaviorPathPlannerParameters & common_parameters,
