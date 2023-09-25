@@ -311,7 +311,7 @@
   
   
     <li class="md-tabs__item">
-      <a href="../../../../localization/ar_tag_based_localizer/" class="md-tabs__link">
+      <a href="../../../../localization/ekf_localizer/" class="md-tabs__link">
         Localization
       </a>
     </li>
@@ -5523,14 +5523,14 @@
         
         
         <div class="md-nav__link md-nav__link--index ">
-          <a href="../../../../localization/ar_tag_based_localizer/">Ar tag based localizer</a>
+          <a href="../../../../localization/ekf_localizer/">Ekf localizer</a>
           
         </div>
       
       <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_5_1_label" aria-expanded="false">
         <label class="md-nav__title" for="__nav_5_1">
           <span class="md-nav__icon md-icon"></span>
-          Ar tag based localizer
+          Ekf localizer
         </label>
         <ul class="md-nav__list" data-md-scrollfix>
           
@@ -5571,14 +5571,14 @@
         
         
         <div class="md-nav__link md-nav__link--index ">
-          <a href="../../../../localization/ekf_localizer/">Ekf localizer</a>
+          <a href="../../../../localization/gyro_odometer/">Gyro odometer</a>
           
         </div>
       
       <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_5_2_label" aria-expanded="false">
         <label class="md-nav__title" for="__nav_5_2">
           <span class="md-nav__icon md-icon"></span>
-          Ekf localizer
+          Gyro odometer
         </label>
         <ul class="md-nav__list" data-md-scrollfix>
           
@@ -5614,22 +5614,74 @@
             
           
         
+          
+        
       
       
         
         
         <div class="md-nav__link md-nav__link--index ">
-          <a href="../../../../localization/gyro_odometer/">Gyro odometer</a>
+          <a href="../../../../localization/landmark_based_localizer/">Landmark based localizer</a>
+          
+            <label for="__nav_5_3">
+              <span class="md-nav__icon md-icon"></span>
+            </label>
           
         </div>
       
       <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_5_3_label" aria-expanded="false">
         <label class="md-nav__title" for="__nav_5_3">
           <span class="md-nav__icon md-icon"></span>
-          Gyro odometer
+          Landmark based localizer
         </label>
         <ul class="md-nav__list" data-md-scrollfix>
           
+            
+          
+            
+              
+  
+  
+  
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+      
+      
+      
+        
+      
+      <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_5_3_2" >
+      
+      
+        
+          
+            
+          
+        
+      
+      
+        
+        
+        <div class="md-nav__link md-nav__link--index ">
+          <a href="../../../../localization/landmark_based_localizer/ar_tag_based_localizer/">Ar tag based localizer</a>
+          
+        </div>
+      
+      <nav class="md-nav" data-md-level="3" aria-labelledby="__nav_5_3_2_label" aria-expanded="false">
+        <label class="md-nav__title" for="__nav_5_3_2">
+          <span class="md-nav__icon md-icon"></span>
+          Ar tag based localizer
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+          
+        </ul>
+      </nav>
+    </li>
+  
+
             
           
         </ul>
@@ -15163,6 +15215,13 @@ When allowed, park in accordance with the specified policy(e.g pull over on left
 <td align="left">time threshold for arrival of path termination</td>
 <td align="left">2.0</td>
 </tr>
+<tr>
+<td align="left">center_line_path_interval</td>
+<td align="left">[m]</td>
+<td align="left">double</td>
+<td align="left">reference center line path point interval</td>
+<td align="left">1.0</td>
+</tr>
 </tbody>
 </table>
 <h2 id="collision-check"><strong>collision check</strong><a class="headerlink" href="#collision-check" title="Permanent link">#</a></h2>
@@ -15181,17 +15240,24 @@ When allowed, park in accordance with the specified policy(e.g pull over on left
 </thead>
 <tbody>
 <tr>
-<td align="left">use_occupancy_grid</td>
+<td align="left">use_occupancy_grid_for_goal_search</td>
 <td align="left">[-]</td>
 <td align="left">bool</td>
-<td align="left">flag whether to use occupancy grid for collision check</td>
+<td align="left">flag whether to use occupancy grid for goal search collision check</td>
 <td align="left">true</td>
 </tr>
 <tr>
-<td align="left">use_occupancy_grid_for_longitudinal_margin</td>
+<td align="left">use_occupancy_grid_for_goal_longitudinal_margin</td>
 <td align="left">[-]</td>
 <td align="left">bool</td>
 <td align="left">flag whether to use occupancy grid for keeping longitudinal margin</td>
+<td align="left">false</td>
+</tr>
+<tr>
+<td align="left">use_occupancy_grid_for_path_collision_check</td>
+<td align="left">[-]</td>
+<td align="left">bool</td>
+<td align="left">flag whether to use occupancy grid for collision check</td>
 <td align="left">false</td>
 </tr>
 <tr>

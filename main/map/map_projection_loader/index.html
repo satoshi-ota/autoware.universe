@@ -311,7 +311,7 @@
   
   
     <li class="md-tabs__item">
-      <a href="../../localization/ar_tag_based_localizer/" class="md-tabs__link">
+      <a href="../../localization/ekf_localizer/" class="md-tabs__link">
         Localization
       </a>
     </li>
@@ -5523,14 +5523,14 @@
         
         
         <div class="md-nav__link md-nav__link--index ">
-          <a href="../../localization/ar_tag_based_localizer/">Ar tag based localizer</a>
+          <a href="../../localization/ekf_localizer/">Ekf localizer</a>
           
         </div>
       
       <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_5_1_label" aria-expanded="false">
         <label class="md-nav__title" for="__nav_5_1">
           <span class="md-nav__icon md-icon"></span>
-          Ar tag based localizer
+          Ekf localizer
         </label>
         <ul class="md-nav__list" data-md-scrollfix>
           
@@ -5571,14 +5571,14 @@
         
         
         <div class="md-nav__link md-nav__link--index ">
-          <a href="../../localization/ekf_localizer/">Ekf localizer</a>
+          <a href="../../localization/gyro_odometer/">Gyro odometer</a>
           
         </div>
       
       <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_5_2_label" aria-expanded="false">
         <label class="md-nav__title" for="__nav_5_2">
           <span class="md-nav__icon md-icon"></span>
-          Ekf localizer
+          Gyro odometer
         </label>
         <ul class="md-nav__list" data-md-scrollfix>
           
@@ -5614,22 +5614,74 @@
             
           
         
+          
+        
       
       
         
         
         <div class="md-nav__link md-nav__link--index ">
-          <a href="../../localization/gyro_odometer/">Gyro odometer</a>
+          <a href="../../localization/landmark_based_localizer/">Landmark based localizer</a>
+          
+            <label for="__nav_5_3">
+              <span class="md-nav__icon md-icon"></span>
+            </label>
           
         </div>
       
       <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_5_3_label" aria-expanded="false">
         <label class="md-nav__title" for="__nav_5_3">
           <span class="md-nav__icon md-icon"></span>
-          Gyro odometer
+          Landmark based localizer
         </label>
         <ul class="md-nav__list" data-md-scrollfix>
           
+            
+          
+            
+              
+  
+  
+  
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+      
+      
+      
+        
+      
+      <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_5_3_2" >
+      
+      
+        
+          
+            
+          
+        
+      
+      
+        
+        
+        <div class="md-nav__link md-nav__link--index ">
+          <a href="../../localization/landmark_based_localizer/ar_tag_based_localizer/">Ar tag based localizer</a>
+          
+        </div>
+      
+      <nav class="md-nav" data-md-level="3" aria-labelledby="__nav_5_3_2_label" aria-expanded="false">
+        <label class="md-nav__title" for="__nav_5_3_2">
+          <span class="md-nav__icon md-icon"></span>
+          Ar tag based localizer
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+          
+        </ul>
+      </nav>
+    </li>
+  
+
             
           
         </ul>
@@ -14797,6 +14849,13 @@
   
 </li>
         
+          <li class="md-nav__item">
+  <a href="#using-transversemercator" class="md-nav__link">
+    Using TransverseMercator
+  </a>
+  
+</li>
+        
       </ul>
     </nav>
   
@@ -14868,6 +14927,16 @@ This is necessary information especially when you want to convert from global (g
 <p>If you want to use local cartesian UTM, please specify the map origin as well.</p>
 <div class="highlight"><pre><span></span><code><span class="c1"># map_projector_info.yaml</span>
 <span class="nt">projector_type</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">LocalCartesianUTM</span>
+<span class="nt">vertical_datum</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">WGS84</span>
+<span class="nt">map_origin</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">latitude</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">35.6762</span><span class="w"> </span><span class="c1"># [deg]</span>
+<span class="w">  </span><span class="nt">longitude</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">139.6503</span><span class="w"> </span><span class="c1"># [deg]</span>
+<span class="w">  </span><span class="nt">altitude</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">0.0</span><span class="w"> </span><span class="c1"># [m]</span>
+</code></pre></div>
+<h3 id="using-transversemercator">Using TransverseMercator<a class="headerlink" href="#using-transversemercator" title="Permanent link">#</a></h3>
+<p>If you want to use Transverse Mercator projection, please specify the map origin as well.</p>
+<div class="highlight"><pre><span></span><code><span class="c1"># map_projector_info.yaml</span>
+<span class="nt">projector_type</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">TransverseMercator</span>
 <span class="nt">vertical_datum</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">WGS84</span>
 <span class="nt">map_origin</span><span class="p">:</span>
 <span class="w">  </span><span class="nt">latitude</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">35.6762</span><span class="w"> </span><span class="c1"># [deg]</span>

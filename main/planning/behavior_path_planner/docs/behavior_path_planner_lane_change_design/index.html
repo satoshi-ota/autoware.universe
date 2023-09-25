@@ -311,7 +311,7 @@
   
   
     <li class="md-tabs__item">
-      <a href="../../../../localization/ar_tag_based_localizer/" class="md-tabs__link">
+      <a href="../../../../localization/ekf_localizer/" class="md-tabs__link">
         Localization
       </a>
     </li>
@@ -5523,14 +5523,14 @@
         
         
         <div class="md-nav__link md-nav__link--index ">
-          <a href="../../../../localization/ar_tag_based_localizer/">Ar tag based localizer</a>
+          <a href="../../../../localization/ekf_localizer/">Ekf localizer</a>
           
         </div>
       
       <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_5_1_label" aria-expanded="false">
         <label class="md-nav__title" for="__nav_5_1">
           <span class="md-nav__icon md-icon"></span>
-          Ar tag based localizer
+          Ekf localizer
         </label>
         <ul class="md-nav__list" data-md-scrollfix>
           
@@ -5571,14 +5571,14 @@
         
         
         <div class="md-nav__link md-nav__link--index ">
-          <a href="../../../../localization/ekf_localizer/">Ekf localizer</a>
+          <a href="../../../../localization/gyro_odometer/">Gyro odometer</a>
           
         </div>
       
       <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_5_2_label" aria-expanded="false">
         <label class="md-nav__title" for="__nav_5_2">
           <span class="md-nav__icon md-icon"></span>
-          Ekf localizer
+          Gyro odometer
         </label>
         <ul class="md-nav__list" data-md-scrollfix>
           
@@ -5614,22 +5614,74 @@
             
           
         
+          
+        
       
       
         
         
         <div class="md-nav__link md-nav__link--index ">
-          <a href="../../../../localization/gyro_odometer/">Gyro odometer</a>
+          <a href="../../../../localization/landmark_based_localizer/">Landmark based localizer</a>
+          
+            <label for="__nav_5_3">
+              <span class="md-nav__icon md-icon"></span>
+            </label>
           
         </div>
       
       <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_5_3_label" aria-expanded="false">
         <label class="md-nav__title" for="__nav_5_3">
           <span class="md-nav__icon md-icon"></span>
-          Gyro odometer
+          Landmark based localizer
         </label>
         <ul class="md-nav__list" data-md-scrollfix>
           
+            
+          
+            
+              
+  
+  
+  
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+      
+      
+      
+        
+      
+      <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_5_3_2" >
+      
+      
+        
+          
+            
+          
+        
+      
+      
+        
+        
+        <div class="md-nav__link md-nav__link--index ">
+          <a href="../../../../localization/landmark_based_localizer/ar_tag_based_localizer/">Ar tag based localizer</a>
+          
+        </div>
+      
+      <nav class="md-nav" data-md-level="3" aria-labelledby="__nav_5_3_2_label" aria-expanded="false">
+        <label class="md-nav__title" for="__nav_5_3_2">
+          <span class="md-nav__icon md-icon"></span>
+          Ar tag based localizer
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+          
+        </ul>
+      </nav>
+    </li>
+  
+
             
           
         </ul>
@@ -9527,6 +9579,13 @@
 </li>
         
           <li class="md-nav__item">
+  <a href="#lane-change-regulations" class="md-nav__link">
+    Lane change regulations
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
   <a href="#aborting-lane-change" class="md-nav__link">
     Aborting lane change
   </a>
@@ -9549,6 +9608,13 @@
           <li class="md-nav__item">
   <a href="#essential-lane-change-parameters" class="md-nav__link">
     Essential lane change parameters
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#lane-change-regulations_1" class="md-nav__link">
+    Lane change regulations
   </a>
   
 </li>
@@ -14914,6 +14980,13 @@
 </li>
         
           <li class="md-nav__item">
+  <a href="#lane-change-regulations" class="md-nav__link">
+    Lane change regulations
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
   <a href="#aborting-lane-change" class="md-nav__link">
     Aborting lane change
   </a>
@@ -14936,6 +15009,13 @@
           <li class="md-nav__item">
   <a href="#essential-lane-change-parameters" class="md-nav__link">
     Essential lane change parameters
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#lane-change-regulations_1" class="md-nav__link">
+    Lane change regulations
   </a>
   
 </li>
@@ -15101,6 +15181,9 @@ Computing candidate paths that assumes ego vehicle's slows down is performed by 
 </code></pre></div>
 <p>The following figure illustrates when the lane is blocked in multiple lane changes cases.</p>
 <p><img alt="multiple-lane-changes" src="../../image/lane_change/lane_change-when_cannot_change_lanes.png"></p>
+<h3 id="lane-change-regulations">Lane change regulations<a class="headerlink" href="#lane-change-regulations" title="Permanent link">#</a></h3>
+<p>If you want to regulate lane change on crosswalks or intersections, the lane change module finds a lane change path excluding it includes crosswalks or intersections.
+To regulate lane change on crosswalks or intersections, change <code>regulation.crosswalk</code> or <code>regulation.intersection</code> to <code>true</code>.</p>
 <h3 id="aborting-lane-change">Aborting lane change<a class="headerlink" href="#aborting-lane-change" title="Permanent link">#</a></h3>
 <p>The abort process may result in three different outcome; Cancel, Abort and Stop/Cruise.</p>
 <p>The following depicts the flow of the abort lane change check.</p>
@@ -15318,6 +15401,34 @@ Computing candidate paths that assumes ego vehicle's slows down is performed by 
 <td>boolean</td>
 <td>Include pedestrian objects for safety check</td>
 <td>true</td>
+</tr>
+</tbody>
+</table>
+<h3 id="lane-change-regulations_1">Lane change regulations<a class="headerlink" href="#lane-change-regulations_1" title="Permanent link">#</a></h3>
+<table>
+<thead>
+<tr>
+<th align="left">Name</th>
+<th>Unit</th>
+<th>Type</th>
+<th>Description</th>
+<th>Default value</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td align="left"><code>regulation.crosswalk</code></td>
+<td>[-]</td>
+<td>boolean</td>
+<td>Regulate lane change on crosswalks</td>
+<td>false</td>
+</tr>
+<tr>
+<td align="left"><code>regulation.intersection</code></td>
+<td>[-]</td>
+<td>boolean</td>
+<td>Regulate lane change on intersections</td>
+<td>false</td>
 </tr>
 </tbody>
 </table>
