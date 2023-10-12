@@ -990,17 +990,17 @@ void filterTargetObjects(
     // calc longitudinal distance from ego to closest target object footprint point.
     fillLongitudinalAndLengthByClosestEnvelopeFootprint(data.reference_path_rough, ego_pos, o);
 
-    // object is behind ego or too far.
-    if (o.longitudinal < -parameters->object_check_backward_distance) {
-      o.reason = AvoidanceDebugFactor::OBJECT_IS_BEHIND_THRESHOLD;
-      data.other_objects.push_back(o);
-      continue;
-    }
-    if (o.longitudinal > parameters->object_check_forward_distance) {
-      o.reason = AvoidanceDebugFactor::OBJECT_IS_IN_FRONT_THRESHOLD;
-      data.other_objects.push_back(o);
-      continue;
-    }
+    // // object is behind ego or too far.
+    // if (o.longitudinal < -parameters->object_check_backward_distance) {
+    //   o.reason = AvoidanceDebugFactor::OBJECT_IS_BEHIND_THRESHOLD;
+    //   data.other_objects.push_back(o);
+    //   continue;
+    // }
+    // if (o.longitudinal > parameters->object_check_forward_distance) {
+    //   o.reason = AvoidanceDebugFactor::OBJECT_IS_IN_FRONT_THRESHOLD;
+    //   data.other_objects.push_back(o);
+    //   continue;
+    // }
 
     // Target object is behind the path goal -> ignore.
     if (o.longitudinal > dist_to_goal) {
@@ -1559,7 +1559,7 @@ lanelet::ConstLanelets getAdjacentLane(
   const std::shared_ptr<AvoidanceParameters> & parameters, const bool is_right_shift)
 {
   const auto & rh = planner_data->route_handler;
-  const auto & forward_distance = parameters->object_check_forward_distance;
+  const auto & forward_distance = parameters->object_check_max_forward_distance;
   const auto & backward_distance = parameters->safety_check_backward_distance;
   const auto & vehicle_pose = planner_data->self_odometry->pose.pose;
 
@@ -1670,7 +1670,7 @@ std::vector<ExtendedPredictedObject> getSafetyCheckTargetObjects(
 std::pair<PredictedObjects, PredictedObjects> separateObjectsByPath(
   const PathWithLaneId & path, const std::shared_ptr<const PlannerData> & planner_data,
   const AvoidancePlanningData & data, const std::shared_ptr<AvoidanceParameters> & parameters,
-  const bool is_running, DebugData & debug)
+  const double object_check_forward_distance, const bool is_running, DebugData & debug)
 {
   PredictedObjects target_objects;
   PredictedObjects other_objects;
@@ -1693,7 +1693,7 @@ std::pair<PredictedObjects, PredictedObjects> separateObjectsByPath(
     const auto & p_ego_back = path.points.at(i + 1).point.pose;
 
     const auto distance_from_ego = calcSignedArcLength(path.points, ego_idx, i);
-    if (distance_from_ego > parameters->object_check_forward_distance) {
+    if (distance_from_ego > object_check_forward_distance) {
       break;
     }
 
