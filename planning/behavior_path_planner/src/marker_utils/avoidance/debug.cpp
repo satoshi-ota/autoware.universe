@@ -83,6 +83,19 @@ MarkerArray createObjectsCubeMarkerArray(
     msg.markers.push_back(marker);
   }
 
+  for (const auto & object : objects) {
+    auto marker = createDefaultMarker(
+      "map", rclcpp::Clock{RCL_ROS_TIME}.now(), ns + "_margin", 0L, Marker::CYLINDER, scale, color);
+
+    const auto radius = 2.0 * object.to_road_shoulder_distance;
+
+    marker.scale = createMarkerScale(radius, radius, 0.1);
+    marker.color.a = 0.2;
+    marker.id = uuidToInt32(object.object.object_id);
+    marker.pose.position = object.overhang_pose.position;
+    msg.markers.push_back(marker);
+  }
+
   return msg;
 }
 
@@ -418,58 +431,37 @@ MarkerArray createOtherObjectsMarkerArray(const ObjectDataArray & objects, const
   return msg;
 }
 
-MarkerArray makeOverhangToRoadShoulderMarkerArray(
-  const ObjectDataArray & objects, std::string && ns)
-{
-  auto marker = createDefaultMarker(
-    "map", rclcpp::Clock{RCL_ROS_TIME}.now(), ns, 0L, Marker::TEXT_VIEW_FACING,
-    createMarkerScale(1.0, 1.0, 1.0), createMarkerColor(1.0, 1.0, 0.0, 1.0));
-
-  int32_t i{0};
-  MarkerArray msg;
-  for (const auto & object : objects) {
-    marker.id = ++i;
-    marker.pose = object.overhang_pose;
-    std::ostringstream string_stream;
-    string_stream << "(to_road_shoulder_distance = " << object.to_road_shoulder_distance << " [m])";
-    marker.text = string_stream.str();
-    msg.markers.push_back(marker);
-  }
-
-  return msg;
-}
-
-MarkerArray createOverhangFurthestLineStringMarkerArray(
-  const lanelet::ConstLineStrings3d & linestrings, std::string && ns, const float & r,
-  const float & g, const float & b)
+MarkerArray createDrivableBounds(
+  const AvoidancePlanningData & data, std::string && ns, const float & r, const float & g,
+  const float & b)
 {
   const auto current_time = rclcpp::Clock{RCL_ROS_TIME}.now();
   MarkerArray msg;
 
-  for (const auto & linestring : linestrings) {
-    const auto id = static_cast<int>(linestring.id());
+  // right bound
+  {
     auto marker = createDefaultMarker(
-      "map", current_time, ns, id, Marker::LINE_STRIP, createMarkerScale(0.4, 0.0, 0.0),
+      "map", current_time, ns + "_right", 0L, Marker::LINE_STRIP, createMarkerScale(0.4, 0.0, 0.0),
       createMarkerColor(r, g, b, 0.999));
 
-    marker.pose.orientation = tier4_autoware_utils::createMarkerOrientation(0, 0, 0, 1.0);
-    for (const auto & p : linestring.basicLineString()) {
+    for (const auto & p : data.right_bound) {
       marker.points.push_back(createPoint(p.x(), p.y(), p.z()));
     }
-    msg.markers.push_back(marker);
 
-    Marker marker_linestring_id = createDefaultMarker(
-      "map", current_time, "linestring_id", id, Marker::TEXT_VIEW_FACING,
-      createMarkerScale(1.5, 1.5, 1.5), createMarkerColor(1.0, 1.0, 1.0, 0.8));
-    Pose text_id_pose;
-    text_id_pose.position.x = linestring.front().x();
-    text_id_pose.position.y = linestring.front().y();
-    text_id_pose.position.z = linestring.front().z();
-    marker_linestring_id.pose = text_id_pose;
-    std::ostringstream ss;
-    ss << "(ID : " << id << ") ";
-    marker_linestring_id.text = ss.str();
-    msg.markers.push_back(marker_linestring_id);
+    msg.markers.push_back(marker);
+  }
+
+  // left bound
+  {
+    auto marker = createDefaultMarker(
+      "map", current_time, ns + "_left", 0L, Marker::LINE_STRIP, createMarkerScale(0.4, 0.0, 0.0),
+      createMarkerColor(r, g, b, 0.999));
+
+    for (const auto & p : data.left_bound) {
+      marker.points.push_back(createPoint(p.x(), p.y(), p.z()));
+    }
+
+    msg.markers.push_back(marker);
   }
 
   return msg;
