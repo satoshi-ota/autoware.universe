@@ -2697,6 +2697,7 @@ void AvoidanceModule::updateDebugMarker(
     addObjects(data.other_objects, std::string("NotNeedAvoidance"));
     addObjects(data.other_objects, std::string("LessThanExecutionThreshold"));
     addObjects(data.other_objects, std::string("TooNearToGoal"));
+    addObjects(data.other_objects, std::string("ParallelToEgoLane"));
   }
 
   // shift line pre-process

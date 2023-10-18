@@ -45,6 +45,10 @@ bool isWithinCrosswalk(
 bool isTargetObjectType(
   const PredictedObject & object, const std::shared_ptr<AvoidanceParameters> & parameters);
 
+bool isObjectOnRoadShoulder(
+  ObjectData & object, std::shared_ptr<RouteHandler> & route_handler,
+  std::shared_ptr<AvoidanceParameters> & parameters);
+
 double calcShiftLength(
   const bool & is_object_on_right, const double & overhang_dist, const double & avoid_margin);
 
