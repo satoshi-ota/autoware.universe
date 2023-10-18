@@ -1113,6 +1113,7 @@ void filterTargetObjects(
     }
 
     if (overhang_lanelet.id()) {
+      o.overhang_lanelet = overhang_lanelet;
       lanelet::BasicPoint2d basic_point{o.overhang_pose.position.x, o.overhang_pose.position.y};
 
       // TODO(Satoshi OTA): check if the basic point is on right or left of bound.
