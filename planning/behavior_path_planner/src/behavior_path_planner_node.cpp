@@ -102,6 +102,10 @@ BehaviorPathPlannerNode::BehaviorPathPlannerNode(const rclcpp::NodeOptions & nod
   costmap_subscriber_ = create_subscription<OccupancyGrid>(
     "~/input/costmap", 1, std::bind(&BehaviorPathPlannerNode::onCostMap, this, _1),
     createSubscriptionOptions(this));
+  traffic_signals_subscriber_ =
+    this->create_subscription<autoware_perception_msgs::msg::TrafficSignalArray>(
+      "~/input/traffic_signals", 1, std::bind(&BehaviorPathPlannerNode::onTrafficSignals, this, _1),
+      createSubscriptionOptions(this));
   lateral_offset_subscriber_ = this->create_subscription<LateralOffset>(
     "~/input/lateral_offset", 1, std::bind(&BehaviorPathPlannerNode::onLateralOffset, this, _1),
     createSubscriptionOptions(this));
@@ -931,6 +935,17 @@ void BehaviorPathPlannerNode::onCostMap(const OccupancyGrid::ConstSharedPtr msg)
 {
   const std::lock_guard<std::mutex> lock(mutex_pd_);
   planner_data_->costmap = msg;
+}
+void BehaviorPathPlannerNode::onTrafficSignals(const TrafficSignalArray::ConstSharedPtr msg)
+{
+  std::lock_guard<std::mutex> lock(mutex_pd_);
+
+  for (const auto & signal : msg->signals) {
+    TrafficSignalStamped traffic_signal;
+    traffic_signal.stamp = msg->stamp;
+    traffic_signal.signal = signal;
+    planner_data_->traffic_light_id_map[signal.traffic_signal_id] = traffic_signal;
+  }
 }
 void BehaviorPathPlannerNode::onMap(const HADMapBin::ConstSharedPtr msg)
 {

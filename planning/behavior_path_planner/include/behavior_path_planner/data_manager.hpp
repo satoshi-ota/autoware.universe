@@ -28,6 +28,7 @@
 #include <autoware_auto_planning_msgs/msg/path_with_lane_id.hpp>
 #include <autoware_auto_vehicle_msgs/msg/hazard_lights_command.hpp>
 #include <autoware_auto_vehicle_msgs/msg/turn_indicators_command.hpp>
+#include <autoware_perception_msgs/msg/traffic_signal_array.hpp>
 #include <autoware_planning_msgs/msg/pose_with_uuid_stamped.hpp>
 #include <geometry_msgs/msg/accel_with_covariance_stamped.hpp>
 #include <geometry_msgs/msg/pose.hpp>
@@ -39,6 +40,7 @@
 #include <lanelet2_core/primitives/Lanelet.h>
 
 #include <limits>
+#include <map>
 #include <memory>
 #include <string>
 #include <vector>
@@ -60,6 +62,12 @@ using route_handler::RouteHandler;
 using tier4_planning_msgs::msg::LateralOffset;
 using PlanResult = PathWithLaneId::SharedPtr;
 using unique_identifier_msgs::msg::UUID;
+
+struct TrafficSignalStamped
+{
+  builtin_interfaces::msg::Time stamp;
+  autoware_perception_msgs::msg::TrafficSignal signal;
+};
 
 struct BoolStamped
 {
@@ -147,6 +155,7 @@ struct PlannerData
   std::optional<UUID> prev_route_id{};
   lanelet::ConstLanelets current_lanes{};
   std::shared_ptr<RouteHandler> route_handler{std::make_shared<RouteHandler>()};
+  std::map<int, TrafficSignalStamped> traffic_light_id_map;
   BehaviorPathPlannerParameters parameters{};
   drivable_area_expansion::DrivableAreaExpansionParameters drivable_area_expansion_parameters{};
 
