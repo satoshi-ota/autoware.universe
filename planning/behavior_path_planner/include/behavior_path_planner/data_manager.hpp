@@ -20,6 +20,7 @@
 #include "behavior_path_planner/utils/drivable_area_expansion/parameters.hpp"
 #include "motion_utils/trajectory/trajectory.hpp"
 
+#include <lanelet2_extension/regulatory_elements/Forward.hpp>
 #include <rclcpp/rclcpp.hpp>
 #include <route_handler/route_handler.hpp>
 
@@ -53,6 +54,7 @@ using autoware_auto_perception_msgs::msg::PredictedObjects;
 using autoware_auto_planning_msgs::msg::PathWithLaneId;
 using autoware_auto_vehicle_msgs::msg::HazardLightsCommand;
 using autoware_auto_vehicle_msgs::msg::TurnIndicatorsCommand;
+using autoware_perception_msgs::msg::TrafficSignal;
 using autoware_planning_msgs::msg::PoseWithUuidStamped;
 using geometry_msgs::msg::AccelWithCovarianceStamped;
 using geometry_msgs::msg::PoseStamped;
@@ -61,6 +63,7 @@ using nav_msgs::msg::Odometry;
 using route_handler::RouteHandler;
 using tier4_planning_msgs::msg::LateralOffset;
 using PlanResult = PathWithLaneId::SharedPtr;
+using lanelet::TrafficLight;
 using unique_identifier_msgs::msg::UUID;
 
 struct TrafficSignalStamped
@@ -161,6 +164,14 @@ struct PlannerData
 
   mutable std::optional<geometry_msgs::msg::Pose> drivable_area_expansion_prev_crop_pose;
   mutable TurnSignalDecider turn_signal_decider;
+
+  std::shared_ptr<TrafficSignalStamped> getTrafficSignal(const int id) const
+  {
+    if (traffic_light_id_map.count(id) == 0) {
+      return {};
+    }
+    return std::make_shared<TrafficSignalStamped>(traffic_light_id_map.at(id));
+  }
 
   TurnIndicatorsCommand getTurnSignal(
     const PathWithLaneId & path, const TurnSignalInfo & turn_signal_info,

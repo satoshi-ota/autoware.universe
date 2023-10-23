@@ -50,6 +50,7 @@
 namespace behavior_path_planner::utils::avoidance
 {
 
+using autoware_perception_msgs::msg::TrafficSignalElement;
 using motion_utils::calcLongitudinalOffsetPoint;
 using motion_utils::calcSignedArcLength;
 using motion_utils::findNearestIndex;
@@ -432,6 +433,58 @@ bool isObjectOnRoadShoulder(
   }
 
   return is_left_side_parked_vehicle || is_right_side_parked_vehicle;
+}
+
+bool hasTrafficLightCircleColor(const TrafficSignal & tl_state, const uint8_t & lamp_color)
+{
+  const auto it_lamp =
+    std::find_if(tl_state.elements.begin(), tl_state.elements.end(), [&lamp_color](const auto & x) {
+      return x.shape == TrafficSignalElement::CIRCLE && x.color == lamp_color;
+    });
+
+  return it_lamp != tl_state.elements.end();
+}
+
+bool hasTrafficLightShape(const TrafficSignal & tl_state, const uint8_t & lamp_shape)
+{
+  const auto it_lamp = std::find_if(
+    tl_state.elements.begin(), tl_state.elements.end(),
+    [&lamp_shape](const auto & x) { return x.shape == lamp_shape; });
+
+  return it_lamp != tl_state.elements.end();
+}
+
+bool isTrafficSignalStop(const lanelet::ConstLanelet & lanelet, const TrafficSignal & tl_state)
+{
+  if (hasTrafficLightCircleColor(tl_state, TrafficSignalElement::GREEN)) {
+    return false;
+  }
+
+  if (hasTrafficLightCircleColor(tl_state, TrafficSignalElement::UNKNOWN)) {
+    return false;
+  }
+
+  const std::string turn_direction = lanelet.attributeOr("turn_direction", "else");
+
+  if (turn_direction == "else") {
+    return true;
+  }
+  if (
+    turn_direction == "right" &&
+    hasTrafficLightShape(tl_state, TrafficSignalElement::RIGHT_ARROW)) {
+    return false;
+  }
+  if (
+    turn_direction == "left" && hasTrafficLightShape(tl_state, TrafficSignalElement::LEFT_ARROW)) {
+    return false;
+  }
+  if (
+    turn_direction == "straight" &&
+    hasTrafficLightShape(tl_state, TrafficSignalElement::UP_ARROW)) {
+    return false;
+  }
+
+  return true;
 }
 
 bool isForceAvoidanceTarget(
@@ -1909,5 +1962,93 @@ DrivableLanes generateExpandDrivableLanes(
   }
 
   return current_drivable_lanes;
+}
+
+double calcDistanceToAvoidStartLine(
+  const lanelet::ConstLanelets & lanelets, const PathWithLaneId & path,
+  const std::shared_ptr<const PlannerData> & planner_data,
+  const std::shared_ptr<AvoidanceParameters> & parameters)
+{
+  if (lanelets.empty()) {
+    return std::numeric_limits<double>::lowest();
+  }
+
+  double distance_to_return_dead_line = std::numeric_limits<double>::lowest();
+
+  // dead line stop factor(traffic light)
+  if (parameters->enable_dead_line_for_traffic_light) {
+    const auto to_traffic_light = calcDistanceToRedTrafficLight(lanelets, path, planner_data);
+    if (to_traffic_light.has_value()) {
+      distance_to_return_dead_line = std::max(
+        distance_to_return_dead_line,
+        to_traffic_light.value() + parameters->dead_line_buffer_for_traffic_light);
+    }
+  }
+
+  return distance_to_return_dead_line;
+}
+
+double calcDistanceToReturnDeadLine(
+  const lanelet::ConstLanelets & lanelets, const PathWithLaneId & path,
+  const std::shared_ptr<const PlannerData> & planner_data,
+  const std::shared_ptr<AvoidanceParameters> & parameters)
+{
+  if (lanelets.empty()) {
+    return std::numeric_limits<double>::max();
+  }
+
+  double distance_to_return_dead_line = std::numeric_limits<double>::max();
+
+  // dead line stop factor(traffic light)
+  if (parameters->enable_dead_line_for_traffic_light) {
+    const auto to_traffic_light = calcDistanceToRedTrafficLight(lanelets, path, planner_data);
+    if (to_traffic_light.has_value()) {
+      distance_to_return_dead_line = std::min(
+        distance_to_return_dead_line,
+        to_traffic_light.value() - parameters->dead_line_buffer_for_traffic_light);
+    }
+  }
+
+  // dead line for goal
+  if (parameters->enable_dead_line_for_goal) {
+    if (planner_data->route_handler->isInGoalRouteSection(lanelets.back())) {
+      const auto & ego_pos = planner_data->self_odometry->pose.pose.position;
+      const auto to_goal_distance =
+        calcSignedArcLength(path.points, ego_pos, path.points.size() - 1);
+      distance_to_return_dead_line = std::min(
+        distance_to_return_dead_line, to_goal_distance - parameters->dead_line_buffer_for_goal);
+    }
+  }
+
+  return distance_to_return_dead_line;
+}
+
+std::optional<double> calcDistanceToRedTrafficLight(
+  const lanelet::ConstLanelets & lanelets, const PathWithLaneId & path,
+  const std::shared_ptr<const PlannerData> & planner_data)
+{
+  for (const auto & lanelet : lanelets) {
+    for (const auto & element : lanelet.regulatoryElementsAs<TrafficLight>()) {
+      const auto traffic_signal_stamped = planner_data->getTrafficSignal(element->id());
+      if (!traffic_signal_stamped) {
+        continue;
+      }
+      const auto is_expired_data =
+        (rclcpp::Clock{RCL_ROS_TIME}.now() - traffic_signal_stamped->stamp).seconds() > 3.0;
+      if (is_expired_data) {
+        continue;
+      }
+      if (isTrafficSignalStop(lanelet, traffic_signal_stamped->signal)) {
+        const auto & ego_pos = planner_data->self_odometry->pose.pose.position;
+        lanelet::ConstLineString3d lanelet_stop_lines = *(element->stopLine());
+        const auto stop_point = tier4_autoware_utils::createPoint(
+          lanelet_stop_lines.front().x(), lanelet_stop_lines.front().y(),
+          lanelet_stop_lines.front().z());
+        return calcSignedArcLength(path.points, ego_pos, stop_point);
+      }
+    }
+  }
+
+  return std::nullopt;
 }
 }  // namespace behavior_path_planner::utils::avoidance
