@@ -292,6 +292,9 @@ void AvoidanceModule::fillFundamentalData(AvoidancePlanningData & data, DebugDat
     data.reference_path, 0, data.reference_path.points.size(),
     calcSignedArcLength(data.reference_path.points, getEgoPosition(), 0));
 
+  data.to_return_point = utils::avoidance::calcDistanceToReturnDeadLine(
+    data.current_lanelets, data.reference_path_rough, planner_data_, parameters_);
+
   // target objects for avoidance
   fillAvoidanceTargetObjects(data, debug);
 
@@ -1080,10 +1083,9 @@ AvoidOutlines AvoidanceModule::generateAvoidOutline(
       const auto offset = object_parameter.safety_buffer_longitudinal + base_link2rear + o.length;
       // The end_margin also has the purpose of preventing the return path from NOT being
       // triggered at the end point.
-      const auto return_remaining_distance = std::max(
-        data.arclength_from_ego.back() - o.longitudinal - offset -
-          parameters_->remain_buffer_distance,
-        0.0);
+
+      const auto return_remaining_distance =
+        std::max(data.to_return_point - o.longitudinal - offset, 0.0);
 
       al_return.start_shift_length = feasible_shift_length.get();
       al_return.end_shift_length = 0.0;
@@ -1787,7 +1789,9 @@ AvoidLineArray AvoidanceModule::addReturnShiftLine(
     return ret;
   }
 
-  const auto remaining_distance = arclength_from_ego.back() - parameters_->remain_buffer_distance;
+  const auto remaining_distance = std::min(
+    arclength_from_ego.back() - parameters_->dead_line_buffer_for_goal,
+    avoid_data_.to_return_point);
 
   // If the avoidance point has already been set, the return shift must be set after the point.
   const auto last_sl_distance = avoid_data_.arclength_from_ego.at(last_sl.end_idx);
@@ -2816,8 +2820,8 @@ void AvoidanceModule::insertReturnDeadLine(
 {
   const auto & data = avoid_data_;
 
-  if (!planner_data_->route_handler->isInGoalRouteSection(data.current_lanelets.back())) {
-    RCLCPP_DEBUG(getLogger(), "goal is far enough.");
+  if (data.to_return_point > planner_data_->parameters.forward_path_length) {
+    RCLCPP_DEBUG(getLogger(), "return dead line is far enough.");
     return;
   }
 
@@ -2829,10 +2833,7 @@ void AvoidanceModule::insertReturnDeadLine(
   }
 
   const auto min_return_distance = helper_.getMinAvoidanceDistance(shift_length);
-
-  const auto to_goal = calcSignedArcLength(
-    shifted_path.path.points, getEgoPosition(), shifted_path.path.points.size() - 1);
-  const auto to_stop_line = to_goal - min_return_distance - parameters_->remain_buffer_distance;
+  const auto to_stop_line = data.to_return_point - min_return_distance;
 
   // If we don't need to consider deceleration constraints, insert a deceleration point
   // and return immediately
