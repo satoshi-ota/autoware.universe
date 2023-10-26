@@ -2860,8 +2860,9 @@ void AvoidanceModule::insertReturnDeadLine(
     return;
   }
 
+  constexpr double BUFFER = 3.0;
   const auto min_return_distance = helper_.getMinAvoidanceDistance(shift_length);
-  const auto to_stop_line = data.to_return_point - min_return_distance;
+  const auto to_stop_line = data.to_return_point - min_return_distance - BUFFER;
 
   // If we don't need to consider deceleration constraints, insert a deceleration point
   // and return immediately
