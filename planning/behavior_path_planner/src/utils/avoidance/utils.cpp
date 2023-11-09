@@ -503,6 +503,20 @@ bool isForceAvoidanceTarget(
     return false;
   }
 
+  if (object.is_within_intersection) {
+    RCLCPP_DEBUG(rclcpp::get_logger(__func__), "object is in the intersection area.");
+    return false;
+  }
+
+  const auto rh = planner_data->route_handler;
+
+  if (
+    !!rh->getRoutingGraphPtr()->right(object.overhang_lanelet) &&
+    !!rh->getRoutingGraphPtr()->left(object.overhang_lanelet)) {
+    RCLCPP_DEBUG(rclcpp::get_logger(__func__), "object isn't on the edge lane.");
+    return false;
+  }
+
   const auto & ego_pose = planner_data->self_odometry->pose.pose;
   const auto & object_pose = object.object.kinematics.initial_pose_with_covariance.pose;
 
@@ -1434,6 +1448,8 @@ void filterTargetObjects(
       continue;
     }
 
+    o.is_within_intersection = isWithinIntersection(o, rh);
+
     // from here condition check for vehicle type objects.
     if (isForceAvoidanceTarget(o, extend_lanelets, planner_data, parameters)) {
       push_target_object(o, avoid_margin);
@@ -1459,11 +1475,6 @@ void filterTargetObjects(
         push_target_object(o, avoid_margin);
         continue;
       }
-    }
-
-    if (!isWithinIntersection(o, rh)) {
-      push_target_object(o, avoid_margin);
-      continue;
     }
 
     if (isParallelToEgoLane(o, M_PI_2 / 9.0)) {
