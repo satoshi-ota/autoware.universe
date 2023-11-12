@@ -292,11 +292,12 @@ private:
    */
   void registerRawShiftLines(const AvoidLineArray & future_registered);
 
-  /**
-   * @brief update path index of the registered objects. remove old objects whose end point is
-   * behind ego pose.
-   */
-  void updateRegisteredRawShiftLines();
+  // /**
+  //  * @brief update path index of the registered objects. remove old objects whose end point is
+  //  * behind ego pose.
+  //  */
+  // void updateRegisteredRawShiftLines();
+  void updateRawAvoidOutline(const AvoidOutlines & outlines) const;
 
   /**
    * @brief check whether the ego can transit yield maneuver.
@@ -541,8 +542,8 @@ private:
       removeRTCStatus();
     }
 
-    current_raw_shift_lines_.clear();
-    registered_raw_shift_lines_.clear();
+    // current_raw_shift_lines_.clear();
+    // registered_raw_shift_lines_.clear();
     path_shifter_.setShiftLines(ShiftLineArray{});
   }
 
@@ -592,13 +593,15 @@ private:
 
   RegisteredShiftLineArray right_shift_array_;
 
-  AvoidLineArray registered_raw_shift_lines_;
+  // AvoidLineArray registered_raw_shift_lines_;
 
-  AvoidLineArray current_raw_shift_lines_;
+  // AvoidLineArray current_raw_shift_lines_;
 
   UUID candidate_uuid_;
 
   ObjectDataArray registered_objects_;
+
+  mutable AvoidOutlines raw_outlines_;
 
   mutable size_t safe_count_{0};
 

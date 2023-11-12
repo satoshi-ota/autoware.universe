@@ -464,11 +464,13 @@ void AvoidanceModule::fillShiftLine(AvoidancePlanningData & data, DebugData & de
    * Basically, avoid outlines are generated per target objects.
    */
   const auto outlines = generateAvoidOutline(data, debug);
+  updateRawAvoidOutline(outlines);
 
   /**
    * STEP2: Create rough shift lines.
    */
-  data.raw_shift_line = applyPreProcess(outlines, debug);
+  data.raw_shift_line = applyPreProcess(raw_outlines_, debug);
+  // data.raw_shift_line = applyPreProcess(outlines, debug);
 
   /**
    * STEP3: Create candidate shift lines.
@@ -720,57 +722,88 @@ void AvoidanceModule::updateEgoBehavior(const AvoidancePlanningData & data, Shif
   setStopReason(StopReason::AVOIDANCE, path.path);
 }
 
-void AvoidanceModule::updateRegisteredRawShiftLines()
+void AvoidanceModule::updateRawAvoidOutline(const AvoidOutlines & outlines) const
 {
   const auto & data = avoid_data_;
 
-  utils::avoidance::fillAdditionalInfoFromPoint(data, registered_raw_shift_lines_);
+  utils::avoidance::fillAdditionalInfoFromPoint(data, raw_outlines_);
 
-  AvoidLineArray avoid_lines;
-
-  const auto has_large_offset = [this](const auto & s) {
-    constexpr double THRESHOLD = 0.1;
-    const auto ego_shift_length = helper_.getEgoLinearShift();
-
-    const auto start_to_ego_longitudinal = -1.0 * s.start_longitudinal;
-
-    if (start_to_ego_longitudinal < 0.0) {
-      return false;
+  for (const auto & outline : outlines) {
+    const auto same_object_outline = std::find_if(
+      raw_outlines_.begin(), raw_outlines_.end(),
+      [&outline](const auto & raw_outline) { return outline.uuid == raw_outline.uuid; });
+    if (same_object_outline == raw_outlines_.end()) {
+      raw_outlines_.push_back(outline);
+      continue;
     }
 
-    const auto reg_shift_length =
-      s.getGradient() * start_to_ego_longitudinal + s.start_shift_length;
-
-    return std::abs(ego_shift_length - reg_shift_length) > THRESHOLD;
-  };
+    same_object_outline->avoid_line = outline.avoid_line;
+    same_object_outline->return_line = outline.return_line;
+  }
 
   const auto ego_idx = data.ego_closest_path_index;
 
-  for (const auto & s : registered_raw_shift_lines_) {
-    // invalid
-    if (s.end_idx < ego_idx) {
-      continue;
+  auto itr = raw_outlines_.begin();
+  while (itr != raw_outlines_.end()) {
+    if (itr->return_line.end_idx < ego_idx) {
+      itr = raw_outlines_.erase(itr);
+    } else {
+      itr++;
     }
-
-    // invalid
-    if (has_large_offset(s)) {
-      continue;
-    }
-
-    // valid
-    avoid_lines.push_back(s);
   }
-
-  DEBUG_PRINT(
-    "ego_closest_path_index = %lu, registered_raw_shift_lines_ size: %lu -> %lu",
-    data.ego_closest_path_index, registered_raw_shift_lines_.size(), avoid_lines.size());
-
-  printShiftLines(registered_raw_shift_lines_, "registered_raw_shift_lines_ (before)");
-  printShiftLines(avoid_lines, "registered_raw_shift_lines_ (after)");
-
-  registered_raw_shift_lines_ = avoid_lines;
-  debug_data_.step1_registered_shift_line = registered_raw_shift_lines_;
 }
+
+// void AvoidanceModule::updateRegisteredRawShiftLines()
+// {
+//   const auto & data = avoid_data_;
+
+//   utils::avoidance::fillAdditionalInfoFromPoint(data, registered_raw_shift_lines_);
+
+//   AvoidLineArray avoid_lines;
+
+//   const auto has_large_offset = [this](const auto & s) {
+//     constexpr double THRESHOLD = 0.1;
+//     const auto ego_shift_length = helper_.getEgoLinearShift();
+
+//     const auto start_to_ego_longitudinal = -1.0 * s.start_longitudinal;
+
+//     if (start_to_ego_longitudinal < 0.0) {
+//       return false;
+//     }
+
+//     const auto reg_shift_length =
+//       s.getGradient() * start_to_ego_longitudinal + s.start_shift_length;
+
+//     return std::abs(ego_shift_length - reg_shift_length) > THRESHOLD;
+//   };
+
+//   const auto ego_idx = data.ego_closest_path_index;
+
+//   for (const auto & s : registered_raw_shift_lines_) {
+//     // invalid
+//     if (s.end_idx < ego_idx) {
+//       continue;
+//     }
+
+//     // invalid
+//     if (has_large_offset(s)) {
+//       continue;
+//     }
+
+//     // valid
+//     avoid_lines.push_back(s);
+//   }
+
+//   DEBUG_PRINT(
+//     "ego_closest_path_index = %lu, registered_raw_shift_lines_ size: %lu -> %lu",
+//     data.ego_closest_path_index, registered_raw_shift_lines_.size(), avoid_lines.size());
+
+//   printShiftLines(registered_raw_shift_lines_, "registered_raw_shift_lines_ (before)");
+//   printShiftLines(avoid_lines, "registered_raw_shift_lines_ (after)");
+
+//   registered_raw_shift_lines_ = avoid_lines;
+//   debug_data_.step1_registered_shift_line = registered_raw_shift_lines_;
+// }
 
 AvoidLineArray AvoidanceModule::applyPreProcess(
   const AvoidOutlines & outlines, DebugData & debug) const
@@ -796,13 +829,13 @@ AvoidLineArray AvoidanceModule::applyPreProcess(
    */
   AvoidLineArray processed_raw_lines = toArray(processed_outlines);
 
-  /**
-   * Step4: Combine process.
-   * Use all registered points. For the current points, if the similar one of the current
-   * points are already registered, will not use it.
-   */
-  processed_raw_lines =
-    applyCombineProcess(processed_raw_lines, registered_raw_shift_lines_, debug);
+  // /**
+  //  * Step4: Combine process.
+  //  * Use all registered points. For the current points, if the similar one of the current
+  //  * points are already registered, will not use it.
+  //  */
+  // processed_raw_lines =
+  //   applyCombineProcess(processed_raw_lines, registered_raw_shift_lines_, debug);
 
   /*
    * Step5: Add return shift line.
@@ -842,62 +875,63 @@ AvoidLineArray AvoidanceModule::generateCandidateShiftLine(
   return findNewShiftLine(processed_shift_lines, debug);
 }
 
-void AvoidanceModule::registerRawShiftLines(const AvoidLineArray & future)
-{
-  if (future.empty()) {
-    RCLCPP_ERROR(getLogger(), "future is empty! return.");
-    return;
-  }
+// void AvoidanceModule::registerRawShiftLines(const AvoidLineArray & future)
+// {
+//   if (future.empty()) {
+//     RCLCPP_ERROR(getLogger(), "future is empty! return.");
+//     return;
+//   }
 
-  const auto old_size = registered_raw_shift_lines_.size();
+//   const auto old_size = registered_raw_shift_lines_.size();
 
-  auto future_with_info = future;
-  utils::avoidance::fillAdditionalInfoFromPoint(avoid_data_, future_with_info);
-  printShiftLines(future_with_info, "future_with_info");
-  printShiftLines(registered_raw_shift_lines_, "registered_raw_shift_lines_");
-  printShiftLines(current_raw_shift_lines_, "current_raw_shift_lines_");
+//   auto future_with_info = future;
+//   utils::avoidance::fillAdditionalInfoFromPoint(avoid_data_, future_with_info);
+//   printShiftLines(future_with_info, "future_with_info");
+//   printShiftLines(registered_raw_shift_lines_, "registered_raw_shift_lines_");
+//   printShiftLines(current_raw_shift_lines_, "current_raw_shift_lines_");
 
-  // sort by longitudinal
-  std::sort(future_with_info.begin(), future_with_info.end(), [](auto a, auto b) {
-    return a.end_longitudinal < b.end_longitudinal;
-  });
+//   // sort by longitudinal
+//   std::sort(future_with_info.begin(), future_with_info.end(), [](auto a, auto b) {
+//     return a.end_longitudinal < b.end_longitudinal;
+//   });
 
-  // calc relative lateral length
-  future_with_info.front().start_shift_length = getCurrentBaseShift();
-  for (size_t i = 1; i < future_with_info.size(); ++i) {
-    future_with_info.at(i).start_shift_length = future_with_info.at(i - 1).end_shift_length;
-  }
+//   // calc relative lateral length
+//   future_with_info.front().start_shift_length = getCurrentBaseShift();
+//   for (size_t i = 1; i < future_with_info.size(); ++i) {
+//     future_with_info.at(i).start_shift_length = future_with_info.at(i - 1).end_shift_length;
+//   }
 
-  const auto is_registered = [this](const auto id) {
-    const auto & r = registered_raw_shift_lines_;
-    return std::any_of(r.begin(), r.end(), [id](const auto & s) { return s.id == id; });
-  };
+//   const auto is_registered = [this](const auto id) {
+//     const auto & r = registered_raw_shift_lines_;
+//     return std::any_of(r.begin(), r.end(), [id](const auto & s) { return s.id == id; });
+//   };
 
-  const auto same_id_shift_line = [this](const auto id) {
-    const auto & r = current_raw_shift_lines_;
-    const auto itr = std::find_if(r.begin(), r.end(), [id](const auto & s) { return s.id == id; });
-    if (itr != r.end()) {
-      return *itr;
-    }
-    throw std::logic_error("not found same id current raw shift line.");
-  };
+//   const auto same_id_shift_line = [this](const auto id) {
+//     const auto & r = current_raw_shift_lines_;
+//     const auto itr = std::find_if(r.begin(), r.end(), [id](const auto & s) { return s.id == id;
+//     }); if (itr != r.end()) {
+//       return *itr;
+//     }
+//     throw std::logic_error("not found same id current raw shift line.");
+//   };
 
-  for (const auto & s : future_with_info) {
-    if (s.parent_ids.empty()) {
-      RCLCPP_ERROR(getLogger(), "avoid line for path_shifter must have parent_id.");
-    }
+//   for (const auto & s : future_with_info) {
+//     if (s.parent_ids.empty()) {
+//       RCLCPP_ERROR(getLogger(), "avoid line for path_shifter must have parent_id.");
+//     }
 
-    for (const auto id : s.parent_ids) {
-      if (is_registered(id)) {
-        continue;
-      }
+//     for (const auto id : s.parent_ids) {
+//       if (is_registered(id)) {
+//         continue;
+//       }
 
-      registered_raw_shift_lines_.push_back(same_id_shift_line(id));
-    }
-  }
+//       registered_raw_shift_lines_.push_back(same_id_shift_line(id));
+//     }
+//   }
 
-  DEBUG_PRINT("registered object size: %lu -> %lu", old_size, registered_raw_shift_lines_.size());
-}
+//   DEBUG_PRINT("registered object size: %lu -> %lu", old_size,
+//   registered_raw_shift_lines_.size());
+// }
 
 AvoidOutlines AvoidanceModule::generateAvoidOutline(
   AvoidancePlanningData & data, [[maybe_unused]] DebugData & debug) const
@@ -1134,7 +1168,7 @@ AvoidOutlines AvoidanceModule::generateAvoidOutline(
     }
 
     if (is_valid_shift_line(al_avoid) && is_valid_shift_line(al_return)) {
-      outlines.emplace_back(al_avoid, al_return);
+      outlines.emplace_back(al_avoid, al_return, o.object.object_id);
     } else {
       o.reason = "InvalidShiftLine";
       continue;
@@ -2014,10 +2048,11 @@ PathWithLaneId AvoidanceModule::extendBackwardLength(const PathWithLaneId & orig
       max_dist = std::max(
         max_dist, calcSignedArcLength(previous_path.points, pnt.start.position, getEgoPosition()));
     }
-    for (const auto & sp : registered_raw_shift_lines_) {
-      max_dist = std::max(
-        max_dist, calcSignedArcLength(previous_path.points, sp.start.position, getEgoPosition()));
-    }
+    // for (const auto & sp : registered_raw_shift_lines_) {
+    //   max_dist = std::max(
+    //     max_dist, calcSignedArcLength(previous_path.points, sp.start.position,
+    //     getEgoPosition()));
+    // }
     return max_dist;
   }();
 
@@ -2231,9 +2266,9 @@ void AvoidanceModule::updatePathShifter(const AvoidLineArray & shift_lines)
 
   addNewShiftLines(path_shifter_, shift_lines);
 
-  current_raw_shift_lines_ = avoid_data_.raw_shift_line;
+  // current_raw_shift_lines_ = avoid_data_.raw_shift_line;
 
-  registerRawShiftLines(shift_lines);
+  // registerRawShiftLines(shift_lines);
 
   const auto sl = helper_.getMainShiftLine(shift_lines);
   const auto sl_front = shift_lines.front();
@@ -2491,8 +2526,8 @@ void AvoidanceModule::updateData()
     return;
   }
 
-  // update registered shift point for new reference path & remove past objects
-  updateRegisteredRawShiftLines();
+  // // update registered shift point for new reference path & remove past objects
+  // updateRegisteredRawShiftLines();
 
   // update shift line and check path safety.
   fillShiftLine(avoid_data_, debug_data_);
@@ -2530,8 +2565,8 @@ void AvoidanceModule::initVariables()
   debug_marker_.markers.clear();
   resetPathCandidate();
   resetPathReference();
-  registered_raw_shift_lines_ = {};
-  current_raw_shift_lines_ = {};
+  // registered_raw_shift_lines_ = {};
+  // current_raw_shift_lines_ = {};
   original_unique_id = 0;
   is_avoidance_maneuver_starts = false;
   arrived_path_end_ = false;

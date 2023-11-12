@@ -431,8 +431,8 @@ using AvoidLineArray = std::vector<AvoidLine>;
 
 struct AvoidOutline
 {
-  AvoidOutline(const AvoidLine & avoid_line, const AvoidLine & return_line)
-  : avoid_line{avoid_line}, return_line{return_line}
+  AvoidOutline(const AvoidLine & avoid_line, const AvoidLine & return_line, const UUID & object_id)
+  : avoid_line{avoid_line}, return_line{return_line}, uuid{object_id}
   {
   }
 
@@ -441,6 +441,8 @@ struct AvoidOutline
   AvoidLine return_line{};
 
   AvoidLineArray middle_lines{};
+
+  UUID uuid{};
 };
 using AvoidOutlines = std::vector<AvoidOutline>;
 

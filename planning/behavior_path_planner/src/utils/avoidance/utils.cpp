@@ -1477,6 +1477,29 @@ void fillAdditionalInfoFromPoint(const AvoidancePlanningData & data, AvoidLineAr
   }
 }
 
+void fillAdditionalInfoFromPoint(const AvoidancePlanningData & data, AvoidLine & line)
+{
+  const auto & path = data.reference_path;
+  const auto & arc = data.arclength_from_ego;
+
+  line.start_idx = findNearestIndex(path.points, line.start.position);
+  line.start_longitudinal = arc.at(line.start_idx);
+  line.end_idx = findNearestIndex(path.points, line.end.position);
+  line.end_longitudinal = arc.at(line.end_idx);
+}
+
+void fillAdditionalInfoFromPoint(const AvoidancePlanningData & data, AvoidOutlines & outlines)
+{
+  for (auto & outline : outlines) {
+    fillAdditionalInfoFromPoint(data, outline.avoid_line);
+    fillAdditionalInfoFromPoint(data, outline.return_line);
+
+    std::for_each(outline.middle_lines.begin(), outline.middle_lines.end(), [&](auto & line) {
+      fillAdditionalInfoFromPoint(data, line);
+    });
+  }
+}
+
 void fillAdditionalInfoFromLongitudinal(const AvoidancePlanningData & data, AvoidLine & line)
 {
   const auto & path = data.reference_path;
