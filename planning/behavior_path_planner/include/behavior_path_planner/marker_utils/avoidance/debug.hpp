@@ -37,6 +37,7 @@ using autoware_auto_planning_msgs::msg::PathWithLaneId;
 using behavior_path_planner::AvoidancePlanningData;
 using behavior_path_planner::AvoidanceState;
 using behavior_path_planner::AvoidLineArray;
+using behavior_path_planner::AvoidOutlines;
 using behavior_path_planner::DebugData;
 using behavior_path_planner::ObjectDataArray;
 using behavior_path_planner::ShiftLineArray;
@@ -50,6 +51,10 @@ MarkerArray createEgoStatusMarkerArray(
 
 MarkerArray createAvoidLineMarkerArray(
   const AvoidLineArray & shift_points, std::string && ns, const float & r, const float & g,
+  const float & b, const double & w);
+
+MarkerArray createAvoidOutLineMarkerArray(
+  const AvoidOutlines & outlines, std::string && ns, const float & r, const float & g,
   const float & b, const double & w);
 
 MarkerArray createPredictedVehiclePositions(const PathWithLaneId & path, std::string && ns);

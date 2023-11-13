@@ -301,6 +301,28 @@ MarkerArray createAvoidLineMarkerArray(
   return msg;
 }
 
+MarkerArray createAvoidOutLineMarkerArray(
+  const AvoidOutlines & outlines, std::string && ns, const float & r, const float & g,
+  const float & b, const double & w)
+{
+  MarkerArray msg;
+
+  AvoidLineArray avoid_lines{};
+  AvoidLineArray return_lines{};
+  // AvoidLineArray middle_lines{};
+
+  for (const auto & outline : outlines) {
+    avoid_lines.push_back(outline.avoid_line);
+    return_lines.push_back(outline.return_line);
+  }
+
+  appendMarkerArray(createAvoidLineMarkerArray(avoid_lines, ns + "_avoid_shift", r, g, b, w), &msg);
+  appendMarkerArray(
+    createAvoidLineMarkerArray(return_lines, ns + "_return_shift", r, g, b, w), &msg);
+
+  return msg;
+}
+
 MarkerArray createPredictedVehiclePositions(const PathWithLaneId & path, std::string && ns)
 {
   const auto current_time = rclcpp::Clock{RCL_ROS_TIME}.now();

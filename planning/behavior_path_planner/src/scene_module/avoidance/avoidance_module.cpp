@@ -728,20 +728,30 @@ void AvoidanceModule::updateRawAvoidOutline(const AvoidOutlines & outlines) cons
 
   utils::avoidance::fillAdditionalInfoFromPoint(data, raw_outlines_);
 
+  const auto ego_idx = data.ego_closest_path_index;
+
   for (const auto & outline : outlines) {
     const auto same_object_outline = std::find_if(
       raw_outlines_.begin(), raw_outlines_.end(),
       [&outline](const auto & raw_outline) { return outline.uuid == raw_outline.uuid; });
+
     if (same_object_outline == raw_outlines_.end()) {
       raw_outlines_.push_back(outline);
       continue;
     }
 
-    same_object_outline->avoid_line = outline.avoid_line;
-    same_object_outline->return_line = outline.return_line;
-  }
+    const auto diff_end_shift = std::abs(
+      same_object_outline->avoid_line.end_shift_length - outline.avoid_line.end_shift_length);
+    if (diff_end_shift > parameters_->lateral_execution_threshold) {
+      same_object_outline->avoid_line = outline.avoid_line;
+    }
 
-  const auto ego_idx = data.ego_closest_path_index;
+    const auto diff_start_shift = std::abs(
+      same_object_outline->return_line.start_shift_length - outline.return_line.start_shift_length);
+    if (diff_start_shift > parameters_->lateral_execution_threshold) {
+      same_object_outline->return_line = outline.return_line;
+    }
+  }
 
   auto itr = raw_outlines_.begin();
   while (itr != raw_outlines_.end()) {
@@ -2752,6 +2762,7 @@ void AvoidanceModule::updateDebugMarker(
   using marker_utils::showPredictedPath;
   using marker_utils::showSafetyCheckInfo;
   using marker_utils::avoidance_marker::createAvoidLineMarkerArray;
+  using marker_utils::avoidance_marker::createAvoidOutLineMarkerArray;
   using marker_utils::avoidance_marker::createEgoStatusMarkerArray;
   using marker_utils::avoidance_marker::createOtherObjectsMarkerArray;
   using marker_utils::avoidance_marker::createOverhangFurthestLineStringMarkerArray;
@@ -2810,6 +2821,10 @@ void AvoidanceModule::updateDebugMarker(
     addObjects(data.other_objects, std::string("NotNeedAvoidance"));
     addObjects(data.other_objects, std::string("LessThanExecutionThreshold"));
     addObjects(data.other_objects, std::string("TooNearToGoal"));
+  }
+
+  {
+    add(createAvoidOutLineMarkerArray(raw_outlines_, "step0_raw_outlines", 1.0, 0.8, 1.0, 0.3));
   }
 
   // shift line pre-process
