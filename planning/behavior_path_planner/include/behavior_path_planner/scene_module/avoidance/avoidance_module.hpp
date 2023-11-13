@@ -297,7 +297,7 @@ private:
   //  * behind ego pose.
   //  */
   // void updateRegisteredRawShiftLines();
-  void updateRawAvoidOutline(const AvoidOutlines & outlines) const;
+  // void updateRawAvoidOutline(const AvoidOutlines & outlines) const;
 
   /**
    * @brief check whether the ego can transit yield maneuver.
@@ -601,7 +601,7 @@ private:
 
   ObjectDataArray registered_objects_;
 
-  mutable AvoidOutlines raw_outlines_;
+  // mutable AvoidOutlines raw_outlines_;
 
   mutable size_t safe_count_{0};
 
