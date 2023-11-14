@@ -431,6 +431,18 @@ bool AvoidanceModule::canYieldManeuver(const AvoidancePlanningData & data) const
     return false;
   }
 
+  // prevent sudden steering.
+  const auto registered_lines = path_shifter_.getShiftLines();
+  if (!registered_lines.empty()) {
+    const size_t idx = planner_data_->findEgoIndex(path_shifter_.getReferencePath().points);
+    const auto to_shift_start_point = calcSignedArcLength(
+      path_shifter_.getReferencePath().points, idx, registered_lines.front().start_idx);
+    constexpr double FIXED_PATH_TIME = 1.0;
+    if (to_shift_start_point < FIXED_PATH_TIME * getEgoSpeed()) {
+      return false;
+    }
+  }
+
   if (!data.stop_target_object) {
     return true;
   }
