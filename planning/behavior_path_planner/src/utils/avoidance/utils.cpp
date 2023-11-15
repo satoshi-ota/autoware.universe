@@ -1477,9 +1477,11 @@ void filterTargetObjects(
       }
     }
 
-    if (isParallelToEgoLane(o, M_PI_2 / 9.0)) {
-      push_ignore_object(o, "ParallelToEgoLane");
-      continue;
+    if (o.is_within_intersection) {
+      if (isParallelToEgoLane(o, M_PI_2 / 9.0)) {
+        push_ignore_object(o, "ParallelToEgoLane");
+        continue;
+      }
     }
 
     push_target_object(o, avoid_margin);
