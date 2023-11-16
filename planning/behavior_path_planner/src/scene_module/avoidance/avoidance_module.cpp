@@ -444,6 +444,7 @@ bool AvoidanceModule::canYieldManeuver(const AvoidancePlanningData & data) const
 {
   // transit yield maneuver only when the avoidance maneuver is not initiated.
   if (helper_.isShifted()) {
+    RCLCPP_DEBUG(getLogger(), "avoidance maneuver already initiated.");
     return false;
   }
 
@@ -453,13 +454,17 @@ bool AvoidanceModule::canYieldManeuver(const AvoidancePlanningData & data) const
     const size_t idx = planner_data_->findEgoIndex(path_shifter_.getReferencePath().points);
     const auto to_shift_start_point = calcSignedArcLength(
       path_shifter_.getReferencePath().points, idx, registered_lines.front().start_idx);
-    constexpr double FIXED_PATH_TIME = 1.0;
-    if (to_shift_start_point < FIXED_PATH_TIME * getEgoSpeed()) {
+    if (to_shift_start_point < helper_.getMinimumPrepareDistance()) {
+      RCLCPP_DEBUG(
+        getLogger(),
+        "Distance to shift start point is less than minimum prepare distance. The distance is not "
+        "enough.");
       return false;
     }
   }
 
   if (!data.stop_target_object) {
+    RCLCPP_DEBUG(getLogger(), "can pass by the object safely without avoidance maneuver.");
     return true;
   }
 
@@ -1661,6 +1666,10 @@ void AvoidanceModule::applySmallShiftFilter(
       continue;
     }
 
+    if (s.start_longitudinal < helper_.getMinimumPrepareDistance()) {
+      continue;
+    }
+
     shift_lines.push_back(s);
   }
 }
@@ -2405,9 +2414,8 @@ AvoidLineArray AvoidanceModule::findNewShiftLine(
   for (size_t i = 0; i < shift_lines.size(); ++i) {
     const auto & candidate = shift_lines.at(i);
 
-    // new shift points must exist in front of Ego
-    // this value should be larger than -eps consider path shifter calculation error.
-    if (candidate.start_idx < avoid_data_.ego_closest_path_index) {
+    // prevent sudden steering.
+    if (candidate.start_longitudinal < helper_.getMinimumPrepareDistance()) {
       break;
     }
 
