@@ -255,6 +255,9 @@ void AvoidanceModule::fillFundamentalData(AvoidancePlanningData & data, DebugDat
   data.current_lanelets = utils::avoidance::getCurrentLanesFromPath(
     *getPreviousModuleOutput().reference_path, planner_data_);
 
+  data.extend_lanelets =
+    utils::avoidance::getExtendLanes(data.current_lanelets, getEgoPose(), planner_data_);
+
   // expand drivable lanes
   std::for_each(
     data.current_lanelets.begin(), data.current_lanelets.end(), [&](const auto & lanelet) {
@@ -1035,7 +1038,7 @@ AvoidOutlines AvoidanceModule::generateAvoidOutline(
 
   AvoidOutlines outlines;
   for (auto & o : data.target_objects) {
-    if (!o.avoid_margin) {
+    if (!o.avoid_margin.has_value()) {
       o.reason = AvoidanceDebugFactor::INSUFFICIENT_LATERAL_MARGIN;
       if (o.avoid_required && is_forward_object(o)) {
         break;
@@ -1046,7 +1049,7 @@ AvoidOutlines AvoidanceModule::generateAvoidOutline(
 
     const auto is_object_on_right = utils::avoidance::isOnRight(o);
     const auto desire_shift_length =
-      helper_.getShiftLength(o, is_object_on_right, o.avoid_margin.get());
+      helper_.getShiftLength(o, is_object_on_right, o.avoid_margin.value());
     if (utils::avoidance::isSameDirectionShift(is_object_on_right, desire_shift_length)) {
       o.reason = AvoidanceDebugFactor::SAME_DIRECTION_SHIFT;
       if (o.avoid_required && is_forward_object(o)) {
@@ -1071,7 +1074,7 @@ AvoidOutlines AvoidanceModule::generateAvoidOutline(
 
     // use absolute dist for return-to-center, relative dist from current for avoiding.
     const auto feasible_return_distance =
-      helper_.getMaxAvoidanceDistance(feasible_shift_profile.get().first);
+      helper_.getMaxAvoidanceDistance(feasible_shift_profile.value().first);
 
     AvoidLine al_avoid;
     {
