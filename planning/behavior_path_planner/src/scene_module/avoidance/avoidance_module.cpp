@@ -2775,6 +2775,7 @@ void AvoidanceModule::updateDebugMarker(
     addObjects(data.other_objects, std::string("TooNearToGoal"));
     addObjects(data.other_objects, std::string("ParallelToEgoLane"));
     addObjects(data.other_objects, std::string("BehindReturnPoint"));
+    addObjects(data.other_objects, std::string("UnstableObject"));
   }
 
   // shift line pre-process
