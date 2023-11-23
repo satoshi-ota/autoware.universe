@@ -516,6 +516,8 @@ struct AvoidancePlanningData
 
   bool valid{false};
 
+  bool success{false};
+
   bool comfortable{false};
 
   bool avoid_required{false};
