@@ -117,6 +117,10 @@ void fillObjectStoppableJudge(
   ObjectData & object_data, const ObjectDataArray & registered_objects,
   const double feasible_stop_distance, const std::shared_ptr<AvoidanceParameters> & parameters);
 
+void updateClippedObject(
+  ObjectDataArray & now_objects, const ObjectDataArray & registered_objects,
+  const std::shared_ptr<AvoidanceParameters> & parameters);
+
 void updateRegisteredObject(
   ObjectDataArray & registered_objects, const ObjectDataArray & now_objects,
   const std::shared_ptr<AvoidanceParameters> & parameters);

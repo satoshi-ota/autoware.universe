@@ -124,13 +124,14 @@ bool AvoidanceModule::isExecutionRequested() const
     return true;
   }
 
-  if (avoid_data_.new_shift_line.empty()) {
-    return false;
-  }
+  // if (avoid_data_.new_shift_line.empty()) {
+  //   return false;
+  // }
 
   return std::any_of(
     avoid_data_.target_objects.begin(), avoid_data_.target_objects.end(), [](const auto & o) {
-      return o.is_avoidable || o.reason == AvoidanceDebugFactor::TOO_LARGE_JERK;
+      return o.is_avoidable || o.reason != AvoidanceDebugFactor::INSUFFICIENT_LATERAL_MARGIN;
+      // return o.is_avoidable || o.reason == AvoidanceDebugFactor::TOO_LARGE_JERK;
     });
 }
 
@@ -170,7 +171,8 @@ bool AvoidanceModule::canTransitSuccessState()
 
   const bool has_avoidance_target =
     std::any_of(data.target_objects.begin(), data.target_objects.end(), [](const auto & o) {
-      return o.is_avoidable || o.reason == AvoidanceDebugFactor::TOO_LARGE_JERK;
+      return o.is_avoidable || o.reason != AvoidanceDebugFactor::INSUFFICIENT_LATERAL_MARGIN;
+      // return o.is_avoidable || o.reason == AvoidanceDebugFactor::TOO_LARGE_JERK;
     });
   const bool has_shift_point = !path_shifter_.getShiftLines().empty();
   const bool has_base_offset =
@@ -504,6 +506,8 @@ void AvoidanceModule::fillEgoStatus(
       o.reason = "InvalidShiftLine";
     });
   }
+
+  utils::avoidance::updateClippedObject(clipped_objects_, data.target_objects, parameters_);
 
   /**
    * Find the nearest object that should be avoid. When the ego follows reference path,
@@ -932,7 +936,8 @@ BehaviorModuleOutput AvoidanceModule::plan()
     // generate obstacle polygons
     current_drivable_area_info.obstacles =
       utils::avoidance::generateObstaclePolygonsForDrivableArea(
-        avoid_data_.target_objects, parameters_, planner_data_->parameters.vehicle_width / 2.0);
+        clipped_objects_, parameters_, planner_data_->parameters.vehicle_width / 2.0);
+    // avoid_data_.target_objects, parameters_, planner_data_->parameters.vehicle_width / 2.0);
     // expand hatched road markings
     current_drivable_area_info.enable_expanding_hatched_road_markings =
       parameters_->use_hatched_road_markings;

@@ -436,6 +436,8 @@ private:
 
   mutable size_t safe_count_{0};
 
+  mutable ObjectDataArray clipped_objects_;
+
   mutable ObjectDataArray ego_stopped_objects_;
 
   mutable ObjectDataArray stopped_objects_;

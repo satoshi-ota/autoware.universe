@@ -910,23 +910,30 @@ std::vector<DrivableAreaInfo::Obstacle> generateObstaclePolygonsForDrivableArea(
   const ObjectDataArray & objects, const std::shared_ptr<AvoidanceParameters> & parameters,
   const double vehicle_width)
 {
-  std::vector<DrivableAreaInfo::Obstacle> obstacles_for_drivable_area;
-
-  if (objects.empty() || !parameters->enable_bound_clipping) {
-    return obstacles_for_drivable_area;
+  if (!parameters->enable_bound_clipping) {
+    return {};
   }
+
+  if (objects.empty()) {
+    std::cout << __func__ << ":" << __LINE__ << std::endl;
+    return {};
+  }
+
+  std::vector<DrivableAreaInfo::Obstacle> obstacles_for_drivable_area;
 
   for (const auto & object : objects) {
     // If avoidance is executed by both behavior and motion, only non-avoidable object will be
     // extracted from the drivable area.
     if (!parameters->disable_path_update) {
       if (object.is_avoidable) {
+        std::cout << __func__ << ":" << __LINE__ << std::endl;
         continue;
       }
     }
 
     // check if avoid marin is calculated
     if (!object.avoid_margin.has_value()) {
+      std::cout << __func__ << ":" << __LINE__ << std::endl;
       continue;
     }
 
@@ -934,13 +941,12 @@ std::vector<DrivableAreaInfo::Obstacle> generateObstaclePolygonsForDrivableArea(
     const auto object_parameter = parameters->object_parameters.at(object_type);
 
     // generate obstacle polygon
-    const double diff_poly_buffer =
-      object.avoid_margin.value() - object_parameter.envelope_buffer_margin - vehicle_width / 2.0;
+    const double diff_poly_buffer = object_parameter.safety_buffer_lateral - vehicle_width / 2.0;
+    // object.avoid_margin.value() - object_parameter.envelope_buffer_margin - vehicle_width / 2.0;
     const auto obj_poly =
       tier4_autoware_utils::expandPolygon(object.envelope_poly, diff_poly_buffer);
-    const bool is_left = 0 < object.lateral;
     obstacles_for_drivable_area.push_back(
-      {object.object.kinematics.initial_pose_with_covariance.pose, obj_poly, is_left});
+      {object.object.kinematics.initial_pose_with_covariance.pose, obj_poly, !isOnRight(object)});
   }
   return obstacles_for_drivable_area;
 }
@@ -1241,6 +1247,32 @@ void fillObjectStoppableJudge(
   }
 
   object_data.is_stoppable = same_id_obj->is_stoppable;
+}
+
+void updateClippedObject(
+  ObjectDataArray & clipped_objects, const ObjectDataArray & now_objects,
+  const std::shared_ptr<AvoidanceParameters> & parameters)
+{
+  if (!parameters->enable_bound_clipping) {
+    return;
+  }
+
+  for (const auto & object : now_objects) {
+    const auto id = object.object.object_id;
+    const auto same_id_obj = std::find_if(
+      clipped_objects.begin(), clipped_objects.end(),
+      [&id](const auto & o) { return o.object.object_id == id; });
+
+    if (same_id_obj != clipped_objects.end()) {
+      continue;
+    }
+
+    if (object.is_avoidable) {
+      continue;
+    }
+
+    clipped_objects.push_back(object);
+  }
 }
 
 void updateRegisteredObject(
