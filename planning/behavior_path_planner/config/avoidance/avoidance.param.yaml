@@ -27,7 +27,6 @@
       # avoidance is performed for the object type with true
       target_object:
         car:
-          is_target: true                              # [-]
           execute_num: 1                               # [-]
           moving_speed_threshold: 1.0                  # [m/s]
           moving_time_threshold: 1.0                   # [s]
@@ -37,7 +36,6 @@
           safety_buffer_lateral: 0.7                   # [m]
           safety_buffer_longitudinal: 0.0              # [m]
         truck:
-          is_target: true
           execute_num: 1
           moving_speed_threshold: 1.0
           moving_time_threshold: 1.0
@@ -47,7 +45,6 @@
           safety_buffer_lateral: 0.7
           safety_buffer_longitudinal: 0.0
         bus:
-          is_target: true
           execute_num: 1
           moving_speed_threshold: 1.0
           moving_time_threshold: 1.0
@@ -57,7 +54,6 @@
           safety_buffer_lateral: 0.7
           safety_buffer_longitudinal: 0.0
         trailer:
-          is_target: true
           execute_num: 1
           moving_speed_threshold: 1.0
           moving_time_threshold: 1.0
@@ -67,7 +63,6 @@
           safety_buffer_lateral: 0.7
           safety_buffer_longitudinal: 0.0
         unknown:
-          is_target: false
           execute_num: 1
           moving_speed_threshold: 1.0
           moving_time_threshold: 1.0
@@ -77,7 +72,6 @@
           safety_buffer_lateral: 0.7
           safety_buffer_longitudinal: 0.0
         bicycle:
-          is_target: false
           execute_num: 1
           moving_speed_threshold: 1.0
           moving_time_threshold: 1.0
@@ -87,7 +81,6 @@
           safety_buffer_lateral: 1.0
           safety_buffer_longitudinal: 1.0
         motorcycle:
-          is_target: false
           execute_num: 1
           moving_speed_threshold: 1.0
           moving_time_threshold: 1.0
@@ -97,7 +90,6 @@
           safety_buffer_lateral: 1.0
           safety_buffer_longitudinal: 1.0
         pedestrian:
-          is_target: false
           execute_num: 1
           moving_speed_threshold: 1.0
           moving_time_threshold: 1.0
@@ -111,6 +103,16 @@
 
       # For target object filtering
       target_filtering:
+        # avoidance target type
+        target_type:
+          car: true                                      # [-]
+          truck: true                                    # [-]
+          bus: true                                      # [-]
+          trailer: true                                  # [-]
+          unknown: true                                  # [-]
+          bicycle: true                                  # [-]
+          motorcycle: true                               # [-]
+          pedestrian: true                               # [-]
         # detection range
         object_check_goal_distance: 20.0                # [m]
         # filtering parking objects
@@ -140,6 +142,16 @@
 
       # For safety check
       safety_check:
+        # safety check target type
+        target_type:
+          car: true                                      # [-]
+          truck: true                                    # [-]
+          bus: true                                      # [-]
+          trailer: true                                  # [-]
+          unknown: false                                 # [-]
+          bicycle: true                                  # [-]
+          motorcycle: true                               # [-]
+          pedestrian: true                               # [-]
         # safety check configuration
         enable: true                                     # [-]
         check_current_lane: false                        # [-]
