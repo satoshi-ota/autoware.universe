@@ -336,6 +336,34 @@ bool isParallelToEgoLane(const ObjectData & object, const double threshold)
   return yaw_deviation < threshold || yaw_deviation > M_PI - threshold;
 }
 
+bool isMergingToEgoLane(const ObjectData & object)
+{
+  const auto & object_pose = object.object.kinematics.initial_pose_with_covariance.pose;
+  const auto closest_pose =
+    lanelet::utils::getClosestCenterPose(object.overhang_lanelet, object_pose.position);
+  const auto yaw_deviation = calcYawDeviation(closest_pose, object_pose);
+
+  if (isOnRight(object)) {
+    if (yaw_deviation < 0.0 && -1.0 * M_PI_2 < yaw_deviation) {
+      return false;
+    }
+
+    if (yaw_deviation > M_PI_2) {
+      return false;
+    }
+  } else {
+    if (yaw_deviation > 0.0 && M_PI_2 > yaw_deviation) {
+      return false;
+    }
+
+    if (yaw_deviation < -1.0 * M_PI_2) {
+      return false;
+    }
+  }
+
+  return true;
+}
+
 bool isObjectOnRoadShoulder(
   ObjectData & object, const std::shared_ptr<RouteHandler> & route_handler,
   const std::shared_ptr<AvoidanceParameters> & parameters)
@@ -623,6 +651,11 @@ bool isSatisfiedWithVehicleCondition(
 
   if (isParallelToEgoLane(object, parameters->object_check_yaw_deviation)) {
     object.reason = "ParallelToEgoLane";
+    return false;
+  }
+
+  if (isMergingToEgoLane(object)) {
+    object.reason = "MergingToEgoLane";
     return false;
   }
 
