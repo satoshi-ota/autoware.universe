@@ -150,6 +150,32 @@ lanelet::BasicLineString3d toLineString3d(const std::vector<Point> & bound)
     bound.begin(), bound.end(), [&](const auto & p) { ret.emplace_back(p.x, p.y, p.z); });
   return ret;
 }
+
+inline tier4_autoware_utils::LinearRing2d createVehicleFootprint(
+  const vehicle_info_util::VehicleInfo & vehicle_info, const double margin = 0.0)
+{
+  using tier4_autoware_utils::LinearRing2d;
+  using tier4_autoware_utils::Point2d;
+
+  const auto & i = vehicle_info;
+
+  const double x_front = i.front_overhang_m + i.wheel_base_m + margin;
+  const double x_center = i.wheel_base_m / 2.0;
+  const double x_rear = -(i.rear_overhang_m + margin);
+  const double y_left = i.wheel_tread_m / 2.0 + i.left_overhang_m + margin;
+  const double y_right = -(i.wheel_tread_m / 2.0 + i.right_overhang_m + margin);
+
+  LinearRing2d footprint;
+  footprint.push_back(Point2d{x_front, y_left});
+  footprint.push_back(Point2d{x_front, y_right});
+  footprint.push_back(Point2d{x_center, y_right});
+  footprint.push_back(Point2d{x_rear, y_right});
+  footprint.push_back(Point2d{x_rear, y_left});
+  footprint.push_back(Point2d{x_center, y_left});
+  footprint.push_back(Point2d{x_front, y_left});
+
+  return footprint;
+}
 }  // namespace
 
 AvoidanceModule::AvoidanceModule(
@@ -224,7 +250,7 @@ bool AvoidanceModule::isSatisfiedSuccessCondition(const AvoidancePlanningData & 
   }
 
   // Be able to canceling avoidance path. -> EXIT.
-  if (!helper_->isShifted() && parameters_->enable_cancel_maneuver) {
+  if (!helper_.isShifted() && parameters_->enable_cancel_maneuver) {
     return true;
   }
 
@@ -2633,7 +2659,7 @@ TurnSignalInfo AvoidanceModule::calcTurnSignalInfo(
   const auto & p = planner_data_->parameters;
   const auto & rh = planner_data_->route_handler;
 
-  const auto current_shift_length = helper_->getEgoShift();
+  const auto current_shift_length = helper_.getEgoShift();
   const auto start_shift_length = path.shift_length.at(shift_line.start_idx);
   const auto end_shift_length = path.shift_length.at(shift_line.end_idx);
   const auto relative_shift_length = end_shift_length - start_shift_length;
@@ -2742,12 +2768,13 @@ TurnSignalInfo AvoidanceModule::calcTurnSignalInfo(
     }
   }
 
-  const auto footprint = createVehicleFootprint(p.vehicle_info);
+  const auto footprint = createVehicleFootprint(p.vehicle_info, 0.0);
   for (const auto & lane : avoid_data_.current_lanelets) {
     for (size_t i = shift_line.start_idx; i < shift_line.end_idx; ++i) {
       const auto transform =
         tier4_autoware_utils::pose2transform(path.path.points.at(i).point.pose);
-      const auto shifted_vehicle_footprint = transformVector(footprint, transform);
+      const auto shifted_vehicle_footprint =
+        tier4_autoware_utils::transformVector(footprint, transform);
 
       if (intersects(lane.leftBound2d().basicLineString(), shifted_vehicle_footprint)) {
         turn_signal_info.turn_signal.command = get_command(relative_shift_length);
