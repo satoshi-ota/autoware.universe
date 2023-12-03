@@ -642,6 +642,9 @@ bool isSatisfiedWithVehicleCondition(
   if (on_ego_driving_lane) {
     if (isObjectOnRoadShoulder(object, planner_data->route_handler, parameters)) {
       return true;
+    } else {
+      object.reason = AvoidanceDebugFactor::NOT_PARKING_OBJECT;
+      return false;
     }
   }
 
