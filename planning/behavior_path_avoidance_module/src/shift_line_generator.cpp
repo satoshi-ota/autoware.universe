@@ -219,7 +219,7 @@ AvoidOutlines ShiftLineGenerator::generateAvoidOutline(
                                 : -1.0 * feasible_relative_shift_length + current_ego_shift;
 
     const auto infeasible =
-      std::abs(feasible_shift_length - object.overhang_dist) <
+      std::abs(feasible_shift_length - object.overhang_points.front().first) <
       0.5 * data_->parameters.vehicle_width + object_parameter.safety_buffer_lateral;
     if (infeasible) {
       RCLCPP_DEBUG(rclcpp::get_logger(""), "feasible shift length is not enough to avoid. ");
