@@ -1313,18 +1313,26 @@ std::pair<std::vector<lanelet::ConstPoint3d>, bool> getBoundWithFreeSpaceAreas(
   const auto is_clockwise_polygon = boost::geometry::is_valid(to2D(polygon.basicPolygon()));
   const auto is_clockwise_iteration = is_clockwise_polygon ? is_left : !is_left;
 
-  const auto extract_bound_from_polygon = [&polygon, &is_clockwise_iteration](
+  const auto get_idx = [&polygon](const auto & id) {
+    const auto itr =
+      std::find_if(polygon.begin(), polygon.end(), [&id](const auto & p) { return p.id() == id; });
+    return std::distance(polygon.begin(), itr);
+  };
+
+  const auto extract_bound_from_polygon = [&get_idx, &polygon, &is_clockwise_iteration](
                                             const auto & start_id, const auto & end_id) {
-    const auto start_point_itr = std::find_if(
-      polygon.begin(), polygon.end(), [&](const auto & p) { return p.id() == start_id; });
+    // const auto start_point_itr = std::find_if(
+    //   polygon.begin(), polygon.end(), [&](const auto & p) { return p.id() == start_id; });
 
-    const auto end_point_itr = std::find_if(
-      polygon.begin(), polygon.end(), [&](const auto & p) { return p.id() == end_id; });
+    // const auto end_point_itr = std::find_if(
+    //   polygon.begin(), polygon.end(), [&](const auto & p) { return p.id() == end_id; });
 
-    // extract line strings between start_idx and end_idx.
-    const size_t start_idx = std::distance(polygon.begin(), start_point_itr);
-    const size_t end_idx = std::distance(polygon.begin(), end_point_itr);
+    // // extract line strings between start_idx and end_idx.
+    // const size_t start_idx = std::distance(polygon.begin(), start_point_itr);
+    // const size_t end_idx = std::distance(polygon.begin(), end_point_itr);
 
+    const size_t start_idx = get_idx(start_id);
+    const size_t end_idx = get_idx(end_id);
     return extractBoundFromPolygon(polygon, start_idx, end_idx, is_clockwise_iteration);
   };
 
@@ -1364,13 +1372,28 @@ std::pair<std::vector<lanelet::ConstPoint3d>, bool> getBoundWithFreeSpaceAreas(
     OTHER,
   };
 
+  std::cout << "left:" << std::boolalpha << is_left << std::endl;
+  const auto is_pass_through = [&]() {
+    if (original_bound_itr == std::next(original_bound_rev_itr).base()) {
+      return false;
+    }
+
+    return !std::any_of(
+      original_bound_itr, std::next(original_bound_rev_itr).base(), [&polygon](const auto & p) {
+        return std::any_of(polygon.begin(), polygon.end(), [&p](const auto & p_outer) {
+          return p.id() == p_outer.id();
+        });
+      });
+  }();
+
   const auto route_case = [&]() {
-    if (original_bound_itr->id() != original_bound_rev_itr->id()) {
+    // if (original_bound_itr->id() != original_bound_rev_itr->id()) {
+    if (is_pass_through) {
       return RouteCase::ROUTE_IS_PASS_THROUGH_FREESPACE;
-    } else if (boost::geometry::within(
+    } else if (!boost::geometry::disjoint(
                  to2D(original_bound.front().basicPoint()), to2D(polygon).basicPolygon())) {
       return RouteCase::INIT_POS_IS_IN_FREESPACE;
-    } else if (boost::geometry::within(
+    } else if (!boost::geometry::disjoint(
                  to2D(original_bound.back().basicPoint()), to2D(polygon).basicPolygon())) {
       return RouteCase::GOAL_POS_IS_IN_FREESPACE;
     }
@@ -1379,8 +1402,16 @@ std::pair<std::vector<lanelet::ConstPoint3d>, bool> getBoundWithFreeSpaceAreas(
 
   switch (route_case) {
     case RouteCase::ROUTE_IS_PASS_THROUGH_FREESPACE: {
+      std::cout << __LINE__ << std::endl;
+      const size_t rev_idx = get_idx(original_bound_rev_itr->id());
+      const size_t other_idx = get_idx(other_side_bound_itr->id());
+      const size_t idx =
+        is_clockwise_iteration ? std::min(rev_idx, other_idx) : std::max(rev_idx, other_idx);
       const auto polygon_bound =
-        extract_bound_from_polygon(original_bound_itr->id(), original_bound_rev_itr->id());
+        extract_bound_from_polygon(original_bound_itr->id(), polygon[idx].id());
+      // extract_bound_from_polygon(original_bound_itr->id(), original_bound_rev_itr->id());
+      std::cout << "size:" << polygon_bound.size() << std::endl;
+      std::cout << polygon_bound.front().id() << ":" << polygon_bound.back().id() << std::endl;
 
       expanded_bound.insert(expanded_bound.end(), original_bound.begin(), original_bound_itr);
       expanded_bound.insert(expanded_bound.end(), polygon_bound.begin(), polygon_bound.end());
@@ -1389,8 +1420,11 @@ std::pair<std::vector<lanelet::ConstPoint3d>, bool> getBoundWithFreeSpaceAreas(
       break;
     }
     case RouteCase::INIT_POS_IS_IN_FREESPACE: {
+      std::cout << __LINE__ << std::endl;
       auto polygon_bound =
         extract_bound_from_polygon(other_side_bound_itr->id(), original_bound_itr->id());
+      std::cout << "size:" << polygon_bound.size() << std::endl;
+      std::cout << polygon_bound.front().id() << ":" << polygon_bound.back().id() << std::endl;
       std::reverse(polygon_bound.begin(), polygon_bound.end());
       auto bound_edge = get_bound_edge(polygon_bound, true);
       std::reverse(bound_edge.begin(), bound_edge.end());
@@ -1400,8 +1434,11 @@ std::pair<std::vector<lanelet::ConstPoint3d>, bool> getBoundWithFreeSpaceAreas(
       break;
     }
     case RouteCase::GOAL_POS_IS_IN_FREESPACE: {
+      std::cout << __LINE__ << std::endl;
       const auto polygon_bound =
         extract_bound_from_polygon(original_bound_itr->id(), other_side_bound_itr->id());
+      std::cout << "size:" << polygon_bound.size() << std::endl;
+      std::cout << polygon_bound.front().id() << ":" << polygon_bound.back().id() << std::endl;
       const auto bound_edge = get_bound_edge(polygon_bound, false);
 
       expanded_bound.insert(expanded_bound.end(), original_bound.begin(), original_bound_itr);
@@ -1409,6 +1446,7 @@ std::pair<std::vector<lanelet::ConstPoint3d>, bool> getBoundWithFreeSpaceAreas(
       break;
     }
     case RouteCase::OTHER: {
+      std::cout << __LINE__ << std::endl;
       expanded_bound = original_bound;
       break;
     }
