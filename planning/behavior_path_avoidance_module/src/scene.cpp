@@ -334,7 +334,6 @@ void AvoidanceModule::fillAvoidanceTargetObjects(
       AvoidanceDebugMsg debug_info;
       debug_info.object_id = toHexString(o.object.object_id);
       debug_info.longitudinal_distance = o.longitudinal;
-      debug_info.lateral_distance_from_centerline = o.to_centerline;
       debug_info.allow_avoidance = o.reason == "";
       debug_info.failed_reason = o.reason;
       debug_info_array.push_back(debug_info);

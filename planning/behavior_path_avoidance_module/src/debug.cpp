@@ -148,6 +148,15 @@ MarkerArray createObjectInfoMarkerArray(const ObjectDataArray & objects, std::st
 {
   MarkerArray msg;
 
+  const auto opt_to_string = [](const std::optional<double> & opt) {
+    if (!opt.has_value()) {
+      return std::string("nan");
+    }
+    std::ostringstream string_stream;
+    string_stream << std::fixed << std::setprecision(2) << opt.value();
+    return string_stream.str();
+  };
+
   auto marker = createDefaultMarker(
     "map", rclcpp::Clock{RCL_ROS_TIME}.now(), ns, 0L, Marker::TEXT_VIEW_FACING,
     createMarkerScale(0.5, 0.5, 0.5), createMarkerColor(1.0, 1.0, 0.0, 1.0));
@@ -158,8 +167,8 @@ MarkerArray createObjectInfoMarkerArray(const ObjectDataArray & objects, std::st
       marker.pose = object.object.kinematics.initial_pose_with_covariance.pose;
       std::ostringstream string_stream;
       string_stream << std::fixed << std::setprecision(2) << std::boolalpha;
-      string_stream << "ratio:" << object.shiftable_ratio << " [-]\n"
-                    << "lateral:" << object.to_centerline << " [m]\n"
+      string_stream << "ratio:" << opt_to_string(object.shiftable_ratio) << " [-]\n"
+                    << "lateral:" << opt_to_string(object.to_centerline) << " [m]\n"
                     << "necessity:" << object.avoid_required << " [-]\n"
                     << "stoppable:" << object.is_stoppable << " [-]\n"
                     << "stop_factor:" << object.to_stop_factor_distance << " [m]\n"

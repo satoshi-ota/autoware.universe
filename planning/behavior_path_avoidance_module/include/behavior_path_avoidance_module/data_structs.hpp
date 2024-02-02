@@ -336,8 +336,8 @@ struct ObjectData  // avoidance target
 {
   ObjectData() = default;
 
-  ObjectData(PredictedObject obj, double lat, double lon, double len)
-  : object(std::move(obj)), to_centerline(lat), longitudinal(lon), length(len)
+  ObjectData(PredictedObject obj, double lon, double len)
+  : object(std::move(obj)), longitudinal(lon), length(len)
   {
   }
 
@@ -353,7 +353,7 @@ struct ObjectData  // avoidance target
 
   // lateral position of the CoM, in Frenet coordinate from ego-pose
 
-  double to_centerline{0.0};
+  std::optional<double> to_centerline{std::nullopt};
 
   // longitudinal position of the CoM, in Frenet coordinate from ego-pose
   double longitudinal{0.0};
@@ -362,7 +362,7 @@ struct ObjectData  // avoidance target
   double length{0.0};
 
   // lateral shiftable ratio
-  double shiftable_ratio{0.0};
+  std::optional<double> shiftable_ratio{std::nullopt};
 
   // distance factor for perception noise (0.0~1.0)
   double distance_factor{0.0};
