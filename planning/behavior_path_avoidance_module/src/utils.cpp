@@ -641,26 +641,31 @@ bool isForceAvoidanceTarget(
   bool not_parked_object = true;
 
   // check traffic light
-  const auto to_traffic_light = getDistanceToNextTrafficLight(object_pose, data.extend_lanelets);
   {
     not_parked_object =
-      to_traffic_light < parameters->object_ignore_section_traffic_light_in_front_distance;
+      object.to_traffic_light < parameters->object_ignore_section_traffic_light_in_front_distance;
   }
 
   // check crosswalk
-  const auto to_crosswalk =
+  object.to_crosswalk =
     utils::getDistanceToCrosswalk(ego_pose, data.extend_lanelets, *rh->getOverallGraphPtr()) -
     object.longitudinal;
   {
     const auto stop_for_crosswalk =
-      to_crosswalk < parameters->object_ignore_section_crosswalk_in_front_distance &&
-      to_crosswalk > -1.0 * parameters->object_ignore_section_crosswalk_behind_distance;
+      object.to_crosswalk < parameters->object_ignore_section_crosswalk_in_front_distance &&
+      object.to_crosswalk > -1.0 * parameters->object_ignore_section_crosswalk_behind_distance;
     not_parked_object = not_parked_object || stop_for_crosswalk;
   }
 
-  object.to_stop_factor_distance = std::min(to_traffic_light, to_crosswalk);
+  object.to_stop_factor_distance = std::min(object.to_traffic_light, object.to_crosswalk);
 
-  return !not_parked_object;
+  const rclcpp::Time now = rclcpp::Clock(RCL_ROS_TIME).now();
+  object.stop_time_after_passabel_signal =
+    std::min(object.stop_time, (now - object.last_stop_signal).seconds());
+  const auto no_intent_to_move = object.stop_time_after_passabel_signal >
+                                 parameters->threshold_time_force_avoidance_for_passable_signal;
+
+  return !not_parked_object || no_intent_to_move;
 }
 
 bool isSatisfiedWithCommonCondition(
@@ -1431,8 +1436,9 @@ void fillObjectEnvelopePolygon(
   object_data.envelope_poly = one_shot_envelope_poly;
 }
 
-void fillObjectMovingTime(
-  ObjectData & object_data, ObjectDataArray & stopped_objects,
+void fillObjectTimeSeriesInfo(
+  ObjectData & object_data, ObjectDataArray & stopped_objects, const AvoidancePlanningData & data,
+  const std::shared_ptr<const PlannerData> & planner_data,
   const std::shared_ptr<AvoidanceParameters> & parameters)
 {
   const auto object_type = utils::getHighestProbLabel(object_data.object.classification);
@@ -1441,6 +1447,11 @@ void fillObjectMovingTime(
   const auto & object_twist = object_data.object.kinematics.initial_twist_with_covariance.twist;
   const auto object_vel_norm = std::hypot(object_twist.linear.x, object_twist.linear.y);
   const auto is_faster_than_threshold = object_vel_norm > object_parameter.moving_speed_threshold;
+
+  const auto & object_pose = object_data.object.kinematics.initial_pose_with_covariance.pose;
+  const auto [to_traffic_light, is_passable] =
+    getDistanceToNextTrafficLight(object_pose, data.extend_lanelets, planner_data);
+  object_data.to_traffic_light = to_traffic_light;
 
   const auto id = object_data.object.object_id;
   const auto same_id_obj = std::find_if(
@@ -1456,11 +1467,14 @@ void fillObjectMovingTime(
     if (is_new_object) {
       object_data.stop_time = 0.0;
       object_data.last_move = now;
+      object_data.last_stop_signal = now;
       stopped_objects.push_back(object_data);
     } else {
       same_id_obj->stop_time = (now - same_id_obj->last_move).seconds();
       same_id_obj->last_stop = now;
       same_id_obj->move_time = 0.0;
+      same_id_obj->last_stop_signal = is_passable ? same_id_obj->last_stop_signal : now;
+      object_data.last_stop_signal = same_id_obj->last_stop_signal;
       object_data.stop_time = same_id_obj->stop_time;
     }
     return;
@@ -1470,9 +1484,12 @@ void fillObjectMovingTime(
     object_data.move_time = std::numeric_limits<double>::infinity();
     object_data.stop_time = 0.0;
     object_data.last_move = now;
+    object_data.last_stop_signal = now;
     return;
   }
 
+  same_id_obj->last_stop_signal = is_passable ? same_id_obj->last_stop_signal : now;
+  object_data.last_stop_signal = same_id_obj->last_stop_signal;
   object_data.last_stop = same_id_obj->last_stop;
   object_data.move_time = (now - same_id_obj->last_stop).seconds();
   object_data.stop_time = 0.0;

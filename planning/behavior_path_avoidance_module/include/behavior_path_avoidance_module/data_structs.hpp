@@ -183,6 +183,7 @@ struct AvoidanceParameters
 
   // force avoidance
   double threshold_time_force_avoidance_for_stopped_vehicle{0.0};
+  double threshold_time_force_avoidance_for_passable_signal{0.0};
   double force_avoidance_distance_threshold{0.0};
 
   // when complete avoidance motion, there is a distance margin with the object
@@ -379,6 +380,10 @@ struct ObjectData  // avoidance target
   rclcpp::Time last_move;
   double stop_time{0.0};
 
+  // object force avoidnce.
+  rclcpp::Time last_stop_signal;
+  double stop_time_after_passabel_signal{0.0};
+
   // store the information of the lanelet which the object's overhang is currently occupying
   lanelet::ConstLanelet overhang_lanelet;
 
@@ -395,6 +400,8 @@ struct ObjectData  // avoidance target
   double to_road_shoulder_distance{0.0};
 
   // to intersection
+  double to_traffic_light{std::numeric_limits<double>::infinity()};
+  double to_crosswalk{std::numeric_limits<double>::infinity()};
   double to_stop_factor_distance{std::numeric_limits<double>::infinity()};
 
   // to stop line distance

@@ -104,8 +104,9 @@ void fillObjectEnvelopePolygon(
   ObjectData & object_data, const ObjectDataArray & registered_objects, const Pose & closest_pose,
   const std::shared_ptr<AvoidanceParameters> & parameters);
 
-void fillObjectMovingTime(
-  ObjectData & object_data, ObjectDataArray & stopped_objects,
+void fillObjectTimeSeriesInfo(
+  ObjectData & object_data, ObjectDataArray & stopped_objects, const AvoidancePlanningData & data,
+  const std::shared_ptr<const PlannerData> & planner_data,
   const std::shared_ptr<AvoidanceParameters> & parameters);
 
 void fillAvoidanceNecessity(

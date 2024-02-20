@@ -164,7 +164,9 @@ MarkerArray createObjectInfoMarkerArray(const ObjectDataArray & objects, std::st
                     << "stoppable:" << object.is_stoppable << " [-]\n"
                     << "stop_factor:" << object.to_stop_factor_distance << " [m]\n"
                     << "move_time:" << object.move_time << " [s]\n"
-                    << "stop_time:" << object.stop_time << " [s]\n";
+                    << "stop_time:" << object.stop_time << " [s]\n"
+                    << "stop_time_after_passabel_signal:" << object.stop_time_after_passabel_signal
+                    << " [s]\n";
       marker.text = string_stream.str();
       marker.color = createMarkerColor(1.0, 1.0, 0.0, 0.999);
       marker.scale = createMarkerScale(0.5, 0.5, 0.5);

@@ -402,7 +402,8 @@ ObjectData AvoidanceModule::createObjectData(
   object_data.centroid = return_centroid<Point2d>(object_data.envelope_poly);
 
   // Calc moving time.
-  utils::avoidance::fillObjectMovingTime(object_data, stopped_objects_, parameters_);
+  utils::avoidance::fillObjectTimeSeriesInfo(
+    object_data, stopped_objects_, data, planner_data_, parameters_);
 
   // Fill init pose.
   utils::avoidance::fillInitialPose(object_data, detected_objects_);

@@ -255,7 +255,7 @@ ObjectData AvoidanceByLaneChange::createObjectData(
   object_data.centroid = return_centroid<Point2d>(object_data.envelope_poly);
 
   // Calc moving time.
-  utils::avoidance::fillObjectMovingTime(object_data, stopped_objects_, p);
+  utils::avoidance::fillObjectTimeSeriesInfo(object_data, stopped_objects_, data, planner_data_, p);
 
   // Calc lateral deviation from path to target object.
   object_data.to_centerline =
