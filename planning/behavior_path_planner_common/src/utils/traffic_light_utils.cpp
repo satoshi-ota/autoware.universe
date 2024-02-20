@@ -20,12 +20,13 @@ namespace behavior_path_planner::utils::traffic_light
 {
 using motion_utils::calcSignedArcLength;
 
-double getDistanceToNextTrafficLight(
-  const Pose & current_pose, const lanelet::ConstLanelets & lanelets)
+std::pair<double, bool> getDistanceToNextTrafficLight(
+  const Pose & current_pose, const lanelet::ConstLanelets & lanelets,
+  const std::shared_ptr<const PlannerData> & planner_data)
 {
   lanelet::ConstLanelet current_lanelet;
   if (!lanelet::utils::query::getClosestLanelet(lanelets, current_pose, &current_lanelet)) {
-    return std::numeric_limits<double>::infinity();
+    return std::make_pair(std::numeric_limits<double>::infinity(), false);
   }
 
   const auto lanelet_point = lanelet::utils::conversion::toLaneletPoint(current_pose.position);
@@ -42,8 +43,18 @@ double getDistanceToNextTrafficLight(
 
     const auto distance_object_to_stop_line = to_stop_line.length - to_object.length;
 
+    const auto is_passable = [&]() {
+      const auto traffic_signal_stamped = planner_data->getTrafficSignal(element->id());
+      if (!traffic_signal_stamped.has_value()) {
+        return false;
+      }
+
+      return !traffic_light_utils::isTrafficSignalStop(
+        current_lanelet, traffic_signal_stamped.value().signal);
+    }();
+
     if (distance_object_to_stop_line > 0.0) {
-      return distance_object_to_stop_line;
+      return std::make_pair(distance_object_to_stop_line, is_passable);
     }
   }
 
@@ -67,13 +78,23 @@ double getDistanceToNextTrafficLight(
         lanelet::utils::to2D(llt.centerline()),
         lanelet::utils::to2D(lanelet_stop_lines).front().basicPoint());
 
-      return distance + to_stop_line.length - to_object.length;
+      const auto is_passable = [&]() {
+        const auto traffic_signal_stamped = planner_data->getTrafficSignal(element->id());
+        if (!traffic_signal_stamped.has_value()) {
+          return false;
+        }
+
+        return !traffic_light_utils::isTrafficSignalStop(
+          llt, traffic_signal_stamped.value().signal);
+      }();
+
+      return std::make_pair(distance + to_stop_line.length - to_object.length, is_passable);
     }
 
     distance += lanelet::utils::getLaneletLength3d(llt);
   }
 
-  return std::numeric_limits<double>::infinity();
+  return std::make_pair(std::numeric_limits<double>::infinity(), false);
 }
 
 std::optional<double> calcDistanceToRedTrafficLight(

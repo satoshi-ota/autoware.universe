@@ -29,6 +29,7 @@
 
 #include <limits>
 #include <memory>
+#include <utility>
 
 namespace behavior_path_planner::utils::traffic_light
 {
@@ -47,11 +48,14 @@ using geometry_msgs::msg::Pose;
  *
  * @param current_pose The current position of ego vehicle.
  * @param lanelets A collection of lanelets representing the road ahead.
+ * @param planner_data Shared pointer to planner data with vehicle odometry and traffic signal
+ * information.
  * @return The distance to the next traffic light's stop line or infinity if no traffic light is
- * found ahead.
+ * found ahead and traffic condition.
  */
-double getDistanceToNextTrafficLight(
-  const Pose & current_pose, const lanelet::ConstLanelets & lanelets);
+std::pair<double, bool> getDistanceToNextTrafficLight(
+  const Pose & current_pose, const lanelet::ConstLanelets & lanelets,
+  const std::shared_ptr<const PlannerData> & planner_data);
 
 /**
  * @brief Calculates the signed distance from the ego vehicle to the stop line of the nearest red

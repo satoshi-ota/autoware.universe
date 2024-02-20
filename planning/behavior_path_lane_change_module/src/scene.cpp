@@ -1167,8 +1167,8 @@ bool NormalLaneChange::hasEnoughLengthToTrafficLight(
   const LaneChangePath & path, const lanelet::ConstLanelets & current_lanes) const
 {
   const auto current_pose = getEgoPose();
-  const auto dist_to_next_traffic_light =
-    getDistanceToNextTrafficLight(current_pose, current_lanes);
+  const auto [dist_to_next_traffic_light, is_passable] =
+    getDistanceToNextTrafficLight(current_pose, current_lanes, planner_data_);
   const auto dist_to_next_traffic_light_from_lc_start_pose =
     dist_to_next_traffic_light - path.info.length.prepare;
 
