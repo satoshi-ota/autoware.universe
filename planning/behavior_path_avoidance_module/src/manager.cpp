@@ -67,9 +67,6 @@ void AvoidanceModuleManager::updateModuleParams(const std::vector<rclcpp::Parame
       config.lateral_hard_margin_for_parked_vehicle);
     updateParam<double>(
       parameters, ns + "safety_buffer_longitudinal", config.safety_buffer_longitudinal);
-    updateParam<bool>(
-      parameters, ns + "use_conservative_buffer_longitudinal",
-      config.use_conservative_buffer_longitudinal);
   };
 
   {

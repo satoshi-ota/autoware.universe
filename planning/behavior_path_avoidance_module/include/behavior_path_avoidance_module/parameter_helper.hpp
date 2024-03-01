@@ -80,8 +80,6 @@ AvoidanceParameters getParameter(rclcpp::Node * node)
         getOrDeclareParameter<double>(*node, ns + "lateral_margin.hard_margin_for_parked_vehicle");
       param.safety_buffer_longitudinal =
         getOrDeclareParameter<double>(*node, ns + "safety_buffer_longitudinal");
-      param.use_conservative_buffer_longitudinal =
-        getOrDeclareParameter<bool>(*node, ns + "use_conservative_buffer_longitudinal");
       return param;
     };
 

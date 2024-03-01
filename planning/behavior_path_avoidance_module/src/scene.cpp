@@ -629,10 +629,6 @@ void AvoidanceModule::fillDebugData(
   const auto o_front = data.stop_target_object.value();
   const auto object_type = utils::getHighestProbLabel(o_front.object.classification);
   const auto object_parameter = parameters_->object_parameters.at(object_type);
-  const auto & additional_buffer_longitudinal =
-    object_parameter.use_conservative_buffer_longitudinal
-      ? planner_data_->parameters.base_link2front
-      : 0.0;
   const auto & vehicle_width = planner_data_->parameters.vehicle_width;
 
   const auto max_avoid_margin = object_parameter.lateral_hard_margin * o_front.distance_factor +
@@ -642,7 +638,7 @@ void AvoidanceModule::fillDebugData(
     helper_->getShiftLength(o_front, utils::avoidance::isOnRight(o_front), max_avoid_margin));
   const auto constant = helper_->getNominalPrepareDistance() +
                         object_parameter.safety_buffer_longitudinal +
-                        additional_buffer_longitudinal;
+                        planner_data_->parameters.base_link2front;
   const auto total_avoid_distance = variable + constant;
 
   dead_pose_ = calcLongitudinalOffsetPose(
@@ -1417,8 +1413,7 @@ double AvoidanceModule::calcDistanceToStopLine(const ObjectData & object) const
   // D2: min_avoid_distance
   // D3: longitudinal_avoid_margin_front (margin + D5)
   // D4: o_front.longitudinal
-  // D5: additional_buffer_longitudinal (base_link2front or 0 depending on the
-  // use_conservative_buffer_longitudinal)
+  // D5: base_link2front
 
   const auto object_type = utils::getHighestProbLabel(object.object.classification);
   const auto object_parameter = parameters_->object_parameters.at(object_type);
@@ -1427,12 +1422,8 @@ double AvoidanceModule::calcDistanceToStopLine(const ObjectData & object) const
                             object_parameter.lateral_soft_margin + 0.5 * vehicle_width;
   const auto variable = helper_->getMinAvoidanceDistance(
     helper_->getShiftLength(object, utils::avoidance::isOnRight(object), avoid_margin));
-  const auto & additional_buffer_longitudinal =
-    object_parameter.use_conservative_buffer_longitudinal
-      ? planner_data_->parameters.base_link2front
-      : 0.0;
   const auto constant = p->min_prepare_distance + object_parameter.safety_buffer_longitudinal +
-                        additional_buffer_longitudinal + p->stop_buffer;
+                        planner_data_->parameters.base_link2front + p->stop_buffer;
 
   return object.longitudinal - std::min(variable + constant, p->stop_max_distance);
 }

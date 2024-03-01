@@ -140,11 +140,8 @@ AvoidOutlines ShiftLineGenerator::generateAvoidOutline(
 
     // calculate remaining distance.
     const auto prepare_distance = helper_->getNominalPrepareDistance();
-    const auto & additional_buffer_longitudinal =
-      object_parameter.use_conservative_buffer_longitudinal ? data_->parameters.base_link2front
-                                                            : 0.0;
     const auto constant = object_parameter.safety_buffer_longitudinal +
-                          additional_buffer_longitudinal + prepare_distance;
+                          data_->parameters.base_link2front + prepare_distance;
     const auto has_enough_distance = object.longitudinal > constant + nominal_avoid_distance;
     const auto remaining_distance = object.longitudinal - constant;
     const auto avoidance_distance =
@@ -297,11 +294,8 @@ AvoidOutlines ShiftLineGenerator::generateAvoidOutline(
 
     AvoidLine al_avoid;
     {
-      const auto & additional_buffer_longitudinal =
-        object_parameter.use_conservative_buffer_longitudinal ? data_->parameters.base_link2front
-                                                              : 0.0;
       const auto offset =
-        object_parameter.safety_buffer_longitudinal + additional_buffer_longitudinal;
+        object_parameter.safety_buffer_longitudinal + data_->parameters.base_link2front;
       const auto to_shift_end = o.longitudinal - offset;
       const auto path_front_to_ego = data.arclength_from_ego.at(data.ego_closest_path_index);
 
