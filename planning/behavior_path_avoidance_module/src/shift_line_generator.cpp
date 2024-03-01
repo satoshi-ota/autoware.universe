@@ -140,10 +140,10 @@ AvoidOutlines ShiftLineGenerator::generateAvoidOutline(
 
     // calculate remaining distance.
     const auto prepare_distance = helper_->getNominalPrepareDistance();
-    const auto constant =
-      object_parameter.longitudinal_margin + data_->parameters.base_link2front + prepare_distance;
-    const auto has_enough_distance = object.longitudinal > constant + nominal_avoid_distance;
-    const auto remaining_distance = object.longitudinal - constant;
+    const auto constant_distance = helper_->getLongitudinalConstantDistance(object);
+    const auto has_enough_distance =
+      object.longitudinal > constant_distance + prepare_distance + nominal_avoid_distance;
+    const auto remaining_distance = object.longitudinal - constant_distance - prepare_distance;
     const auto avoidance_distance =
       has_enough_distance ? nominal_avoid_distance : remaining_distance;
 
@@ -294,8 +294,8 @@ AvoidOutlines ShiftLineGenerator::generateAvoidOutline(
 
     AvoidLine al_avoid;
     {
-      const auto offset = object_parameter.longitudinal_margin + data_->parameters.base_link2front;
-      const auto to_shift_end = o.longitudinal - offset;
+      const auto constant_distance = helper_->getLongitudinalConstantDistance(o);
+      const auto to_shift_end = o.longitudinal - constant_distance;
       const auto path_front_to_ego = data.arclength_from_ego.at(data.ego_closest_path_index);
 
       // start point (use previous linear shift length as start shift length.)
@@ -331,8 +331,9 @@ AvoidOutlines ShiftLineGenerator::generateAvoidOutline(
 
     AvoidLine al_return;
     {
-      const auto offset = object_parameter.longitudinal_margin + base_link2rear + o.length;
-      const auto to_shift_start = o.longitudinal + offset;
+      const auto constant_distance =
+        object_parameter.longitudinal_margin + base_link2rear + o.length;
+      const auto to_shift_start = o.longitudinal + constant_distance;
 
       // start point
       al_return.start_shift_length = feasible_shift_profile.value().first;
