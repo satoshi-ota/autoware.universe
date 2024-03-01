@@ -637,7 +637,7 @@ void AvoidanceModule::fillDebugData(
   const auto variable = helper_->getSharpAvoidanceDistance(
     helper_->getShiftLength(o_front, utils::avoidance::isOnRight(o_front), max_avoid_margin));
   const auto constant = helper_->getNominalPrepareDistance() +
-                        object_parameter.safety_buffer_longitudinal +
+                        object_parameter.longitudinal_margin +
                         planner_data_->parameters.base_link2front;
   const auto total_avoid_distance = variable + constant;
 
@@ -1422,7 +1422,7 @@ double AvoidanceModule::calcDistanceToStopLine(const ObjectData & object) const
                             object_parameter.lateral_soft_margin + 0.5 * vehicle_width;
   const auto variable = helper_->getMinAvoidanceDistance(
     helper_->getShiftLength(object, utils::avoidance::isOnRight(object), avoid_margin));
-  const auto constant = p->min_prepare_distance + object_parameter.safety_buffer_longitudinal +
+  const auto constant = p->min_prepare_distance + object_parameter.longitudinal_margin +
                         planner_data_->parameters.base_link2front + p->stop_buffer;
 
   return object.longitudinal - std::min(variable + constant, p->stop_max_distance);

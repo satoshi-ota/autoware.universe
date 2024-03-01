@@ -65,8 +65,7 @@ void AvoidanceModuleManager::updateModuleParams(const std::vector<rclcpp::Parame
     updateParam<double>(
       parameters, ns + "lateral_margin.hard_margin_for_parked_vehicle",
       config.lateral_hard_margin_for_parked_vehicle);
-    updateParam<double>(
-      parameters, ns + "safety_buffer_longitudinal", config.safety_buffer_longitudinal);
+    updateParam<double>(parameters, ns + "longitudinal_margin", config.longitudinal_margin);
   };
 
   {

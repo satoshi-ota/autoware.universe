@@ -75,7 +75,7 @@ struct ObjectParameter
 
   double lateral_hard_margin_for_parked_vehicle{1.0};
 
-  double safety_buffer_longitudinal{0.0};
+  double longitudinal_margin{0.0};
 };
 
 struct AvoidanceParameters
