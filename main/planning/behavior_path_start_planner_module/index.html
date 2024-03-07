@@ -4839,6 +4839,8 @@
         
           
         
+          
+        
       
       
         <label class="md-nav__link" for="__nav_3" id="__nav_3_label" tabindex="0">
@@ -5025,14 +5027,14 @@
         
         
         <div class="md-nav__link md-nav__link--index ">
-          <a href="../../evaluator/planning_evaluator/">Planning evaluator</a>
+          <a href="../../evaluator/perception_online_evaluator/">Perception online evaluator</a>
           
         </div>
       
       <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_3_4_label" aria-expanded="false">
         <label class="md-nav__title" for="__nav_3_4">
           <span class="md-nav__icon md-icon"></span>
-          Planning evaluator
+          Perception online evaluator
         </label>
         <ul class="md-nav__list" data-md-scrollfix>
           
@@ -5073,12 +5075,60 @@
         
         
         <div class="md-nav__link md-nav__link--index ">
-          <a href="../../evaluator/tier4_metrics_rviz_plugin/">Tier4 metrics rviz plugin</a>
+          <a href="../../evaluator/planning_evaluator/">Planning evaluator</a>
           
         </div>
       
       <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_3_5_label" aria-expanded="false">
         <label class="md-nav__title" for="__nav_3_5">
+          <span class="md-nav__icon md-icon"></span>
+          Planning evaluator
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+          
+        </ul>
+      </nav>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    
+      
+    
+    <li class="md-nav__item md-nav__item--section md-nav__item--nested">
+      
+      
+      
+      
+        
+      
+      <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_3_6" >
+      
+      
+        
+          
+            
+          
+        
+      
+      
+        
+        
+        <div class="md-nav__link md-nav__link--index ">
+          <a href="../../evaluator/tier4_metrics_rviz_plugin/">Tier4 metrics rviz plugin</a>
+          
+        </div>
+      
+      <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_3_6_label" aria-expanded="false">
+        <label class="md-nav__title" for="__nav_3_6">
           <span class="md-nav__icon md-icon"></span>
           Tier4 metrics rviz plugin
         </label>
@@ -15066,6 +15116,55 @@ Opting for <code>short_back_distance</code> aims to find a location with the lea
 <td align="left">5.0</td>
 </tr>
 <tr>
+<td align="left">object_types_to_check_for_path_generation.check_car</td>
+<td align="left">-</td>
+<td align="left">bool</td>
+<td align="left">flag to check car for path generation</td>
+<td align="left">true</td>
+</tr>
+<tr>
+<td align="left">object_types_to_check_for_path_generation.check_truck</td>
+<td align="left">-</td>
+<td align="left">bool</td>
+<td align="left">flag to check truck for path generation</td>
+<td align="left">true</td>
+</tr>
+<tr>
+<td align="left">object_types_to_check_for_path_generation.check_bus</td>
+<td align="left">-</td>
+<td align="left">bool</td>
+<td align="left">flag to check bus for path generation</td>
+<td align="left">true</td>
+</tr>
+<tr>
+<td align="left">object_types_to_check_for_path_generation.check_bicycle</td>
+<td align="left">-</td>
+<td align="left">bool</td>
+<td align="left">flag to check bicycle for path generation</td>
+<td align="left">true</td>
+</tr>
+<tr>
+<td align="left">object_types_to_check_for_path_generation.check_motorcycle</td>
+<td align="left">-</td>
+<td align="left">bool</td>
+<td align="left">flag to check motorcycle for path generation</td>
+<td align="left">true</td>
+</tr>
+<tr>
+<td align="left">object_types_to_check_for_path_generation.check_pedestrian</td>
+<td align="left">-</td>
+<td align="left">bool</td>
+<td align="left">flag to check pedestrian for path generation</td>
+<td align="left">true</td>
+</tr>
+<tr>
+<td align="left">object_types_to_check_for_path_generation.check_unknown</td>
+<td align="left">-</td>
+<td align="left">bool</td>
+<td align="left">flag to check unknown for path generation</td>
+<td align="left">true</td>
+</tr>
+<tr>
 <td align="left">center_line_path_interval</td>
 <td align="left">[m]</td>
 <td align="left">double</td>
@@ -15462,6 +15561,13 @@ Opting for <code>short_back_distance</code> aims to find a location with the lea
 <td align="left">[-]</td>
 <td align="left">bool</td>
 <td align="left">flag whether to check if shift path footprints are out of lane</td>
+<td align="left">true</td>
+</tr>
+<tr>
+<td align="left">allow_check_shift_path_lane_departure_override</td>
+<td align="left">[-]</td>
+<td align="left">bool</td>
+<td align="left">flag to override/cancel lane departure check if the ego vehicle's starting pose is already out of lane</td>
 <td align="left">false</td>
 </tr>
 <tr>
