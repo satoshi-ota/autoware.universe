@@ -12298,6 +12298,8 @@
         
           
         
+          
+        
       
       
         <label class="md-nav__link" for="__nav_10" id="__nav_10_label" tabindex="0">
@@ -12444,6 +12446,54 @@
         <label class="md-nav__title" for="__nav_10_3">
           <span class="md-nav__icon md-icon"></span>
           Simple planning simulator
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+          
+        </ul>
+      </nav>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    
+      
+    
+    <li class="md-nav__item md-nav__item--section md-nav__item--nested">
+      
+      
+      
+      
+        
+      
+      <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_10_4" >
+      
+      
+        
+          
+            
+          
+        
+      
+      
+        
+        
+        <div class="md-nav__link md-nav__link--index ">
+          <a href="../../simulator/vehicle_door_simulator/">Vehicle door simulator</a>
+          
+        </div>
+      
+      <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_10_4_label" aria-expanded="false">
+        <label class="md-nav__title" for="__nav_10_4">
+          <span class="md-nav__icon md-icon"></span>
+          Vehicle door simulator
         </label>
         <ul class="md-nav__list" data-md-scrollfix>
           
@@ -14700,7 +14750,6 @@ The overall module flow can be summarized with the following 4 steps.</p>
 <p>In addition to these 4 steps, 2 mechanisms are in place to make the stop point of this module more stable: an hysteresis and a decision duration buffer.</p>
 <p>The <code>hysteresis</code> parameter is used when a stop point was already being inserted in the previous iteration
 and it increases the range where dynamic objects are considered close enough to the ego path to be used by the module.</p>
-<p>The <code>decision_duration_buffer</code> parameter defines the duration when the module will keep inserted the previous stop point, even after no collisions were found.</p>
 <h4 id="filter-dynamic-objects">Filter dynamic objects<a class="headerlink" href="#filter-dynamic-objects" title="Permanent link">#</a></h4>
 <p><img alt="filtering example" src="docs/DynamicObstacleStop-Filtering.drawio.svg"></p>
 <p>An object is considered by the module only if it meets all of the following conditions:</p>
@@ -14708,8 +14757,10 @@ and it increases the range where dynamic objects are considered close enough to 
 <li>it is a vehicle (pedestrians are ignored);</li>
 <li>it is moving at a velocity higher than defined by the <code>minimum_object_velocity</code> parameter;</li>
 <li>it is not too close to the current position of the ego vehicle;</li>
+<li>it is not unavoidable (only if parameter <code>ignore_unavoidable_collisions</code> is set to <code>true</code>);</li>
 <li>it is close to the ego path.</li>
 </ul>
+<p>An object is considered unavoidable if it is heading towards the ego vehicle such that even if ego stops, a collision would still occur (assuming the object keeps driving in a straight line).</p>
 <p>For the last condition,
 the object is considered close enough if its lateral distance from the ego path is less than the threshold parameter <code>minimum_object_distance_from_ego_path</code> plus half the width of ego and of the object (including the <code>extra_object_width</code> parameter).
 In addition, the value of the <code>hysteresis</code> parameter is added to the minimum distance if a stop point was inserted in the previous iteration.</p>
@@ -14731,6 +14782,13 @@ The minimum is calculated to satisfy the acceleration and jerk constraints of th
 If a stop point was inserted in the previous iteration of the module, its arc length is used as the maximum.
 Finally,
 the stop point arc length is calculated to be the arc length of the previously found collision point minus the <code>stop_distance_buffer</code> and the ego vehicle longitudinal offset, clamped between the minimum and maximum values.</p>
+<h4 id="duration-buffer">Duration buffer<a class="headerlink" href="#duration-buffer" title="Permanent link">#</a></h4>
+<p>To prevent chatter caused by noisy perception, two duration parameters are used.</p>
+<ul>
+<li><code>add_stop_duration_buffer</code> represents the duration of consecutive collision detection with an object for the corresponding stop point to be added.</li>
+<li><code>remove_stop_duration_buffer</code> represents the duration of consecutive non-detection of collision with an object for the corresponding stop point to be removed.</li>
+</ul>
+<p>Timers and collision points are tracked for each dynamic object independently.</p>
 <h3 id="module-parameters">Module Parameters<a class="headerlink" href="#module-parameters" title="Permanent link">#</a></h3>
 <table>
 <thead>
@@ -14767,14 +14825,24 @@ the stop point arc length is calculated to be the arc length of the previously f
 <td>[m] once a collision has been detected, this hysteresis is used on the collision detection</td>
 </tr>
 <tr>
-<td><code>decision_duration_buffer</code></td>
+<td><code>add_stop_duration_buffer</code></td>
 <td>double</td>
-<td>[s] duration between no collision being detected and the stop decision being cancelled</td>
+<td>[s] duration where a collision must be continuously detected before a stop decision is added</td>
+</tr>
+<tr>
+<td><code>remove_stop_duration_buffer</code></td>
+<td>double</td>
+<td>[s] duration between no collision being detected and the stop decision being remove</td>
 </tr>
 <tr>
 <td><code>minimum_object_distance_from_ego_path</code></td>
 <td>double</td>
 <td>[m] minimum distance between the footprints of ego and an object to consider for collision</td>
+</tr>
+<tr>
+<td><code>ignore_unavoidable_collisions</code></td>
+<td>bool</td>
+<td>[-] if true, ignore collisions that cannot be avoided by stopping (assuming the obstacle continues going straight)</td>
 </tr>
 </tbody>
 </table></div>

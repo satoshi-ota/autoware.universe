@@ -12298,6 +12298,8 @@
         
           
         
+          
+        
       
       
         <label class="md-nav__link" for="__nav_10" id="__nav_10_label" tabindex="0">
@@ -12444,6 +12446,54 @@
         <label class="md-nav__title" for="__nav_10_3">
           <span class="md-nav__icon md-icon"></span>
           Simple planning simulator
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+          
+        </ul>
+      </nav>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    
+      
+    
+    <li class="md-nav__item md-nav__item--section md-nav__item--nested">
+      
+      
+      
+      
+        
+      
+      <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_10_4" >
+      
+      
+        
+          
+            
+          
+        
+      
+      
+        
+        
+        <div class="md-nav__link md-nav__link--index ">
+          <a href="../../simulator/vehicle_door_simulator/">Vehicle door simulator</a>
+          
+        </div>
+      
+      <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_10_4_label" aria-expanded="false">
+        <label class="md-nav__title" for="__nav_10_4">
+          <span class="md-nav__icon md-icon"></span>
+          Vehicle door simulator
         </label>
         <ul class="md-nav__list" data-md-scrollfix>
           
@@ -14691,6 +14741,7 @@
 <li>Calculates lateral deviation between the predicted path and the actual traveled trajectory.</li>
 <li>Calculates lateral deviation between the smoothed traveled trajectory and the perceived position to evaluate the stability of lateral position recognition.</li>
 <li>Calculates yaw deviation between the smoothed traveled trajectory and the perceived position to evaluate the stability of yaw recognition.</li>
+<li>Calculates yaw rate based on the yaw of the object received in the previous cycle to evaluate the stability of the yaw rate recognition.</li>
 </ul>
 <h2 id="inputs-outputs">Inputs / Outputs<a class="headerlink" href="#inputs-outputs" title="Permanent link">#</a></h2>
 <table>
@@ -14743,6 +14794,11 @@
 <td><code>prediction_time_horizons</code></td>
 <td>list[double]</td>
 <td>Time horizons for prediction evaluation in seconds.</td>
+</tr>
+<tr>
+<td><code>stopped_velocity_threshold</code></td>
+<td>double</td>
+<td>threshold velocity to check if vehicle is stopped</td>
 </tr>
 <tr>
 <td><code>target_object.*.check_deviation</code></td>
